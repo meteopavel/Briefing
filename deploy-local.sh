@@ -3,7 +3,8 @@ set -euo pipefail
 
 REPO_REQUIRED_REMOTE='git@github.com:meteopavel/Chronicle_Reporting_Automation.git'
 BRANCH_NAME='main'
-ENV_FILE="$(git rev-parse --show-toplevel)/.env"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+ENV_FILE="${REPO_ROOT}/.env"
 
 LOCAL_SECURE_DIR='.local_secure'
 ARCHIVE_DIR='secure'
@@ -85,13 +86,21 @@ mkdir -p "${ARCHIVE_DIR}"
 
 # ================= АРХИВАЦИЯ =================
 
+if [[ ! -f "${ENV_FILE}" ]]; then
+  echo "❌ Ошибка: файл ${ENV_FILE} не найден."
+  exit 1
+fi
+
 if [[ -f "${ARCHIVE_PATH}" ]]; then
   echo "🗑 Удаляем старый архив: ${ARCHIVE_PATH}"
   rm -f "${ARCHIVE_PATH}"
 fi
 
-echo '🔐 Создаём зашифрованный архив локальных защищённых данных...'
-7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}"
+echo '🔐 Создаём зашифрованный архив локальных защищённых данных и .env...'
+(
+  cd "${REPO_ROOT}"
+  7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}" ".env"
+)
 echo '✅ Архив успешно создан.'
 
 # ================= RSYNC =================

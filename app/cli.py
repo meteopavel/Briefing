@@ -4,19 +4,18 @@ import os
 from app.config import ACTS_DATA_FILE, OUTPUT_DIR, REDMINE_URL
 from app.services.acts_data import load_acts_data
 from app.services.documents import generate_act, generate_report
-from app.services.redmine import fetch_and_save_timelog
+from app.services.redmine import export_issue_contexts_for_period, fetch_and_save_timelog
 from app.utils.dates import dd_mm_yyyy_to_yyyy_mm_dd, get_target_month_row
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Генерация акта и отчёта')
+    parser = argparse.ArgumentParser(description='Генерация акта, отчёта и экспорт контекста Redmine')
     parser.add_argument('--debug', action='store_true', help='Показать таблицу расчёта в консоли')
+    parser.add_argument('--export-chronicle-context', action='store_true', help='Экспортировать сырой контекст задач из Redmine за целевой период')
+    parser.add_argument('--chronicle-issue-id', type=int, help='Экспортировать контекст только по одной задаче Redmine')
     args = parser.parse_args()
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-    print('📄 Генерация документов для бухгалтерии...\n')
-
     acts_dataframe = load_acts_data()
     row = get_target_month_row(acts_dataframe, ACTS_DATA_FILE)
 
@@ -32,6 +31,23 @@ def main():
         '&f%5B%5D=user_id&op%5Buser_id%5D=%3D&v%5Buser_id%5D%5B%5D=me'
         '&f%5B%5D=&group_by=&t%5B%5D=&columns=day&criteria%5B%5D=issue'
     )
+
+    if args.export_chronicle_context:
+        print('📚 Экспорт сырого контекста задач для летописи...\n')
+        print(f'🔍 Ссылка для сверки в Redmine:\n{report_url}\n')
+        filename_suffix = f'{start_date}_{end_date}'
+        if args.chronicle_issue_id is not None:
+            filename_suffix += f'-issue-{args.chronicle_issue_id}'
+        chronicle_filename = os.path.join(OUTPUT_DIR, f'redmine-chronicle-context-{filename_suffix}.json')
+        try:
+            export_issue_contexts_for_period(start_date, end_date, chronicle_filename, issue_id=args.chronicle_issue_id)
+            print(f'\n🎉 Готово! Контекст сохранён в: {chronicle_filename}')
+        except Exception as error:
+            print(f'\n❌ ОШИБКА: {error}')
+            raise SystemExit(1)
+        return
+
+    print('📄 Генерация документов для бухгалтерии...\n')
     print(f'\n🔍 Ссылка для сверки в Redmine:\n{report_url}\n')
 
     fetch_and_save_timelog(start_date, end_date, redmine_filename)
