@@ -1,0 +1,16 @@
+.env
+.local_secure/
+.local_runtime/
+/secure/
+/TODO
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+
+.DS_Store
+.idea/
+.vscode/
