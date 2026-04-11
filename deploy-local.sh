@@ -91,15 +91,20 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   exit 1
 fi
 
+if [[ ! -f "${REPO_ROOT}/TODO" ]]; then
+  echo "❌ Ошибка: файл TODO не найден в корне проекта."
+  exit 1
+fi
+
 if [[ -f "${ARCHIVE_PATH}" ]]; then
   echo "🗑 Удаляем старый архив: ${ARCHIVE_PATH}"
   rm -f "${ARCHIVE_PATH}"
 fi
 
-echo '🔐 Создаём зашифрованный архив локальных защищённых данных и .env...'
+echo '🔐 Создаём зашифрованный архив локальных защищённых данных, .env и TODO...'
 (
   cd "${REPO_ROOT}"
-  7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}" ".env"
+  7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}" ".env" "TODO"
 )
 echo '✅ Архив успешно создан.'
 

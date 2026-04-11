@@ -4,7 +4,12 @@ import os
 from app.config import ACTS_DATA_FILE, OUTPUT_DIR, REDMINE_URL
 from app.services.acts_data import load_acts_data
 from app.services.documents import generate_act, generate_report
-from app.services.redmine import export_issue_contexts_for_period, fetch_and_save_timelog
+from app.services.redmine import (
+    build_final_chronicle_prompt,
+    export_issue_contexts_for_period,
+    export_issue_contexts_for_period_in_chunks,
+    fetch_and_save_timelog,
+)
 from app.utils.dates import dd_mm_yyyy_to_yyyy_mm_dd, get_target_month_row
 
 
@@ -12,7 +17,10 @@ def main():
     parser = argparse.ArgumentParser(description='Генерация акта, отчёта и экспорт контекста Redmine')
     parser.add_argument('--debug', action='store_true', help='Показать таблицу расчёта в консоли')
     parser.add_argument('--export-chronicle-context', action='store_true', help='Экспортировать сырой контекст задач из Redmine за целевой период')
+    parser.add_argument('--export-chronicle-context-chunks', action='store_true', help='Экспортировать контекст задач чанками и подготовить prompt-файлы')
+    parser.add_argument('--build-chronicle-final-prompt', action='store_true', help='Собрать финальный prompt из chunk summary файлов')
     parser.add_argument('--chronicle-issue-id', type=int, help='Экспортировать контекст только по одной задаче Redmine')
+    parser.add_argument('--chronicle-chunk-size', type=int, default=6, help='Размер чанка по количеству задач, по умолчанию 6')
     args = parser.parse_args()
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -40,8 +48,43 @@ def main():
             filename_suffix += f'-issue-{args.chronicle_issue_id}'
         chronicle_filename = os.path.join(OUTPUT_DIR, f'redmine-chronicle-context-{filename_suffix}.json')
         try:
-            export_issue_contexts_for_period(start_date, end_date, chronicle_filename, issue_id=args.chronicle_issue_id)
+            export_issue_contexts_for_period(
+                start_date,
+                end_date,
+                chronicle_filename,
+                issue_id=args.chronicle_issue_id,
+            )
             print(f'\n🎉 Готово! Контекст сохранён в: {chronicle_filename}')
+        except Exception as error:
+            print(f'\n❌ ОШИБКА: {error}')
+            raise SystemExit(1)
+        return
+
+    if args.export_chronicle_context_chunks:
+        print('📚 Экспорт контекста задач чанками для летописи...\n')
+        print(f'🔍 Ссылка для сверки в Redmine:\n{report_url}\n')
+        try:
+            output_dir = export_issue_contexts_for_period_in_chunks(
+                start_date,
+                end_date,
+                output_root_dir=OUTPUT_DIR,
+                chunk_size=args.chronicle_chunk_size,
+            )
+            print(f'\n🎉 Готово! Чанки и prompt-файлы сохранены в: {output_dir}')
+        except Exception as error:
+            print(f'\n❌ ОШИБКА: {error}')
+            raise SystemExit(1)
+        return
+
+    if args.build_chronicle_final_prompt:
+        print('🧠 Собираем финальный prompt по chunk summary...\n')
+        try:
+            output_dir = build_final_chronicle_prompt(
+                start_date,
+                end_date,
+                output_root_dir=OUTPUT_DIR,
+            )
+            print(f'\n🎉 Готово! Финальный prompt сохранён в: {output_dir}')
         except Exception as error:
             print(f'\n❌ ОШИБКА: {error}')
             raise SystemExit(1)
