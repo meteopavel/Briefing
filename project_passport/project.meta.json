@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-04-12T13:41:00.941288+00:00",
+  "generated_by": "tools/build_project_passport.py",
+  "auto_generated": true,
+  "review_status": "draft",
+  "id": "chronicle-reporting-automation",
+  "title": "Redmine Documents & Chronicle Automation",
+  "tagline": "Python CLI для генерации документов, экспорта данных из Redmine, подготовки Chronicle-контекста и LLM-friendly prompt workflow.",
+  "summary": "Проект автоматизирует выгрузку трудозатрат и связанных данных из Redmine. На базе полученных данных формируются DOCX-документы, включая акт и отчёт. Дополнительно проект готовит структурированный контекст задач, chunk-based prompt-файлы и итоговый prompt для дальнейшего LLM-анализа. Сценарии запуска объединены через единый CLI-слой.",
+  "status": "active",
+  "visibility": "private_code",
+  "role": "solo_developer",
+  "domain": [
+    "automation",
+    "integrations",
+    "document-generation",
+    "reporting",
+    "developer-tools",
+    "llm-workflows"
+  ],
+  "stack": [
+    "Python",
+    "Redmine API",
+    "pandas",
+    "python-docx",
+    "dotenv",
+    "JSON",
+    "CSV",
+    "Markdown"
+  ],
+  "links": {
+    "repo": null,
+    "demo": null,
+    "details": "/projects/chronicle-reporting-automation"
+  },
+  "highlights": [
+    "Генерация актов и отчётов на основе шаблонов DOCX.",
+    "Интеграция с Redmine API и экспорт данных за выбранный период.",
+    "Подготовка CSV-таблиц трудозатрат с итогами по датам и задачам.",
+    "Разбиение контекста задач на chunk'и и сборка итогового monthly prompt.",
+    "Подготовка JSON- и markdown-артефактов для последующего LLM-анализа.",
+    "Единый CLI entrypoint для маршрутизации сценариев генерации и экспорта."
+  ],
+  "public_artifacts": [
+    "api_map_json",
+    "api_map_markdown",
+    "project_meta_json",
+    "project_public_json"
+  ],
+  "notes": {
+    "project_root": ".",
+    "source_target": "app",
+    "scanned_python_files": 21
+  }
+}

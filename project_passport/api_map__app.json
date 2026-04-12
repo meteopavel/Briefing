@@ -1,0 +1,1153 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-04-12T13:39:33.271084+00:00",
+  "generator": "tools/extract_api_map.py",
+  "target": "app",
+  "scanned_python_files": 21,
+  "files_count": 16,
+  "skipped_files_count": 5,
+  "skipped_files": [
+    "app/__init__.py",
+    "app/services/__init__.py",
+    "app/services/chronicle/__init__.py",
+    "app/services/redmine/__init__.py",
+    "app/utils/__init__.py"
+  ],
+  "stats": {
+    "modules": 16,
+    "classes": 2,
+    "dataclasses": 1,
+    "functions": 64,
+    "methods": 4,
+    "constants": 20
+  },
+  "modules": [
+    {
+      "path": "app/cli.py",
+      "module_docstring": "CLI-точка входа для генерации документов и экспорта данных из Redmine.\nМодуль отвечает за:\n- генерацию акта и отчёта для бухгалтерии;\n- экспорт сырого контекста задач Redmine за период;\n- экспорт контекста задач чанками;\n- сборку финального prompt для летописи.",
+      "module_summary": "CLI-точка входа для генерации документов и экспорта данных из Redmine.",
+      "classes": [
+        {
+          "name": "CliContext",
+          "signature": "CliContext [dataclass]",
+          "docstring": "Общий контекст выполнения CLI-команд.",
+          "summary": "Общий контекст выполнения CLI-команд.",
+          "kind": "dataclass",
+          "bases": [],
+          "decorators": [
+            "dataclass"
+          ],
+          "fields": [
+            {
+              "name": "row",
+              "annotation": "Any",
+              "value_repr": null,
+              "lineno": 34
+            },
+            {
+              "name": "start_date",
+              "annotation": "str",
+              "value_repr": null,
+              "lineno": 35
+            },
+            {
+              "name": "end_date",
+              "annotation": "str",
+              "value_repr": null,
+              "lineno": 36
+            },
+            {
+              "name": "report_url",
+              "annotation": "str",
+              "value_repr": null,
+              "lineno": 37
+            },
+            {
+              "name": "redmine_filename",
+              "annotation": "str",
+              "value_repr": null,
+              "lineno": 38
+            }
+          ],
+          "methods": [],
+          "lineno": 30,
+          "end_lineno": 38
+        }
+      ],
+      "functions": [
+        {
+          "name": "create_parser",
+          "signature": "create_parser() -> argparse.ArgumentParser",
+          "docstring": "Создаёт и настраивает CLI-парсер аргументов.",
+          "summary": "Создаёт и настраивает CLI-парсер аргументов.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 41,
+          "end_lineno": 79
+        },
+        {
+          "name": "prepare_context",
+          "signature": "prepare_context() -> CliContext",
+          "docstring": "Подготавливает общий контекст для выполнения CLI-команд.",
+          "summary": "Подготавливает общий контекст для выполнения CLI-команд.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 82,
+          "end_lineno": 98
+        },
+        {
+          "name": "print_report_url",
+          "signature": "print_report_url(report_url: str) -> None",
+          "docstring": "Печатает ссылку для сверки данных в Redmine.",
+          "summary": "Печатает ссылку для сверки данных в Redmine.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 101,
+          "end_lineno": 105
+        },
+        {
+          "name": "handle_export_chronicle_context",
+          "signature": "handle_export_chronicle_context(args: Namespace, context: CliContext) -> None",
+          "docstring": "Обрабатывает сценарий экспорта сырого контекста задач Redmine.",
+          "summary": "Обрабатывает сценарий экспорта сырого контекста задач Redmine.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 108,
+          "end_lineno": 131
+        },
+        {
+          "name": "handle_export_chronicle_context_chunks",
+          "signature": "handle_export_chronicle_context_chunks(args: Namespace, context: CliContext) -> None",
+          "docstring": "Обрабатывает сценарий экспорта контекста задач чанками.",
+          "summary": "Обрабатывает сценарий экспорта контекста задач чанками.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 134,
+          "end_lineno": 150
+        },
+        {
+          "name": "handle_build_chronicle_final_prompt",
+          "signature": "handle_build_chronicle_final_prompt(context: CliContext) -> None",
+          "docstring": "Обрабатывает сценарий сборки финального prompt для летописи.",
+          "summary": "Обрабатывает сценарий сборки финального prompt для летописи.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 153,
+          "end_lineno": 167
+        },
+        {
+          "name": "handle_generate_documents",
+          "signature": "handle_generate_documents(args: Namespace, context: CliContext) -> None",
+          "docstring": "Обрабатывает сценарий генерации бухгалтерских документов.",
+          "summary": "Обрабатывает сценарий генерации бухгалтерских документов.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 170,
+          "end_lineno": 187
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "docstring": "Запускает CLI-приложение и маршрутизирует выполнение по аргументам.",
+          "summary": "Запускает CLI-приложение и маршрутизирует выполнение по аргументам.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 190,
+          "end_lineno": 206
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 1,
+        "dataclasses": 1,
+        "functions": 8,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/config.py",
+      "module_docstring": "Конфигурация приложения и загрузка значений из переменных окружения.\nМодуль отвечает за:\n- загрузку .env-файла;\n- чтение и преобразование JSON-значений из переменных окружения;\n- хранение путей к входным, шаблонным и выходным файлам;\n- хранение справочников и констант, используемых в приложении.",
+      "module_summary": "Конфигурация приложения и загрузка значений из переменных окружения.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "load_json_env",
+          "signature": "load_json_env(name: str, default: Any) -> Any",
+          "docstring": "Загружает значение переменной окружения как JSON.\nЕсли переменная не задана или пуста, возвращает default.\nЕсли значение не является корректным JSON, выбрасывает ValueError.",
+          "summary": "Загружает значение переменной окружения как JSON.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 19,
+          "end_lineno": 31
+        },
+        {
+          "name": "load_int_key_dict_env",
+          "signature": "load_int_key_dict_env(name: str, default: dict[Any, Any]) -> dict[int, Any]",
+          "docstring": "Загружает JSON-словарь из переменной окружения и приводит его ключи к int.",
+          "summary": "Загружает JSON-словарь из переменной окружения и приводит его ключи к int.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 34,
+          "end_lineno": 39
+        },
+        {
+          "name": "load_set_dict_env",
+          "signature": "load_set_dict_env(name: str, default: dict[Any, Any]) -> dict[Any, set[Any]]",
+          "docstring": "Загружает JSON-словарь из переменной окружения и приводит его значения к set.",
+          "summary": "Загружает JSON-словарь из переменной окружения и приводит его значения к set.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 42,
+          "end_lineno": 47
+        }
+      ],
+      "constants": [
+        {
+          "name": "LOCAL_SECURE_DIR",
+          "annotation": null,
+          "value_repr": "'.local_secure'",
+          "lineno": 50
+        },
+        {
+          "name": "LOCAL_RUNTIME_DIR",
+          "annotation": null,
+          "value_repr": "'.local_runtime'",
+          "lineno": 51
+        },
+        {
+          "name": "ACTS_DATA_FILE",
+          "annotation": null,
+          "value_repr": "os.path.join(LOCAL_SECURE_DIR, 'salary_data.xlsx')",
+          "lineno": 53
+        },
+        {
+          "name": "TEMPLATES_DIR",
+          "annotation": null,
+          "value_repr": "os.path.join(LOCAL_SECURE_DIR, 'templates')",
+          "lineno": 55
+        },
+        {
+          "name": "ACT_TEMPLATE_FILE",
+          "annotation": null,
+          "value_repr": "os.path.join(TEMPLATES_DIR, 'template_act.docx')",
+          "lineno": 56
+        },
+        {
+          "name": "REPORT_TEMPLATE_FILE",
+          "annotation": null,
+          "value_repr": "os.path.join(TEMPLATES_DIR, 'template_report.docx')",
+          "lineno": 57
+        },
+        {
+          "name": "OUTPUT_DIR",
+          "annotation": null,
+          "value_repr": "os.path.join(LOCAL_RUNTIME_DIR, 'output')",
+          "lineno": 59
+        },
+        {
+          "name": "TIMELOGS_DIR",
+          "annotation": null,
+          "value_repr": "os.path.join(LOCAL_RUNTIME_DIR, 'timelogs')",
+          "lineno": 60
+        },
+        {
+          "name": "REDMINE_URL",
+          "annotation": null,
+          "value_repr": "os.getenv('REDMINE_URL', '').rstrip('/')",
+          "lineno": 62
+        },
+        {
+          "name": "REDMINE_API_KEY",
+          "annotation": null,
+          "value_repr": "os.getenv('REDMINE_API_KEY')",
+          "lineno": 63
+        },
+        {
+          "name": "REDMINE_USER_ID",
+          "annotation": null,
+          "value_repr": "os.getenv('REDMINE_USER_ID')",
+          "lineno": 64
+        },
+        {
+          "name": "USER_MAP",
+          "annotation": null,
+          "value_repr": "load_int_key_dict_env('USER_MAP', {})",
+          "lineno": 66
+        },
+        {
+          "name": "ISSUE_STATUS_MAP",
+          "annotation": null,
+          "value_repr": "load_int_key_dict_env('ISSUE_STATUS_MAP', {})",
+          "lineno": 67
+        },
+        {
+          "name": "ISSUE_PRIORITY_MAP",
+          "annotation": null,
+          "value_repr": "load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})",
+          "lineno": 68
+        },
+        {
+          "name": "CUSTOM_FIELD_MAP",
+          "annotation": null,
+          "value_repr": "load_int_key_dict_env('CUSTOM_FIELD_MAP', {})",
+          "lineno": 69
+        },
+        {
+          "name": "CUSTOM_FIELDS_HIDE_IF_NEGATIVE",
+          "annotation": null,
+          "value_repr": "load_set_dict_env('CUSTOM_FIELDS_HIDE_IF_NEGATIVE', {})",
+          "lineno": 70
+        },
+        {
+          "name": "USER_REFERENCE_CUSTOM_FIELD_IDS",
+          "annotation": null,
+          "value_repr": "{16, 17, 18, 19}",
+          "lineno": 71
+        },
+        {
+          "name": "MONTH_NAMES",
+          "annotation": null,
+          "value_repr": "{'01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля', '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа', '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'}",
+          "lineno": 73
+        },
+        {
+          "name": "REPORT_TABLE_COLUMN_WIDTHS_INCH",
+          "annotation": null,
+          "value_repr": "[0.4, 1.6, 2.9, 1.3]",
+          "lineno": 77
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 3,
+        "methods": 0,
+        "constants": 19
+      }
+    },
+    {
+      "path": "app/services/acts_data.py",
+      "module_docstring": "Загрузка и подготовка данных по актам из Excel-файла.\nМодуль отвечает за чтение таблицы актов и преобразование относительных\nимён файлов Redmine в полные пути внутри каталога таймлогов.",
+      "module_summary": "Загрузка и подготовка данных по актам из Excel-файла.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "load_acts_data",
+          "signature": "load_acts_data() -> pd.DataFrame",
+          "docstring": "Загружает данные по актам из Excel-файла.\nВозвращает DataFrame с приведёнными типами колонок и полными путями\nк CSV-файлам Redmine в колонке `redmine_file`.",
+          "summary": "Загружает данные по актам из Excel-файла.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 14,
+          "end_lineno": 35
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 1,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/chronicle/chunking.py",
+      "module_docstring": "Вспомогательные функции для разбиения данных Chronicle на chunk'и\nи построения путей к директориям экспорта.",
+      "module_summary": "Вспомогательные функции для разбиения данных Chronicle на chunk'и",
+      "classes": [],
+      "functions": [
+        {
+          "name": "split_into_chunks",
+          "signature": "split_into_chunks(items: list[T], chunk_size: int) -> list[list[T]]",
+          "docstring": "Разбивает список элементов на последовательные chunk'и фиксированного размера.\nЕсли размер chunk'а меньше или равен нулю, выбрасывает ValueError.",
+          "summary": "Разбивает список элементов на последовательные chunk'и фиксированного размера.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 13,
+          "end_lineno": 20
+        },
+        {
+          "name": "get_chronicle_base_dir",
+          "signature": "get_chronicle_base_dir(output_root_dir: str, start_date_str: str, end_date_str: str) -> str",
+          "docstring": "Строит путь к базовой директории Chronicle-экспорта для заданного периода.",
+          "summary": "Строит путь к базовой директории Chronicle-экспорта для заданного периода.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 23,
+          "end_lineno": 27
+        }
+      ],
+      "constants": [
+        {
+          "name": "T",
+          "annotation": null,
+          "value_repr": "TypeVar('T')",
+          "lineno": 10
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 2,
+        "methods": 0,
+        "constants": 1
+      }
+    },
+    {
+      "path": "app/services/chronicle/export.py",
+      "module_docstring": "Функции экспорта Chronicle-контекста и сборки итоговых prompt-файлов.\nМодуль отвечает за:\n- экспорт полного контекста задач за период;\n- разбиение задач на chunk'и и сохранение связанных файлов;\n- сборку финального prompt'а по заполненным chunk summary.",
+      "module_summary": "Функции экспорта Chronicle-контекста и сборки итоговых prompt-файлов.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "export_issue_contexts_for_period_in_chunks",
+          "signature": "export_issue_contexts_for_period_in_chunks(start_date_str: str, end_date_str: str, output_root_dir: str, chunk_size: int = 6) -> str",
+          "docstring": "Экспортирует контекст задач за период в полный JSON, chunk-файлы и prompt-файлы.\nПолучает общий payload задач за период, делит задачи на chunk'и, сохраняет\nполный контекст, manifest, JSON по chunk'ам, prompt-файлы и пустые summary-файлы.\nВозвращает путь к директории экспорта.",
+          "summary": "Экспортирует контекст задач за период в полный JSON, chunk-файлы и prompt-файлы.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 27,
+          "end_lineno": 98
+        },
+        {
+          "name": "build_final_chronicle_prompt",
+          "signature": "build_final_chronicle_prompt(start_date_str: str, end_date_str: str, output_root_dir: str) -> str",
+          "docstring": "Собирает финальный месячный prompt по заполненным summary-файлам chunk'ов.\nЧитает manifest экспорта, проверяет наличие и непустое содержимое всех\n`*.summary.md` файлов, затем объединяет их в итоговый prompt для LLM.\nДополнительно подготавливает пустой файл для финального анализа.",
+          "summary": "Собирает финальный месячный prompt по заполненным summary-файлам chunk'ов.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 101,
+          "end_lineno": 159
+        },
+        {
+          "name": "export_issue_contexts_for_period",
+          "signature": "export_issue_contexts_for_period(start_date_str: str, end_date_str: str, output_filename: str, issue_id: int | None = None) -> str",
+          "docstring": "Экспортирует контекст задач за период в один JSON-файл.\nИспользуется для сохранения полного payload без разбиения на chunk'и.\nМожет ограничивать экспорт одной задачей через `issue_id`.",
+          "summary": "Экспортирует контекст задач за период в один JSON-файл.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 162,
+          "end_lineno": 184
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 3,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/chronicle/prompts.py",
+      "module_docstring": "Функции генерации prompt'ов и вспомогательных markdown-текстов для Chronicle.\nМодуль отвечает за подготовку prompt'ов для анализа chunk'ов задач,\nREADME с дальнейшими шагами и итогового prompt'а для месячного анализа.",
+      "module_summary": "Функции генерации prompt'ов и вспомогательных markdown-текстов для Chronicle.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "build_chunk_prompt",
+          "signature": "build_chunk_prompt(chunk_payload: dict[str, Any]) -> str",
+          "docstring": "Формирует markdown prompt для анализа одного chunk'а задач.\nНа вход принимает payload чанка с периодом, метаданными chunk'а и списком задач.\nВстраивает в prompt сериализованный JSON-контекст для передачи в LLM.",
+          "summary": "Формирует markdown prompt для анализа одного chunk'а задач.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 14,
+          "end_lineno": 57
+        },
+        {
+          "name": "build_next_steps_readme",
+          "signature": "build_next_steps_readme(start_date_str: str, end_date_str: str, total_chunks: int) -> str",
+          "docstring": "Формирует README с инструкцией по дальнейшей работе после экспорта Chronicle.\nREADME описывает, какие файлы уже созданы, как обрабатывать chunk prompt'ы\nи куда сохранять итоговый месячный анализ.",
+          "summary": "Формирует README с инструкцией по дальнейшей работе после экспорта Chronicle.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 60,
+          "end_lineno": 99
+        },
+        {
+          "name": "build_final_prompt_content",
+          "signature": "build_final_prompt_content(period_from: str, period_to: str, chunk_summaries: list[dict[str, Any]]) -> str",
+          "docstring": "Собирает финальный prompt для месячного анализа на основе summary по chunk'ам.\nОбъединяет содержимое всех chunk summary в один текстовый блок,\nкоторый затем используется как вход для итогового LLM-анализа.",
+          "summary": "Собирает финальный prompt для месячного анализа на основе summary по chunk'ам.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 102,
+          "end_lineno": 134
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 3,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/documents.py",
+      "module_docstring": "Генерация документов акта и отчёта на основе шаблонов DOCX.\nМодуль отвечает за:\n- формирование акта по строке данных;\n- формирование отчёта по CSV-файлу трудозатрат;\n- подстановку значений в шаблоны документов;\n- сохранение итоговых DOCX-файлов.",
+      "module_summary": "Генерация документов акта и отчёта на основе шаблонов DOCX.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "generate_act",
+          "signature": "generate_act(row: dict[str, Any] | pd.Series, output_dir: str = OUTPUT_DIR) -> str",
+          "docstring": "Генерирует DOCX-акт по строке данных.\nВ документ подставляются номер акта, даты периода и сумма вознаграждения\nв числовом и текстовом формате.",
+          "summary": "Генерирует DOCX-акт по строке данных.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 27,
+          "end_lineno": 53
+        },
+        {
+          "name": "generate_report",
+          "signature": "generate_report(row: dict[str, Any] | pd.Series, output_dir: str = OUTPUT_DIR, debug_print: bool = False) -> str",
+          "docstring": "Генерирует DOCX-отчёт по строке данных и CSV-файлу трудозатрат.\nЗагружает таблицу трудозатрат, рассчитывает распределение суммы\nвознаграждения по задачам, формирует итоговую таблицу и вставляет\nеё в шаблон отчёта.",
+          "summary": "Генерирует DOCX-отчёт по строке данных и CSV-файлу трудозатрат.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 56,
+          "end_lineno": 124
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 2,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/redmine/client.py",
+      "module_docstring": "HTTP-клиент для получения данных из Redmine API.\nМодуль содержит методы для загрузки:\n- time entries за период;\n- названий задач по списку id;\n- полной задачи;\n- полной задачи вместе с journals.",
+      "module_summary": "HTTP-клиент для получения данных из Redmine API.",
+      "classes": [
+        {
+          "name": "RedmineClient",
+          "signature": "RedmineClient",
+          "docstring": "Клиент для чтения данных из Redmine через REST API.",
+          "summary": "Клиент для чтения данных из Redmine через REST API.",
+          "kind": "class",
+          "bases": [],
+          "decorators": [],
+          "fields": [],
+          "methods": [
+            {
+              "name": "fetch_time_entries",
+              "signature": "fetch_time_entries(start_date_str: str, end_date_str: str) -> list[dict[str, Any]]",
+              "docstring": "Загружает time entries текущего пользователя Redmine за указанный период.",
+              "summary": "Загружает time entries текущего пользователя Redmine за указанный период.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 24,
+              "end_lineno": 38
+            },
+            {
+              "name": "fetch_issue_subjects",
+              "signature": "fetch_issue_subjects(issue_ids: set[int] | list[int]) -> dict[int, str]",
+              "docstring": "Загружает названия задач по набору или списку идентификаторов.",
+              "summary": "Загружает названия задач по набору или списку идентификаторов.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 42,
+              "end_lineno": 62
+            },
+            {
+              "name": "fetch_issue_with_journals",
+              "signature": "fetch_issue_with_journals(issue_id: int) -> dict[str, Any]",
+              "docstring": "Загружает полные данные задачи вместе с journals.",
+              "summary": "Загружает полные данные задачи вместе с journals.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 66,
+              "end_lineno": 78
+            },
+            {
+              "name": "fetch_issue",
+              "signature": "fetch_issue(issue_id: int) -> dict[str, Any]",
+              "docstring": "Загружает полные данные одной задачи без journals.",
+              "summary": "Загружает полные данные одной задачи без journals.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 82,
+              "end_lineno": 92
+            }
+          ],
+          "lineno": 18,
+          "end_lineno": 92
+        }
+      ],
+      "functions": [],
+      "constants": [],
+      "stats": {
+        "classes": 1,
+        "dataclasses": 0,
+        "functions": 0,
+        "methods": 4,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/redmine/context_builder.py",
+      "module_docstring": "Сборка нормализованного контекста задач Redmine для последующего экспорта.\nМодуль отвечает за:\n- получение brief-информации по связанным задачам;\n- извлечение связанных issue id из relations и journals;\n- сборку контекста одной задачи;\n- формирование итогового payload по периоду или по одной задаче.",
+      "module_summary": "Сборка нормализованного контекста задач Redmine для последующего экспорта.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "safe_fetch_issue_brief",
+          "signature": "safe_fetch_issue_brief(issue_id: int) -> dict[str, Any]",
+          "docstring": "Безопасно загружает краткую информацию по задаче.\nЕсли задача недоступна или запрос завершается ошибкой, возвращает\nминимальный объект только с идентификатором задачи.",
+          "summary": "Безопасно загружает краткую информацию по задаче.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 20,
+          "end_lineno": 38
+        },
+        {
+          "name": "extract_related_issue_ids",
+          "signature": "extract_related_issue_ids(issue_data: dict[str, Any]) -> list[int]",
+          "docstring": "Извлекает идентификаторы связанных задач из relations и journals задачи.\nВ результат не включается id текущей задачи. Возвращает отсортированный\nсписок уникальных идентификаторов.",
+          "summary": "Извлекает идентификаторы связанных задач из relations и journals задачи.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 41,
+          "end_lineno": 69
+        },
+        {
+          "name": "build_related_issues",
+          "signature": "build_related_issues(issue_data: dict[str, Any]) -> list[dict[str, Any]]",
+          "docstring": "Строит список кратких описаний связанных задач для переданной задачи.",
+          "summary": "Строит список кратких описаний связанных задач для переданной задачи.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 72,
+          "end_lineno": 77
+        },
+        {
+          "name": "build_issue_context",
+          "signature": "build_issue_context(issue_data: dict[str, Any], time_entries_in_period: list[dict[str, Any]]) -> dict[str, Any]",
+          "docstring": "Собирает нормализованный контекст одной задачи Redmine.\nВ итоговый контекст включаются основные поля задачи, связанные задачи,\ncustom fields, journals и трудозатраты за выбранный период.",
+          "summary": "Собирает нормализованный контекст одной задачи Redmine.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 80,
+          "end_lineno": 109
+        },
+        {
+          "name": "build_issue_context_payload",
+          "signature": "build_issue_context_payload(start_date_str: str, end_date_str: str, issue_id: int | None = None) -> dict[str, Any]",
+          "docstring": "Формирует итоговый payload контекста задач за период.\nЗагружает time entries за указанный диапазон дат, группирует их по задачам,\nподгружает расширенный контекст задач с journals и возвращает итоговую\nструктуру либо для одной задачи, либо для набора задач.",
+          "summary": "Формирует итоговый payload контекста задач за период.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 112,
+          "end_lineno": 162
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 5,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/redmine/exports.py",
+      "module_docstring": "Экспорт трудозатрат Redmine в табличный CSV-формат.\nМодуль отвечает за:\n- преобразование time entries в плоские записи;\n- построение таблицы трудозатрат по дням;\n- форматирование значений для CSV;\n- добавление итогов по строкам и по всем задачам;\n- сохранение итогового файла.",
+      "module_summary": "Экспорт трудозатрат Redmine в табличный CSV-формат.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "build_timelog_records",
+          "signature": "build_timelog_records(entries: list[dict[str, Any]], subjects_map: dict[int, str]) -> list[dict[str, Any]]",
+          "docstring": "Преобразует список time entries в плоские записи для табличного экспорта.\nДля каждой записи формирует имя задачи и сохраняет дату и количество часов.",
+          "summary": "Преобразует список time entries в плоские записи для табличного экспорта.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 20,
+          "end_lineno": 42
+        },
+        {
+          "name": "build_date_columns",
+          "signature": "build_date_columns(start_date_str: str, end_date_str: str) -> list[str]",
+          "docstring": "Строит список дат периода в формате YYYY-MM-DD с дневным шагом.",
+          "summary": "Строит список дат периода в формате YYYY-MM-DD с дневным шагом.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 45,
+          "end_lineno": 50
+        },
+        {
+          "name": "build_timelog_dataframe",
+          "signature": "build_timelog_dataframe(records: list[dict[str, Any]], all_dates: list[str]) -> pd.DataFrame",
+          "docstring": "Строит pivot-таблицу трудозатрат по задачам и датам.\nНа выходе возвращает DataFrame, где строки — задачи, а колонки — даты периода.",
+          "summary": "Строит pivot-таблицу трудозатрат по задачам и датам.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 53,
+          "end_lineno": 68
+        },
+        {
+          "name": "format_timelog_value",
+          "signature": "format_timelog_value(value: Any) -> str",
+          "docstring": "Форматирует числовое значение трудозатрат для CSV.\nНулевые значения преобразуются в `\"\"`, дробная часть записывается через запятую.",
+          "summary": "Форматирует числовое значение трудозатрат для CSV.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 71,
+          "end_lineno": 76
+        },
+        {
+          "name": "format_timelog_dataframe",
+          "signature": "format_timelog_dataframe(dataframe: pd.DataFrame, all_dates: list[str]) -> pd.DataFrame",
+          "docstring": "Применяет форматирование значений ко всем дневным колонкам DataFrame.",
+          "summary": "Применяет форматирование значений ко всем дневным колонкам DataFrame.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 79,
+          "end_lineno": 86
+        },
+        {
+          "name": "parse_formatted_timelog_value",
+          "signature": "parse_formatted_timelog_value(value: Any) -> float",
+          "docstring": "Преобразует форматированное строковое значение трудозатрат обратно в число.",
+          "summary": "Преобразует форматированное строковое значение трудозатрат обратно в число.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 89,
+          "end_lineno": 95
+        },
+        {
+          "name": "add_row_totals",
+          "signature": "add_row_totals(dataframe: pd.DataFrame, all_dates: list[str]) -> pd.DataFrame",
+          "docstring": "Добавляет в DataFrame колонку с итоговым временем по каждой строке.",
+          "summary": "Добавляет в DataFrame колонку с итоговым временем по каждой строке.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 98,
+          "end_lineno": 108
+        },
+        {
+          "name": "build_total_row",
+          "signature": "build_total_row(dataframe: pd.DataFrame, all_dates: list[str]) -> list[str]",
+          "docstring": "Строит итоговую строку с суммами по всем датам и общим итогом.",
+          "summary": "Строит итоговую строку с суммами по всем датам и общим итогом.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 111,
+          "end_lineno": 122
+        },
+        {
+          "name": "append_totals_row",
+          "signature": "append_totals_row(dataframe: pd.DataFrame, all_dates: list[str]) -> pd.DataFrame",
+          "docstring": "Переименовывает колонку задачи и добавляет в конец DataFrame итоговую строку.",
+          "summary": "Переименовывает колонку задачи и добавляет в конец DataFrame итоговую строку.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 125,
+          "end_lineno": 136
+        },
+        {
+          "name": "save_dataframe_to_csv",
+          "signature": "save_dataframe_to_csv(dataframe: pd.DataFrame, filename: str) -> str",
+          "docstring": "Сохраняет DataFrame в CSV-файл с разделителем `;`.\nЕсли директория назначения отсутствует, она будет создана.",
+          "summary": "Сохраняет DataFrame в CSV-файл с разделителем `;`.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 139,
+          "end_lineno": 149
+        },
+        {
+          "name": "fetch_and_save_timelog",
+          "signature": "fetch_and_save_timelog(start_date_str: str, end_date_str: str, redmine_filename: str) -> str",
+          "docstring": "Загружает time entries из Redmine за период, строит CSV-таблицу и сохраняет её в файл.",
+          "summary": "Загружает time entries из Redmine за период, строит CSV-таблицу и сохраняет её в файл.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 152,
+          "end_lineno": 171
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 11,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/redmine/normalizers.py",
+      "module_docstring": "Функции нормализации и упрощения данных Redmine.\nМодуль содержит утилиты для:\n- очистки словарей от пустых значений;\n- нормализации текстовых полей;\n- разрешения идентификаторов пользователей, статусов и приоритетов в имена;\n- нормализации custom fields, journals и time entries.",
+      "module_summary": "Функции нормализации и упрощения данных Redmine.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "remove_empty_values",
+          "signature": "remove_empty_values(data: dict[str, Any]) -> dict[str, Any]",
+          "docstring": "Возвращает копию словаря без пустых значений.\nИз результата удаляются значения None, пустые строки, пустые списки\nи пустые словари.",
+          "summary": "Возвращает копию словаря без пустых значений.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 24,
+          "end_lineno": 30
+        },
+        {
+          "name": "normalize_text",
+          "signature": "normalize_text(value: Any) -> str | None",
+          "docstring": "Нормализует текстовое значение.\nПриводит переводы строк к формату `\\n`, удаляет хвостовые пробелы\nв строках, схлопывает слишком большие пустые блоки и обрезает\nпробелы по краям.",
+          "summary": "Нормализует текстовое значение.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 33,
+          "end_lineno": 47
+        },
+        {
+          "name": "resolve_user_name",
+          "signature": "resolve_user_name(value: Any) -> str | None",
+          "docstring": "Преобразует id пользователя в отображаемое имя.\nЕсли значение не удаётся привести к числу, возвращает его как есть.",
+          "summary": "Преобразует id пользователя в отображаемое имя.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 50,
+          "end_lineno": 61
+        },
+        {
+          "name": "resolve_status_name",
+          "signature": "resolve_status_name(value: Any) -> str | None",
+          "docstring": "Преобразует id статуса задачи в отображаемое имя.",
+          "summary": "Преобразует id статуса задачи в отображаемое имя.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 64,
+          "end_lineno": 74
+        },
+        {
+          "name": "resolve_priority_name",
+          "signature": "resolve_priority_name(value: Any) -> str | None",
+          "docstring": "Преобразует id приоритета задачи в отображаемое имя.",
+          "summary": "Преобразует id приоритета задачи в отображаемое имя.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 77,
+          "end_lineno": 87
+        },
+        {
+          "name": "resolve_custom_field_value",
+          "signature": "resolve_custom_field_value(field_id: int | None, value: Any) -> Any",
+          "docstring": "Нормализует значение custom field с учётом его типа.\nДля пользовательских полей, содержащих user id, возвращает имя пользователя.\nДля строковых значений выполняет текстовую нормализацию.",
+          "summary": "Нормализует значение custom field с учётом его типа.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 90,
+          "end_lineno": 102
+        },
+        {
+          "name": "should_keep_custom_field",
+          "signature": "should_keep_custom_field(field_name: str | None, field_value: Any) -> bool",
+          "docstring": "Определяет, нужно ли сохранять custom field в итоговом результате.\nПоле отбрасывается, если оно пустое или его значение входит в список\nскрываемых отрицательных значений для данного поля.",
+          "summary": "Определяет, нужно ли сохранять custom field в итоговом результате.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 105,
+          "end_lineno": 116
+        },
+        {
+          "name": "normalize_journal_details",
+          "signature": "normalize_journal_details(details: list[dict[str, Any]] | None) -> list[dict[str, Any]]",
+          "docstring": "Нормализует список изменений из journal details.\nПреобразует специальные поля Redmine в более читаемый вид, разрешает\ncustom fields, статусы и пользователей, а также отбрасывает изменения,\nкоторые не нужно включать в итоговый контекст.",
+          "summary": "Нормализует список изменений из journal details.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 119,
+          "end_lineno": 175
+        },
+        {
+          "name": "normalize_time_entry",
+          "signature": "normalize_time_entry(entry: dict[str, Any], include_project: bool = False) -> dict[str, Any]",
+          "docstring": "Нормализует одну запись трудозатрат Redmine.\nПри необходимости может дополнительно включать название проекта.",
+          "summary": "Нормализует одну запись трудозатрат Redmine.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 178,
+          "end_lineno": 189
+        },
+        {
+          "name": "normalize_custom_fields",
+          "signature": "normalize_custom_fields(custom_fields: list[dict[str, Any]] | None) -> dict[str, Any]",
+          "docstring": "Нормализует набор custom fields задачи в плоский словарь.",
+          "summary": "Нормализует набор custom fields задачи в плоский словарь.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 192,
+          "end_lineno": 204
+        },
+        {
+          "name": "normalize_journals",
+          "signature": "normalize_journals(journals: list[dict[str, Any]] | None) -> list[dict[str, Any]]",
+          "docstring": "Нормализует journals задачи.\nВ результат включаются только записи, содержащие заметки и/или значимые изменения.",
+          "summary": "Нормализует journals задачи.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 207,
+          "end_lineno": 226
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 11,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/utils/dates.py",
+      "module_docstring": "Утилиты для работы с датами и выбора записей по целевому месяцу.\nМодуль содержит функции для:\n- валидации дат в формате ДД.ММ.ГГГГ;\n- форматирования дат для документов;\n- преобразования даты в формат ГГГГ-ММ-ДД;\n- выбора строки данных за предыдущий месяц;\n- определения диапазона дат по строке трудозатрат.",
+      "module_summary": "Утилиты для работы с датами и выбора записей по целевому месяцу.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "is_valid_dd_mm_yyyy",
+          "signature": "is_valid_dd_mm_yyyy(value: Any) -> bool",
+          "docstring": "Проверяет, что значение имеет формат ДД.ММ.ГГГГ.\nПроверка включает:\n- строковый тип;\n- наличие трёх компонентов, разделённых точками;\n- числовой состав компонентов;\n- длину компонентов;\n- допустимые диапазоны дня и месяца.\nФункция не проверяет корректность календарной даты полностью,\nнапример 31.02.2024 будет считаться валидной.",
+          "summary": "Проверяет, что значение имеет формат ДД.ММ.ГГГГ.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 20,
+          "end_lineno": 42
+        },
+        {
+          "name": "format_date",
+          "signature": "format_date(date_str: str, short: bool = False) -> str",
+          "docstring": "Форматирует дату из вида ДД.ММ.ГГГГ в текстовый формат для документов.\nПримеры:\n- `01.02.2025` -> `«01» февраля 2025 года`\n- `01.02.2025`, short=True -> `«01» февраля 2025 г.`",
+          "summary": "Форматирует дату из вида ДД.ММ.ГГГГ в текстовый формат для документов.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 45,
+          "end_lineno": 63
+        },
+        {
+          "name": "dd_mm_yyyy_to_yyyy_mm_dd",
+          "signature": "dd_mm_yyyy_to_yyyy_mm_dd(date_str: str) -> str",
+          "docstring": "Преобразует дату из формата ДД.ММ.ГГГГ в формат ГГГГ-ММ-ДД.",
+          "summary": "Преобразует дату из формата ДД.ММ.ГГГГ в формат ГГГГ-ММ-ДД.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 66,
+          "end_lineno": 71
+        },
+        {
+          "name": "get_target_month_row",
+          "signature": "get_target_month_row(acts_df: pd.DataFrame, acts_data_file: str) -> pd.Series",
+          "docstring": "Возвращает единственную строку данных за предыдущий календарный месяц.\nЕсли текущий месяц январь, выбирается декабрь предыдущего года.\nФункция печатает диагностическую информацию о текущей дате и целевом периоде.\nВыбрасывает ValueError, если запись не найдена или найдено несколько записей.",
+          "summary": "Возвращает единственную строку данных за предыдущий календарный месяц.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 74,
+          "end_lineno": 98
+        },
+        {
+          "name": "get_date_range",
+          "signature": "get_date_range(row_data: pd.Series, date_columns: pd.Index | list[str]) -> tuple[str, str]",
+          "docstring": "Определяет диапазон дат оказания услуги по строке трудозатрат.\nНаходит первую и последнюю дату среди переданных колонок, в которых\nприсутствуют непустые значения. Если таких значений нет, возвращает `('-', '-')`.\nОжидается, что имена колонок дат находятся в формате ГГГГ-ММ-ДД.",
+          "summary": "Определяет диапазон дат оказания услуги по строке трудозатрат.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 101,
+          "end_lineno": 116
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 5,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/utils/docx_utils.py",
+      "module_docstring": "Утилиты для работы с DOCX-документами.\nМодуль содержит функции для:\n- настройки шрифта run-элементов;\n- замены плейсхолдеров в абзацах и таблицах документа;\n- добавления границ таблице;\n- вставки таблицы DataFrame на место плейсхолдера;\n- выделения первого абзаца жирным шрифтом.",
+      "module_summary": "Утилиты для работы с DOCX-документами.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "set_font",
+          "signature": "set_font(run: Run, name: str = 'Times New Roman', size: int = 11) -> None",
+          "docstring": "Устанавливает шрифт и размер для текстового фрагмента run.",
+          "summary": "Устанавливает шрифт и размер для текстового фрагмента run.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 27,
+          "end_lineno": 33
+        },
+        {
+          "name": "replace_in_paragraph",
+          "signature": "replace_in_paragraph(paragraph: Paragraph, placeholder: str, replacement_text: str) -> None",
+          "docstring": "Заменяет плейсхолдер в одном абзаце на переданный текст.\nЕсли плейсхолдер отсутствует, функция ничего не делает.\nПосле замены текст абзаца пересобирается через run-элементы\nс единым форматированием.",
+          "summary": "Заменяет плейсхолдер в одном абзаце на переданный текст.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 36,
+          "end_lineno": 58
+        },
+        {
+          "name": "replace_text_with_formatting",
+          "signature": "replace_text_with_formatting(doc: DocumentType, placeholder: str, replacement_text: Any) -> None",
+          "docstring": "Заменяет плейсхолдер на текст во всех абзацах документа и в таблицах.\nЗначение replacement_text приводится к строке перед подстановкой.",
+          "summary": "Заменяет плейсхолдер на текст во всех абзацах документа и в таблицах.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 61,
+          "end_lineno": 77
+        },
+        {
+          "name": "add_table_borders",
+          "signature": "add_table_borders(table: Table) -> None",
+          "docstring": "Добавляет границы ко всем внешним и внутренним линиям таблицы.",
+          "summary": "Добавляет границы ко всем внешним и внутренним линиям таблицы.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 80,
+          "end_lineno": 94
+        },
+        {
+          "name": "add_table_at_placeholder",
+          "signature": "add_table_at_placeholder(doc: DocumentType, df: pd.DataFrame, placeholder: str = '{{TABLE}}') -> None",
+          "docstring": "Вставляет таблицу из DataFrame на место указанного плейсхолдера.\nПлейсхолдер ищется среди абзацев документа. После нахождения\nсоответствующий абзац удаляется, а на его место вставляется таблица.",
+          "summary": "Вставляет таблицу из DataFrame на место указанного плейсхолдера.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 97,
+          "end_lineno": 159
+        },
+        {
+          "name": "make_bold_first_paragraph",
+          "signature": "make_bold_first_paragraph(doc: DocumentType) -> None",
+          "docstring": "Делает все run-элементы первого абзаца документа жирными.",
+          "summary": "Делает все run-элементы первого абзаца документа жирными.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 162,
+          "end_lineno": 171
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 6,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/utils/files.py",
+      "module_docstring": "Утилиты для записи файлов.\nМодуль содержит функции для:\n- записи данных в JSON-файл;\n- записи текста в обычный текстовый файл.",
+      "module_summary": "Утилиты для записи файлов.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "write_json_file",
+          "signature": "write_json_file(filename: str, payload: Any) -> None",
+          "docstring": "Записывает переданные данные в JSON-файл.\nЕсли директория для файла не существует, она будет создана.\nJSON сохраняется в UTF-8 с отступами и без ASCII-экранирования.",
+          "summary": "Записывает переданные данные в JSON-файл.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 14,
+          "end_lineno": 24
+        },
+        {
+          "name": "write_text_file",
+          "signature": "write_text_file(filename: str, content: str) -> None",
+          "docstring": "Записывает текст в файл.\nЕсли директория для файла не существует, она будет создана.\nФайл сохраняется в кодировке UTF-8.",
+          "summary": "Записывает текст в файл.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 27,
+          "end_lineno": 37
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 2,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/utils/money.py",
+      "module_docstring": "Утилиты для работы с денежными суммами.\nМодуль содержит функции для преобразования числовой суммы\nв текстовое представление в рублях.",
+      "module_summary": "Утилиты для работы с денежными суммами.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "amount_to_words_rubles",
+          "signature": "amount_to_words_rubles(amount: int | float) -> str",
+          "docstring": "Преобразует сумму в текстовое представление рублей.\nДробная часть отбрасывается. Результат возвращается в формате:\n\"(текстовая сумма) рублей\".",
+          "summary": "Преобразует сумму в текстовое представление рублей.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 11,
+          "end_lineno": 20
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 1,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/utils/redmine.py",
+      "module_docstring": "Утилиты для работы со ссылками и параметрами Redmine.",
+      "module_summary": "Утилиты для работы со ссылками и параметрами Redmine.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "build_redmine_report_url",
+          "signature": "build_redmine_report_url(start_date: str, end_date: str) -> str",
+          "docstring": "Собирает ссылку на отчёт Redmine по time entries за указанный период.",
+          "summary": "Собирает ссылку на отчёт Redmine по time entries за указанный период.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 8,
+          "end_lineno": 19
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 1,
+        "methods": 0,
+        "constants": 0
+      }
+    }
+  ]
+}
