@@ -10,7 +10,6 @@ def load_json_env(name, default):
     value = os.getenv(name)
     if not value:
         return default
-
     try:
         return json.loads(value)
     except json.JSONDecodeError as error:
