@@ -1,19 +1,41 @@
+"""
+Функции экспорта Chronicle-контекста и сборки итоговых prompt-файлов.
+Модуль отвечает за:
+- экспорт полного контекста задач за период;
+- разбиение задач на chunk'и и сохранение связанных файлов;
+- сборку финального prompt'а по заполненным chunk summary.
+"""
+
+from __future__ import annotations
+
 import json
 import os
 
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from app.services.chronicle.chunking import split_into_chunks, get_chronicle_base_dir
-from app.services.chronicle.promts import (
+from app.services.chronicle.prompts import (
     build_chunk_prompt, build_next_steps_readme, build_final_prompt_content
 )
 from app.services.redmine.context_builder import build_issue_context_payload
-from app.services.redmine.normalizers import compact_dict
+from app.services.redmine.normalizers import remove_empty_values
 from app.utils.files import write_text_file, write_json_file
 
 
-def export_issue_contexts_for_period_in_chunks(start_date_str, end_date_str, output_root_dir, chunk_size=6):
+def export_issue_contexts_for_period_in_chunks(
+    start_date_str: str,
+    end_date_str: str,
+    output_root_dir: str,
+    chunk_size: int = 6,
+) -> str:
+    """
+    Экспортирует контекст задач за период в полный JSON, chunk-файлы и prompt-файлы.
+    Получает общий payload задач за период, делит задачи на chunk'и, сохраняет
+    полный контекст, manifest, JSON по chunk'ам, prompt-файлы и пустые summary-файлы.
+    Возвращает путь к директории экспорта.
+    """
     payload = build_issue_context_payload(start_date_str, end_date_str)
     issues = payload.get('issues')
     if not issues:
@@ -39,7 +61,7 @@ def export_issue_contexts_for_period_in_chunks(start_date_str, end_date_str, out
         'chunks': [],
     }
     for index, chunk_issues in enumerate(issue_chunks, start=1):
-        chunk_payload = compact_dict({
+        chunk_payload = remove_empty_values({
             'period': {'from': start_date_str, 'to': end_date_str},
             'chunk': {
                 'index': index,
@@ -76,7 +98,17 @@ def export_issue_contexts_for_period_in_chunks(start_date_str, end_date_str, out
     return base_dir
 
 
-def build_final_chronicle_prompt(start_date_str, end_date_str, output_root_dir):
+def build_final_chronicle_prompt(
+    start_date_str: str,
+    end_date_str: str,
+    output_root_dir: str,
+) -> str:
+    """
+    Собирает финальный месячный prompt по заполненным summary-файлам chunk'ов.
+    Читает manifest экспорта, проверяет наличие и непустое содержимое всех
+    `*.summary.md` файлов, затем объединяет их в итоговый prompt для LLM.
+    Дополнительно подготавливает пустой файл для финального анализа.
+    """
     base_dir = get_chronicle_base_dir(output_root_dir, start_date_str, end_date_str)
     manifest_filename = os.path.join(base_dir, 'manifest.json')
     if not os.path.isfile(manifest_filename):
@@ -127,9 +159,25 @@ def build_final_chronicle_prompt(start_date_str, end_date_str, output_root_dir):
     return final_prompt_filename
 
 
-def export_issue_contexts_for_period(start_date_str, end_date_str, output_filename, issue_id=None):
-    payload = build_issue_context_payload(start_date_str, end_date_str, issue_id=issue_id)
-    os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+def export_issue_contexts_for_period(
+    start_date_str: str,
+    end_date_str: str,
+    output_filename: str,
+    issue_id: int | None = None,
+) -> str:
+    """
+    Экспортирует контекст задач за период в один JSON-файл.
+    Используется для сохранения полного payload без разбиения на chunk'и.
+    Может ограничивать экспорт одной задачей через `issue_id`.
+    """
+    payload: dict[str, Any] = build_issue_context_payload(
+        start_date_str,
+        end_date_str,
+        issue_id=issue_id,
+    )
+    output_dir = os.path.dirname(output_filename)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
     with open(output_filename, 'w', encoding='utf-8') as file:
         json.dump(payload, file, ensure_ascii=False, indent=2)
     print(f'💾 Контекст задач сохранён: {output_filename}')

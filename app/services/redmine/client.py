@@ -1,10 +1,30 @@
+"""
+HTTP-клиент для получения данных из Redmine API.
+Модуль содержит методы для загрузки:
+- time entries за период;
+- названий задач по списку id;
+- полной задачи;
+- полной задачи вместе с journals.
+"""
+from __future__ import annotations
+
+from typing import Any
+
 import requests
 
 from app.config import REDMINE_API_KEY, REDMINE_USER_ID, REDMINE_URL
 
 
 class RedmineClient:
-    def fetch_time_entries(start_date_str, end_date_str):
+    """
+    Клиент для чтения данных из Redmine через REST API.
+    """
+
+    @staticmethod
+    def fetch_time_entries(start_date_str: str, end_date_str: str) -> list[dict[str, Any]]:
+        """
+        Загружает time entries текущего пользователя Redmine за указанный период.
+        """
         print(f'📥 Запрашиваем time entries из Redmine за {start_date_str} – {end_date_str}...')
         response = requests.get(
             f'{REDMINE_URL}/time_entries.json',
@@ -17,7 +37,12 @@ class RedmineClient:
         print(f'✅ Получено записей time entries: {len(entries)}')
         return entries
 
-    def fetch_issue_subjects(issue_ids):
+
+    @staticmethod
+    def fetch_issue_subjects(issue_ids: set[int] | list[int]) -> dict[int, str]:
+        """
+        Загружает названия задач по набору или списку идентификаторов.
+        """
         if not issue_ids:
             return {}
         issue_ids_string = ','.join(str(issue_id) for issue_id in sorted(issue_ids))
@@ -36,7 +61,12 @@ class RedmineClient:
             print(f'⚠️ Не найдены названия для задач: {missing_issue_ids}')
         return subjects_map
 
-    def fetch_issue_with_journals(issue_id):
+
+    @staticmethod
+    def fetch_issue_with_journals(issue_id: int) -> dict[str, Any]:
+        """
+        Загружает полные данные задачи вместе с journals.
+        """
         print(f'📄 Запрашиваем расширенный контекст задачи #{issue_id}...')
         response = requests.get(
             f'{REDMINE_URL}/issues/{issue_id}.json',
@@ -47,7 +77,12 @@ class RedmineClient:
         response.raise_for_status()
         return response.json()['issue']
 
-    def fetch_issue(issue_id):
+
+    @staticmethod
+    def fetch_issue(issue_id: int) -> dict[str, Any]:
+        """
+        Загружает полные данные одной задачи без journals.
+        """
         response = requests.get(
             f'{REDMINE_URL}/issues/{issue_id}.json',
             headers={'X-Redmine-API-Key': REDMINE_API_KEY},

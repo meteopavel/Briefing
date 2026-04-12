@@ -3,6 +3,7 @@
 .local_runtime/
 /secure/
 /TODO
+/scripts/*.md
 
 __pycache__/
 *.py[cod]

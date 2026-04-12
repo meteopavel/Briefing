@@ -1,11 +1,30 @@
+"""
+Экспорт трудозатрат Redmine в табличный CSV-формат.
+Модуль отвечает за:
+- преобразование time entries в плоские записи;
+- построение таблицы трудозатрат по дням;
+- форматирование значений для CSV;
+- добавление итогов по строкам и по всем задачам;
+- сохранение итогового файла.
+"""
+
+import csv
 import os
+from typing import Any
 
 import pandas as pd
 
 from app.services.redmine.client import RedmineClient
 
 
-def build_timelog_records(entries, subjects_map):
+def build_timelog_records(
+    entries: list[dict[str, Any]],
+    subjects_map: dict[int, str],
+) -> list[dict[str, Any]]:
+    """
+    Преобразует список time entries в плоские записи для табличного экспорта.
+    Для каждой записи формирует имя задачи и сохраняет дату и количество часов.
+    """
     records = []
     for entry in entries:
         issue = entry.get('issue', {})
@@ -23,12 +42,22 @@ def build_timelog_records(entries, subjects_map):
     return records
 
 
-def build_date_columns(start_date_str, end_date_str):
+def build_date_columns(start_date_str: str, end_date_str: str) -> list[str]:
+    """
+    Строит список дат периода в формате YYYY-MM-DD с дневным шагом.
+    """
     date_range = pd.date_range(start=start_date_str, end=end_date_str, freq='D')
     return [date.strftime('%Y-%m-%d') for date in date_range]
 
 
-def build_timelog_dataframe(records, all_dates):
+def build_timelog_dataframe(
+    records: list[dict[str, Any]],
+    all_dates: list[str],
+) -> pd.DataFrame:
+    """
+    Строит pivot-таблицу трудозатрат по задачам и датам.
+    На выходе возвращает DataFrame, где строки — задачи, а колонки — даты периода.
+    """
     raw_dataframe = pd.DataFrame(records)
     pivot_dataframe = (
         raw_dataframe
@@ -39,24 +68,37 @@ def build_timelog_dataframe(records, all_dates):
     return pivot_dataframe
 
 
-def format_timelog_value(value):
+def format_timelog_value(value: Any) -> str:
+    """
+    Форматирует числовое значение трудозатрат для CSV.
+    Нулевые значения преобразуются в `""`, дробная часть записывается через запятую.
+    """
     return '""' if value == 0.0 else str(value).replace('.', ',')
 
 
-def format_timelog_dataframe(dataframe, all_dates):
+def format_timelog_dataframe(dataframe: pd.DataFrame, all_dates: list[str]) -> pd.DataFrame:
+    """
+    Применяет форматирование значений ко всем дневным колонкам DataFrame.
+    """
     formatted_dataframe = dataframe.copy()
     for column in all_dates:
         formatted_dataframe[column] = formatted_dataframe[column].apply(format_timelog_value)
     return formatted_dataframe
 
 
-def parse_formatted_timelog_value(value):
+def parse_formatted_timelog_value(value: Any) -> float:
+    """
+    Преобразует форматированное строковое значение трудозатрат обратно в число.
+    """
     if value == '""':
         return 0.0
     return float(str(value).replace(',', '.'))
 
 
-def add_row_totals(dataframe, all_dates):
+def add_row_totals(dataframe: pd.DataFrame, all_dates: list[str]) -> pd.DataFrame:
+    """
+    Добавляет в DataFrame колонку с итоговым временем по каждой строке.
+    """
     dataframe = dataframe.copy()
     row_totals = []
     for _, row in dataframe.iterrows():
@@ -66,7 +108,10 @@ def add_row_totals(dataframe, all_dates):
     return dataframe
 
 
-def build_total_row(dataframe, all_dates):
+def build_total_row(dataframe: pd.DataFrame, all_dates: list[str]) -> list[str]:
+    """
+    Строит итоговую строку с суммами по всем датам и общим итогом.
+    """
     total_row = ['Общее время']
     grand_total = 0.0
     for column in all_dates:
@@ -77,7 +122,10 @@ def build_total_row(dataframe, all_dates):
     return total_row
 
 
-def append_totals_row(dataframe, all_dates):
+def append_totals_row(dataframe: pd.DataFrame, all_dates: list[str]) -> pd.DataFrame:
+    """
+    Переименовывает колонку задачи и добавляет в конец DataFrame итоговую строку.
+    """
     total_row = build_total_row(dataframe, all_dates)
     return pd.concat(
         [
@@ -88,14 +136,23 @@ def append_totals_row(dataframe, all_dates):
     )
 
 
-def save_dataframe_to_csv(dataframe, filename):
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    dataframe.to_csv(filename, sep=';', index=False, quoting=1)
+def save_dataframe_to_csv(dataframe: pd.DataFrame, filename: str) -> str:
+    """
+    Сохраняет DataFrame в CSV-файл с разделителем `;`.
+    Если директория назначения отсутствует, она будет создана.
+    """
+    output_dir = os.path.dirname(filename)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+    dataframe.to_csv(filename, sep=';', index=False, quoting=csv.QUOTE_ALL)
     print(f'💾 Сохранено: {filename}')
     return filename
 
 
-def fetch_and_save_timelog(start_date_str, end_date_str, redmine_filename):
+def fetch_and_save_timelog(start_date_str: str, end_date_str: str, redmine_filename: str) -> str:
+    """
+    Загружает time entries из Redmine за период, строит CSV-таблицу и сохраняет её в файл.
+    """
     entries = RedmineClient.fetch_time_entries(start_date_str, end_date_str)
     if not entries:
         raise ValueError('Нет трудозатрат за указанный период!')
