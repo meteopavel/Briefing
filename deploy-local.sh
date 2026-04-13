@@ -44,6 +44,18 @@ require_command() {
   fi
 }
 
+update_project_passport() {
+  echo '🪪 Обновляем паспорт проекта...'
+
+  (
+    cd "${REPO_ROOT}"
+    python tools/build_project_passport.py --project-root .
+    python tools/extract_api_map.py app --project-root .
+  )
+
+  echo '✅ Паспорт проекта обновлён.'
+}
+
 # ================= ПРОВЕРКИ =================
 
 echo '🔍 Проверяем, что мы внутри git-репозитория...'
@@ -63,6 +75,7 @@ echo '🔍 Проверяем обязательные команды...'
 require_command 7z
 require_command rsync
 require_command sshpass
+require_command python
 
 echo '🔍 Загружаем переменные из .env...'
 ARCHIVE_PASSWORD="$(get_env "ARCHIVE_PASSWORD" "$ENV_FILE")"
@@ -118,6 +131,10 @@ rsync -avz --progress \
 
 echo '✅ Архив успешно отправлен на сервер.'
 
+# ================= PROJECT PASSPORT =================
+
+update_project_passport
+
 # ================= GIT =================
 
 echo
@@ -146,4 +163,4 @@ git commit -m "${COMMIT_MESSAGE}"
 echo "🚀 Выполняем push в origin/${BRANCH_NAME}..."
 git push origin "${BRANCH_NAME}"
 
-echo '🎉 Готово: код отправлен на GitHub, архив сохранён локально и отправлен на backup-сервер.'
+echo '🎉 Готово: код отправлен на GitHub, архив сохранён локально и отправлен на backup-сервер, паспорт проекта обновлён.'
