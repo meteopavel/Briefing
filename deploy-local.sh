@@ -49,8 +49,8 @@ update_project_passport() {
 
   (
     cd "${REPO_ROOT}"
-    python tools/build_project_passport.py --project-root .
-    python tools/extract_api_map.py app --project-root .
+    .venv/bin/python tools/build_project_passport.py --project-root .
+    .venv/bin/python tools/extract_api_map.py app --project-root .
   )
 
   echo '✅ Паспорт проекта обновлён.'

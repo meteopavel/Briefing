@@ -22,7 +22,7 @@ from app.services.chronicle.export import (
 )
 from app.services.documents import generate_act, generate_report
 from app.services.redmine.exports import fetch_and_save_timelog
-from app.utils.dates import dd_mm_yyyy_to_yyyy_mm_dd, get_target_month_row
+from app.utils.dates import dd_mm_yyyy_to_yyyy_mm_dd, get_target_month_row, is_valid_dd_mm_yyyy
 from app.utils.redmine import build_redmine_report_url
 
 
@@ -75,6 +75,18 @@ def create_parser() -> argparse.ArgumentParser:
         type=int,
         default=6,
         help='Размер чанка по количеству задач, по умолчанию 6',
+    )
+    parser.add_argument(
+        '--start',
+        type=str,
+        default=None,
+        help='Дата начала периода ДД.ММ.ГГГГ — переопределяет автоопределение из salary_data.xlsx',
+    )
+    parser.add_argument(
+        '--end',
+        type=str,
+        default=None,
+        help='Дата окончания периода ДД.ММ.ГГГГ — переопределяет автоопределение из salary_data.xlsx',
     )
     return parser
 
@@ -171,6 +183,10 @@ def handle_generate_documents(args: Namespace, context: CliContext) -> None:
     """
     Обрабатывает сценарий генерации бухгалтерских документов.
     """
+    if context.row is None:
+        print('❌ Ошибка: --start/--end не поддерживается для генерации документов.')
+        print('Уберите флаги --start и --end — период определяется автоматически из salary_data.xlsx.')
+        raise SystemExit(1)
     print('📄 Генерация документов для бухгалтерии...\n')
     print_report_url(context.report_url)
     fetch_and_save_timelog(
@@ -193,7 +209,31 @@ def main() -> None:
     """
     parser = create_parser()
     args = parser.parse_args()
-    context = prepare_context()
+
+    if bool(args.start) != bool(args.end):
+        print('❌ Ошибка: --start и --end должны быть указаны вместе.')
+        raise SystemExit(1)
+
+    if args.start and args.end:
+        if not is_valid_dd_mm_yyyy(args.start):
+            print(f'❌ Ошибка: неверный формат --start: {args.start!r}. Ожидается ДД.ММ.ГГГГ')
+            raise SystemExit(1)
+        if not is_valid_dd_mm_yyyy(args.end):
+            print(f'❌ Ошибка: неверный формат --end: {args.end!r}. Ожидается ДД.ММ.ГГГГ')
+            raise SystemExit(1)
+        start_date = dd_mm_yyyy_to_yyyy_mm_dd(args.start)
+        end_date = dd_mm_yyyy_to_yyyy_mm_dd(args.end)
+        print(f'📅 Период задан вручную: {args.start} — {args.end}\n')
+        context = CliContext(
+            row=None,
+            start_date=start_date,
+            end_date=end_date,
+            report_url=build_redmine_report_url(start_date, end_date),
+            redmine_filename=None,
+        )
+    else:
+        context = prepare_context()
+
     if args.export_chronicle_context:
         handle_export_chronicle_context(args, context)
         return

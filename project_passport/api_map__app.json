@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-04-13T07:29:11.298751+00:00",
+  "generated_at": "2026-06-12T11:59:43.556841+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 21,
@@ -83,7 +83,7 @@
           "kind": "function",
           "decorators": [],
           "lineno": 41,
-          "end_lineno": 79
+          "end_lineno": 91
         },
         {
           "name": "prepare_context",
@@ -92,8 +92,8 @@
           "summary": "Подготавливает общий контекст для выполнения CLI-команд.",
           "kind": "function",
           "decorators": [],
-          "lineno": 82,
-          "end_lineno": 98
+          "lineno": 94,
+          "end_lineno": 110
         },
         {
           "name": "print_report_url",
@@ -102,8 +102,8 @@
           "summary": "Печатает ссылку для сверки данных в Redmine.",
           "kind": "function",
           "decorators": [],
-          "lineno": 101,
-          "end_lineno": 105
+          "lineno": 113,
+          "end_lineno": 117
         },
         {
           "name": "handle_export_chronicle_context",
@@ -112,8 +112,8 @@
           "summary": "Обрабатывает сценарий экспорта сырого контекста задач Redmine.",
           "kind": "function",
           "decorators": [],
-          "lineno": 108,
-          "end_lineno": 131
+          "lineno": 120,
+          "end_lineno": 143
         },
         {
           "name": "handle_export_chronicle_context_chunks",
@@ -122,8 +122,8 @@
           "summary": "Обрабатывает сценарий экспорта контекста задач чанками.",
           "kind": "function",
           "decorators": [],
-          "lineno": 134,
-          "end_lineno": 150
+          "lineno": 146,
+          "end_lineno": 162
         },
         {
           "name": "handle_build_chronicle_final_prompt",
@@ -132,8 +132,8 @@
           "summary": "Обрабатывает сценарий сборки финального prompt для летописи.",
           "kind": "function",
           "decorators": [],
-          "lineno": 153,
-          "end_lineno": 167
+          "lineno": 165,
+          "end_lineno": 179
         },
         {
           "name": "handle_generate_documents",
@@ -142,8 +142,8 @@
           "summary": "Обрабатывает сценарий генерации бухгалтерских документов.",
           "kind": "function",
           "decorators": [],
-          "lineno": 170,
-          "end_lineno": 187
+          "lineno": 182,
+          "end_lineno": 203
         },
         {
           "name": "main",
@@ -152,8 +152,8 @@
           "summary": "Запускает CLI-приложение и маршрутизирует выполнение по аргументам.",
           "kind": "function",
           "decorators": [],
-          "lineno": 190,
-          "end_lineno": 206
+          "lineno": 206,
+          "end_lineno": 246
         }
       ],
       "constants": [],
