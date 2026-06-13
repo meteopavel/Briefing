@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+NON_INTERACTIVE=false
+for arg in "$@"; do
+  [[ "$arg" == "--non-interactive" ]] && NON_INTERACTIVE=true
+done
+
 REPO_REQUIRED_REMOTE='git@github.com:meteopavel/Chronicle_Reporting_Automation.git'
 BRANCH_NAME='main'
 REPO_ROOT="$(git rev-parse --show-toplevel)"
@@ -144,8 +149,13 @@ echo
 
 DEFAULT_COMMIT_MESSAGE='Update project'
 
-read -r -p '✍️ Введите сообщение коммита (Enter = по умолчанию): ' COMMIT_MESSAGE
-COMMIT_MESSAGE="${COMMIT_MESSAGE:-$DEFAULT_COMMIT_MESSAGE}"
+if [[ "$NON_INTERACTIVE" == true ]]; then
+  COMMIT_MESSAGE="$DEFAULT_COMMIT_MESSAGE"
+  echo "ℹ️ Режим без ввода: используется сообщение по умолчанию: ${COMMIT_MESSAGE}"
+else
+  read -r -p '✍️ Введите сообщение коммита (Enter = по умолчанию): ' COMMIT_MESSAGE
+  COMMIT_MESSAGE="${COMMIT_MESSAGE:-$DEFAULT_COMMIT_MESSAGE}"
+fi
 
 echo "📝 Будет использовано сообщение коммита: ${COMMIT_MESSAGE}"
 
