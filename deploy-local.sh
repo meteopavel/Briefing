@@ -122,7 +122,7 @@ fi
 echo '🔐 Создаём зашифрованный архив локальных защищённых данных, .env и TODO...'
 (
   cd "${REPO_ROOT}"
-  7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}" ".env" "TODO"
+  7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}" ".env" "TODO" "CLAUDE.md"
 )
 echo '✅ Архив успешно создан.'
 
