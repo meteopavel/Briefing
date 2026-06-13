@@ -53,6 +53,12 @@ def parse_args() -> argparse.Namespace:
         default='both',
         help='Формат выходного файла: md, json или both. По умолчанию both.',
     )
+    parser.add_argument(
+        '--exclude',
+        nargs='*',
+        default=['.venv', '__pycache__', 'node_modules'],
+        help='Имена директорий, которые нужно исключить из сканирования. По умолчанию: .venv __pycache__ node_modules.',
+    )
     return parser.parse_args()
 
 
@@ -357,8 +363,13 @@ def is_meaningful_module(module_data: dict[str, Any]) -> bool:
     )
 
 
-def collect_python_file_paths(target_path: Path, base_dir: Path) -> list[Path]:
-    """Собирает список Python-файлов из файла или директории."""
+def collect_python_file_paths(
+    target_path: Path,
+    base_dir: Path,
+    exclude: list[str] | None = None,
+) -> list[Path]:
+    """Собирает список Python-файлов из файла или директории, исключая указанные поддиректории."""
+    excluded = set(exclude or [])
     if target_path.is_file():
         if target_path.suffix != '.py':
             raise ValueError(f'Ожидался Python-файл: {target_path}')
@@ -369,15 +380,20 @@ def collect_python_file_paths(target_path: Path, base_dir: Path) -> list[Path]:
                 file_path
                 for file_path in target_path.rglob('*.py')
                 if file_path.is_file()
+                and not any(part in excluded for part in file_path.parts)
             ),
             key=lambda path: get_display_path(path, base_dir),
         )
     raise ValueError(f'Путь не найден: {target_path}')
 
 
-def build_api_map_data(target_path: Path, base_dir: Path) -> dict[str, Any]:
+def build_api_map_data(
+    target_path: Path,
+    base_dir: Path,
+    exclude: list[str] | None = None,
+) -> dict[str, Any]:
     """Собирает структурированную карту API по файлу или директории."""
-    all_python_files = collect_python_file_paths(target_path, base_dir)
+    all_python_files = collect_python_file_paths(target_path, base_dir, exclude=exclude)
     modules: list[dict[str, Any]] = []
     skipped_files: list[str] = []
     for file_path in all_python_files:
@@ -512,7 +528,7 @@ def main() -> None:
     output_dir = resolve_output_dir(project_root, args.output_dir)
     if not target_path.exists():
         raise SystemExit(f'Путь не найден: {target_path}')
-    api_map_data = build_api_map_data(target_path, project_root)
+    api_map_data = build_api_map_data(target_path, project_root, exclude=args.exclude)
     if not api_map_data['modules']:
         raise SystemExit(f'Не найдено подходящих Python-файлов для карты API: {target_path}')
     written_files = write_output_files(
