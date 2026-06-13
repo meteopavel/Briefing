@@ -52,10 +52,13 @@ require_command() {
 update_project_passport() {
   echo '🪪 Обновляем паспорт проекта...'
 
+  local tools_dir
+  tools_dir="$(dirname "${REPO_ROOT}")/meteopavel/tools"
+
   (
     cd "${REPO_ROOT}"
-    .venv/bin/python tools/build_project_passport.py --project-root .
-    .venv/bin/python tools/extract_api_map.py app --project-root .
+    .venv/bin/python "${tools_dir}/build_project_passport.py" --project-root .
+    .venv/bin/python "${tools_dir}/extract_api_map.py" app --project-root .
   )
 
   echo '✅ Паспорт проекта обновлён.'
