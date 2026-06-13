@@ -119,7 +119,7 @@ if [[ -f "${ARCHIVE_PATH}" ]]; then
   rm -f "${ARCHIVE_PATH}"
 fi
 
-echo '🔐 Создаём зашифрованный архив локальных защищённых данных, .env и TODO...'
+echo '🔐 Создаём зашифрованный архив (.local_secure/, .env, TODO, CLAUDE.md)...'
 (
   cd "${REPO_ROOT}"
   7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" "${LOCAL_SECURE_DIR}" ".env" "TODO" "CLAUDE.md"
