@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-13T08:28:16.616385+00:00",
+  "generated_at": "2026-06-21T06:52:20.409758+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 21,
@@ -19,7 +19,7 @@
     "dataclasses": 1,
     "functions": 64,
     "methods": 4,
-    "constants": 20
+    "constants": 21
   },
   "modules": [
     {
@@ -270,52 +270,58 @@
           "lineno": 64
         },
         {
+          "name": "DOCUMENT_OWNER",
+          "annotation": null,
+          "value_repr": "os.getenv('DOCUMENT_OWNER', 'Contractor')",
+          "lineno": 66
+        },
+        {
           "name": "USER_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('USER_MAP', {})",
-          "lineno": 66
+          "lineno": 68
         },
         {
           "name": "ISSUE_STATUS_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_STATUS_MAP', {})",
-          "lineno": 67
+          "lineno": 69
         },
         {
           "name": "ISSUE_PRIORITY_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})",
-          "lineno": 68
+          "lineno": 70
         },
         {
           "name": "CUSTOM_FIELD_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('CUSTOM_FIELD_MAP', {})",
-          "lineno": 69
+          "lineno": 71
         },
         {
           "name": "CUSTOM_FIELDS_HIDE_IF_NEGATIVE",
           "annotation": null,
           "value_repr": "load_set_dict_env('CUSTOM_FIELDS_HIDE_IF_NEGATIVE', {})",
-          "lineno": 70
+          "lineno": 72
         },
         {
           "name": "USER_REFERENCE_CUSTOM_FIELD_IDS",
           "annotation": null,
           "value_repr": "{16, 17, 18, 19}",
-          "lineno": 71
+          "lineno": 73
         },
         {
           "name": "MONTH_NAMES",
           "annotation": null,
           "value_repr": "{'01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля', '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа', '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'}",
-          "lineno": 73
+          "lineno": 75
         },
         {
           "name": "REPORT_TABLE_COLUMN_WIDTHS_INCH",
           "annotation": null,
           "value_repr": "[0.4, 1.6, 2.9, 1.3]",
-          "lineno": 77
+          "lineno": 79
         }
       ],
       "stats": {
@@ -323,7 +329,7 @@
         "dataclasses": 0,
         "functions": 3,
         "methods": 0,
-        "constants": 19
+        "constants": 20
       }
     },
     {
