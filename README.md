@@ -1,5 +1,9 @@
 # Redmine Documents & Chronicle Automation
 
+[![Python](https://k2bz83mrsg.cdn.twcstorage.ru/images/shields/chronicle/python.svg)](https://docs.python.org/3/)
+[![pandas](https://k2bz83mrsg.cdn.twcstorage.ru/images/shields/chronicle/pandas.svg)](https://pandas.pydata.org/docs/)
+[![Markdown](https://k2bz83mrsg.cdn.twcstorage.ru/images/shields/chronicle/markdown.svg)](https://www.markdownguide.org/)
+
 Python CLI для генерации документов, экспорта данных из Redmine, подготовки
 Chronicle-контекста и LLM-friendly prompt workflow.
 
