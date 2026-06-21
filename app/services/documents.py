@@ -14,7 +14,7 @@ from typing import Any
 import pandas as pd
 from docx import Document
 
-from app.config import ACT_TEMPLATE_FILE, OUTPUT_DIR, REPORT_TEMPLATE_FILE
+from app.config import ACT_TEMPLATE_FILE, DOCUMENT_OWNER, OUTPUT_DIR, REPORT_TEMPLATE_FILE
 from app.utils.dates import format_date, is_valid_dd_mm_yyyy, get_date_range
 from app.utils.docx_utils import (
     add_table_at_placeholder,
@@ -45,7 +45,7 @@ def generate_act(row: dict[str, Any] | pd.Series, output_dir: str = OUTPUT_DIR) 
     replace_text_with_formatting(document, '{{TOTAL_AMOUNT}}', total_amount)
     replace_text_with_formatting(document, '{{TOTAL_WORDS}}', total_words)
     make_bold_first_paragraph(document)
-    filename = f'Найденов Акт №{act_num} {month_name}.docx'
+    filename = f'{DOCUMENT_OWNER} Акт №{act_num} {month_name}.docx'
     path = os.path.join(output_dir, filename)
     os.makedirs(output_dir, exist_ok=True)
     document.save(path)
@@ -116,7 +116,7 @@ def generate_report(
     replace_text_with_formatting(document, '{{TOTAL_WORDS}}', total_words)
     add_table_at_placeholder(document, result_dataframe)
     make_bold_first_paragraph(document)
-    filename = f'Найденов Отчёт №{report_num} {month_name}.docx'
+    filename = f'{DOCUMENT_OWNER} Отчёт №{report_num} {month_name}.docx'
     path = os.path.join(output_dir, filename)
     os.makedirs(output_dir, exist_ok=True)
     document.save(path)

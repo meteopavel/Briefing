@@ -63,6 +63,8 @@ REDMINE_URL = os.getenv('REDMINE_URL', '').rstrip('/')
 REDMINE_API_KEY = os.getenv('REDMINE_API_KEY')
 REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')
 
+DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')
+
 USER_MAP = load_int_key_dict_env('USER_MAP', {})
 ISSUE_STATUS_MAP = load_int_key_dict_env('ISSUE_STATUS_MAP', {})
 ISSUE_PRIORITY_MAP = load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})
