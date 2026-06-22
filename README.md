@@ -69,6 +69,4 @@ pip install -r requirements.txt
 
 ## Автор
 
-Павел Найдёнов — разработчик, пришедший в IT из метеорологии и преподавания.
-
-[meteopavel.space](https://meteopavel.space)
+Павел Найдёнов — [meteopavel.space](https://meteopavel.space)
