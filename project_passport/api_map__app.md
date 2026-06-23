@@ -8,7 +8,7 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 75
+- функций: 76
 - методов: 5
 - констант: 29
 
@@ -576,6 +576,9 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `attachment_thumbnail(attachment_id: int)`
+  Нет докстринга.
+
+- `attachment_download(attachment_id: int, filename: str = '')`
   Нет докстринга.
 
 - `_get_redmine_meta() -> dict`

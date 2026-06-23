@@ -134,13 +134,14 @@ function toggleIssue(header) {
                                     ? '<div class="journal-attachments">' +
                                       j.attachments.map(a => {
                                           const isImage = /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(a.filename);
-                                          const dlUrl = '/api/attachment/thumbnail/' + a.id;
+                                          const thumbUrl = '/api/attachment/thumbnail/' + a.id;
+                                          const fullUrl = '/api/attachment/download/' + a.id + '?filename=' + encodeURIComponent(a.filename);
                                           if (isImage) {
-                                              return '<a class="journal-attach-img-wrap" href="' + dlUrl + '" target="_blank">' +
-                                                     '<img class="journal-attach-img" src="' + dlUrl + '" alt="' + escapeHtml(a.filename) + '" loading="lazy">' +
-                                                     '</a>';
+                                              return '<span class="journal-attach-img-wrap" onclick="openImgModal(\'' + fullUrl + '\')" title="' + escapeHtml(a.filename) + '">' +
+                                                     '<img class="journal-attach-img" src="' + thumbUrl + '" alt="' + escapeHtml(a.filename) + '" loading="lazy">' +
+                                                     '</span>';
                                           }
-                                          return '<a class="journal-attach-file" href="' + dlUrl + '" target="_blank">📎 ' + escapeHtml(a.filename) + '</a>';
+                                          return '<a class="journal-attach-file" href="' + fullUrl + '" target="_blank">📎 ' + escapeHtml(a.filename) + '</a>';
                                       }).join('') +
                                       '</div>'
                                     : '';
@@ -183,6 +184,23 @@ function toggleIssue(header) {
     }
 }
 
+function openImgModal(url) {
+    const modal = document.getElementById('img-modal');
+    const img = document.getElementById('img-modal-img');
+    img.src = url;
+    modal.classList.add('img-modal-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImgModal() {
+    const modal = document.getElementById('img-modal');
+    modal.classList.remove('img-modal-open');
+    document.getElementById('img-modal-img').src = '';
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModal(); });
+
 function escapeHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -200,5 +218,9 @@ function escapeHtml(s) {
     });
 })();
 </script>
+
+<div id="img-modal" class="img-modal" onclick="closeImgModal()">
+    <img id="img-modal-img" src="" alt="">
+</div>
 
 {% endblock %}

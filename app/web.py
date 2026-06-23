@@ -131,6 +131,24 @@ def attachment_thumbnail(attachment_id: int):
     return Response(status_code=404)
 
 
+@app.get('/api/attachment/download/{attachment_id}')
+def attachment_download(attachment_id: int, filename: str = ''):
+    try:
+        path = f'/attachments/download/{attachment_id}/{filename}' if filename else f'/attachments/download/{attachment_id}'
+        r = req_lib.get(
+            f'{REDMINE_URL}{path}',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+            timeout=30,
+            allow_redirects=True,
+        )
+        if r.status_code == 200 and r.content:
+            ct = r.headers.get('content-type', 'image/png')
+            return Response(content=r.content, media_type=ct)
+    except Exception:
+        pass
+    return Response(status_code=404)
+
+
 _avatar_cache: dict[int, bytes] = {}
 _redmine_meta: dict = {}  # statuses, priorities, users cache
 
