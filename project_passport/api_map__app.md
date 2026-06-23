@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 69
+- функций: 70
 - методов: 5
-- констант: 24
+- констант: 25
 
 ---
 
@@ -552,8 +552,12 @@ FastAPI web application: маршруты Briefing.
 - `PROJECT_ROOT = Path(__file__).resolve().parent.parent`
 - `STATIC_DIR = PROJECT_ROOT / 'web_static'`
 - `TEMPLATES_DIR = PROJECT_ROOT / 'templates'`
+- `_SPAN_RE = re.compile('%\\{([^}]+)\\}([^%]*)%')`
 
 Функции:
+
+- `_fix_spans(html: str) -> str`
+  Заменяет незарендеренные Textile-спаны %{style}text% на <span>.
 
 - `_render(text: str | None) -> str`
   Нет докстринга.

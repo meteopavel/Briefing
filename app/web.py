@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import re
+
 import requests as req_lib
 import textile
 from fastapi import FastAPI, Request, Response
@@ -22,13 +24,22 @@ app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
+_SPAN_RE = re.compile(r'%\{([^}]+)\}([^%]*)%')
+
+
+def _fix_spans(html: str) -> str:
+    """Заменяет незарендеренные Textile-спаны %{style}text% на <span>."""
+    return _SPAN_RE.sub(lambda m: f'<span style="{m.group(1)}">{m.group(2)}</span>', html)
+
+
 def _render(text: str | None) -> str:
     if not text:
         return ''
     try:
-        return textile.textile(text)
+        html = textile.textile(text)
     except Exception:
-        return text
+        html = text
+    return _fix_spans(html)
 
 
 @app.get('/')

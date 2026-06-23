@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T10:39:09.812550+00:00",
+  "generated_at": "2026-06-23T10:41:22.360055+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,9 +17,9 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 69,
+    "functions": 70,
     "methods": 5,
-    "constants": 24
+    "constants": 25
   },
   "modules": [
     {
@@ -1174,14 +1174,24 @@
       "classes": [],
       "functions": [
         {
+          "name": "_fix_spans",
+          "signature": "_fix_spans(html: str) -> str",
+          "docstring": "Заменяет незарендеренные Textile-спаны %{style}text% на <span>.",
+          "summary": "Заменяет незарендеренные Textile-спаны %{style}text% на <span>.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 30,
+          "end_lineno": 32
+        },
+        {
           "name": "_render",
           "signature": "_render(text: str | None) -> str",
           "docstring": null,
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 25,
-          "end_lineno": 31
+          "lineno": 35,
+          "end_lineno": 42
         },
         {
           "name": "index",
@@ -1192,8 +1202,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 35,
-          "end_lineno": 48
+          "lineno": 46,
+          "end_lineno": 59
         },
         {
           "name": "issue_journals",
@@ -1204,8 +1214,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 52,
-          "end_lineno": 63
+          "lineno": 63,
+          "end_lineno": 74
         },
         {
           "name": "avatar",
@@ -1216,8 +1226,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 67,
-          "end_lineno": 80
+          "lineno": 78,
+          "end_lineno": 91
         },
         {
           "name": "health",
@@ -1228,8 +1238,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 84,
-          "end_lineno": 85
+          "lineno": 95,
+          "end_lineno": 96
         }
       ],
       "constants": [
@@ -1237,27 +1247,33 @@
           "name": "PROJECT_ROOT",
           "annotation": null,
           "value_repr": "Path(__file__).resolve().parent.parent",
-          "lineno": 14
+          "lineno": 16
         },
         {
           "name": "STATIC_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'web_static'",
-          "lineno": 15
+          "lineno": 17
         },
         {
           "name": "TEMPLATES_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'templates'",
-          "lineno": 16
+          "lineno": 18
+        },
+        {
+          "name": "_SPAN_RE",
+          "annotation": null,
+          "value_repr": "re.compile('%\\\\{([^}]+)\\\\}([^%]*)%')",
+          "lineno": 27
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 5,
+        "functions": 6,
         "methods": 0,
-        "constants": 3
+        "constants": 4
       }
     }
   ]
