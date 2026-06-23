@@ -205,6 +205,14 @@ function closeImgModal() {
 async function copyImgToClipboard() {
     const img = document.getElementById('img-modal-img');
     const btn = document.getElementById('img-copy-btn');
+    // execCommand работает без HTTPS: создаём скрытый contenteditable с картинкой, выделяем, копируем
+    const ok = _copyImgViaExecCommand(img);
+    if (ok) {
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 2000);
+        return;
+    }
+    // Фолбэк: Clipboard API (требует HTTPS)
     try {
         const r = await fetch(img.src);
         const blob = await r.blob();
@@ -215,6 +223,28 @@ async function copyImgToClipboard() {
     } catch(e) {
         btn.classList.add('error');
         setTimeout(() => btn.classList.remove('error'), 2000);
+    }
+}
+
+function _copyImgViaExecCommand(imgEl) {
+    try {
+        const div = document.createElement('div');
+        div.contentEditable = 'true';
+        div.style.cssText = 'position:fixed;opacity:0;top:0;left:0;pointer-events:none;';
+        const clone = imgEl.cloneNode(false);
+        div.appendChild(clone);
+        document.body.appendChild(div);
+        const range = document.createRange();
+        range.selectNodeContents(div);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        const ok = document.execCommand('copy');
+        sel.removeAllRanges();
+        document.body.removeChild(div);
+        return ok;
+    } catch(e) {
+        return false;
     }
 }
 
