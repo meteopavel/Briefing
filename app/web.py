@@ -37,6 +37,7 @@ _REAL_TAGS = {
 }
 _ANGLE_RE = re.compile(r'</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')
 _NOTEXTILE_RE = re.compile(r'<notextile>(.*?)</notextile>', re.DOTALL)
+_QUOTE_RE = re.compile(r'^> ?(.*)$', re.MULTILINE)
 
 
 def _fix_spans(html: str) -> str:
@@ -63,7 +64,9 @@ def _render(text: str | None) -> str:
         tokens.append(content)
         return f'\x01TOK{len(tokens) - 1}\x01'
 
-    # 1. <notextile>...</notextile> → защищаем содержимое, теги выбрасываем
+    # 1. > quote lines → bq. textile syntax
+    text = _QUOTE_RE.sub(lambda m: "bq. " + m.group(1), text)
+    # 2. <notextile>...</notextile> → защищаем содержимое, теги выбрасываем
     text = _NOTEXTILE_RE.sub(lambda m: _store_raw(m.group(1)), text)
     # 2. Email-адреса (включая прилегающие _) → токены
     protected = _escape_template_vars(_EMAIL_RE.sub(lambda m: _store_raw(m.group(0)), text))

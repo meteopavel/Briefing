@@ -265,7 +265,8 @@ document.addEventListener('click', e => {
     const open = document.querySelector('.issue-card.issue-open');
     if (!open) return;
     const body = open.querySelector('.issue-body');
-    if (body.contains(e.target) && !e.target.closest('.journal-entry')) {
+    const journals = open.querySelector('.issue-journals');
+    if (journals && journals.contains(e.target) && !e.target.closest('.journal-entry')) {
         open.classList.remove('issue-open');
         body.style.maxHeight = null;
         open.querySelector('.issue-chevron').textContent = '▸';
