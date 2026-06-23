@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 71
+- функций: 72
 - методов: 5
-- констант: 26
+- констант: 28
 
 ---
 
@@ -554,11 +554,16 @@ FastAPI web application: маршруты Briefing.
 - `TEMPLATES_DIR = PROJECT_ROOT / 'templates'`
 - `_SPAN_RE = re.compile('%\\{([^}]+)\\}([^%]*)%')`
 - `_EMAIL_RE = re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+_?')`
+- `_REAL_TAGS = {'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre', 'span', 'div', 'ul', 'ol'…`
+- `_ANGLE_RE = re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')`
 
 Функции:
 
 - `_fix_spans(html: str) -> str`
   Нет докстринга.
+
+- `_escape_template_vars(text: str) -> str`
+  Экранирует <placeholder> которые не являются HTML-тегами.
 
 - `_render(text: str | None) -> str`
   Нет докстринга.
