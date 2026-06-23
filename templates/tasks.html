@@ -261,6 +261,15 @@ function convertToPng(blob) {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModal(); });
 
+document.addEventListener('click', e => {
+    const open = document.querySelector('.issue-card.issue-open');
+    if (open && !open.contains(e.target)) {
+        open.classList.remove('issue-open');
+        open.querySelector('.issue-body').style.maxHeight = null;
+        open.querySelector('.issue-chevron').textContent = '▸';
+    }
+});
+
 function escapeHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
