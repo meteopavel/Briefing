@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T10:44:53.229152+00:00",
+  "generated_at": "2026-06-23T10:48:57.993679+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,9 +17,9 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 71,
+    "functions": 72,
     "methods": 5,
-    "constants": 25
+    "constants": 26
   },
   "modules": [
     {
@@ -1176,12 +1176,22 @@
         {
           "name": "_fix_spans",
           "signature": "_fix_spans(html: str) -> str",
-          "docstring": "Заменяет незарендеренные Textile-спаны %{style}text% на <span>.",
-          "summary": "Заменяет незарендеренные Textile-спаны %{style}text% на <span>.",
+          "docstring": null,
+          "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 30,
+          "lineno": 31,
           "end_lineno": 32
+        },
+        {
+          "name": "_protect_emails",
+          "signature": "_protect_emails(text: str) -> str",
+          "docstring": "Оборачивает email-адреса в <notextile>, чтобы @ не интерпретировался как код.",
+          "summary": "Оборачивает email-адреса в <notextile>, чтобы @ не интерпретировался как код.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 35,
+          "end_lineno": 37
         },
         {
           "name": "_render",
@@ -1190,8 +1200,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 35,
-          "end_lineno": 42
+          "lineno": 40,
+          "end_lineno": 47
         },
         {
           "name": "index",
@@ -1202,8 +1212,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 46,
-          "end_lineno": 59
+          "lineno": 51,
+          "end_lineno": 64
         },
         {
           "name": "issue_journals",
@@ -1214,8 +1224,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 63,
-          "end_lineno": 81
+          "lineno": 68,
+          "end_lineno": 86
         },
         {
           "name": "attachment_thumbnail",
@@ -1226,8 +1236,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 85,
-          "end_lineno": 97
+          "lineno": 90,
+          "end_lineno": 102
         },
         {
           "name": "avatar",
@@ -1238,8 +1248,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 101,
-          "end_lineno": 114
+          "lineno": 106,
+          "end_lineno": 119
         },
         {
           "name": "health",
@@ -1250,8 +1260,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 118,
-          "end_lineno": 119
+          "lineno": 123,
+          "end_lineno": 124
         }
       ],
       "constants": [
@@ -1278,14 +1288,20 @@
           "annotation": null,
           "value_repr": "re.compile('%\\\\{([^}]+)\\\\}([^%]*)%')",
           "lineno": 27
+        },
+        {
+          "name": "_EMAIL_RE",
+          "annotation": null,
+          "value_repr": "re.compile('[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}')",
+          "lineno": 28
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 7,
+        "functions": 8,
         "methods": 0,
-        "constants": 4
+        "constants": 5
       }
     }
   ]

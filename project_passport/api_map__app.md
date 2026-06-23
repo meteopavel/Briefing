@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 71
+- функций: 72
 - методов: 5
-- констант: 25
+- констант: 26
 
 ---
 
@@ -553,11 +553,15 @@ FastAPI web application: маршруты Briefing.
 - `STATIC_DIR = PROJECT_ROOT / 'web_static'`
 - `TEMPLATES_DIR = PROJECT_ROOT / 'templates'`
 - `_SPAN_RE = re.compile('%\\{([^}]+)\\}([^%]*)%')`
+- `_EMAIL_RE = re.compile('[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}')`
 
 Функции:
 
 - `_fix_spans(html: str) -> str`
-  Заменяет незарендеренные Textile-спаны %{style}text% на <span>.
+  Нет докстринга.
+
+- `_protect_emails(text: str) -> str`
+  Оборачивает email-адреса в <notextile>, чтобы @ не интерпретировался как код.
 
 - `_render(text: str | None) -> str`
   Нет докстринга.

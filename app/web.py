@@ -25,18 +25,23 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 _SPAN_RE = re.compile(r'%\{([^}]+)\}([^%]*)%')
+_EMAIL_RE = re.compile(r'[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')
 
 
 def _fix_spans(html: str) -> str:
-    """Заменяет незарендеренные Textile-спаны %{style}text% на <span>."""
     return _SPAN_RE.sub(lambda m: f'<span style="{m.group(1)}">{m.group(2)}</span>', html)
+
+
+def _protect_emails(text: str) -> str:
+    """Оборачивает email-адреса в <notextile>, чтобы @ не интерпретировался как код."""
+    return _EMAIL_RE.sub(lambda m: f'<notextile>{m.group(0)}</notextile>', text)
 
 
 def _render(text: str | None) -> str:
     if not text:
         return ''
     try:
-        html = textile.textile(text)
+        html = textile.textile(_protect_emails(text))
     except Exception:
         html = text
     return _fix_spans(html)
