@@ -494,6 +494,36 @@
     color: var(--muted);
 }
 
+.journal-changes {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.journal-changes li {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.change-label {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.change-old {
+    text-decoration: line-through;
+    color: var(--muted);
+}
+
+.change-new {
+    color: var(--text);
+    font-weight: 600;
+}
+
 .journal-attachments {
     display: flex;
     flex-wrap: wrap;

@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 72
+- функций: 75
 - методов: 5
-- констант: 28
+- констант: 29
 
 ---
 
@@ -556,6 +556,7 @@ FastAPI web application: маршруты Briefing.
 - `_EMAIL_RE = re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+_?')`
 - `_REAL_TAGS = {'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre', 'span', 'div', 'ul', 'ol'…`
 - `_ANGLE_RE = re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')`
+- `_ATTR_LABELS: dict[str, str] = {'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Г…`
 
 Функции:
 
@@ -575,6 +576,15 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `attachment_thumbnail(attachment_id: int)`
+  Нет докстринга.
+
+- `_get_redmine_meta() -> dict`
+  Нет докстринга.
+
+- `_resolve_attr(name: str, value: str | None) -> str | None`
+  Нет докстринга.
+
+- `_build_attr_changes(details: list[dict]) -> list[dict]`
   Нет докстринга.
 
 - `avatar(user_id: int)`

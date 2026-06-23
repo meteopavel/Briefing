@@ -97,15 +97,18 @@ def issue_journals(issue_id: int):
         journals = []
         for j in issue.get('journals', []):
             notes = j.get('notes', '').strip()
+            details = j.get('details', [])
             attachments = [
                 {'id': d['name'], 'filename': d['new_value']}
-                for d in j.get('details', [])
+                for d in details
                 if d.get('property') == 'attachment' and d.get('new_value')
             ]
-            if notes or attachments:
+            attr_changes = _build_attr_changes(details)
+            if notes or attachments or attr_changes:
                 if notes:
                     j['notes_html'] = _render(notes)
                 j['attachments'] = attachments
+                j['attr_changes'] = attr_changes
                 journals.append(j)
         return {'journals': journals}
     except Exception as e:
@@ -129,6 +132,89 @@ def attachment_thumbnail(attachment_id: int):
 
 
 _avatar_cache: dict[int, bytes] = {}
+_redmine_meta: dict = {}  # statuses, priorities, users cache
+
+_ATTR_LABELS: dict[str, str] = {
+    'status_id': 'Статус',
+    'assigned_to_id': 'Назначена',
+    'priority_id': 'Приоритет',
+    'done_ratio': 'Готовность',
+    'fixed_version_id': 'Версия',
+    'tracker_id': 'Трекер',
+    'subject': 'Тема',
+    'description': 'Описание',
+    'estimated_hours': 'Оценка (ч)',
+    'start_date': 'Дата начала',
+    'due_date': 'Дедлайн',
+    'is_private': 'Приватная',
+}
+
+
+def _get_redmine_meta() -> dict:
+    if _redmine_meta:
+        return _redmine_meta
+    try:
+        statuses = {
+            str(s['id']): s['name']
+            for s in req_lib.get(
+                f'{REDMINE_URL}/issue_statuses.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                timeout=5,
+            ).json().get('issue_statuses', [])
+        }
+        priorities = {
+            str(p['id']): p['name']
+            for p in req_lib.get(
+                f'{REDMINE_URL}/enumerations/issue_priorities.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                timeout=5,
+            ).json().get('issue_priorities', [])
+        }
+        _redmine_meta.update({'statuses': statuses, 'priorities': priorities, 'users': {}})
+    except Exception:
+        pass
+    return _redmine_meta
+
+
+def _resolve_attr(name: str, value: str | None) -> str | None:
+    if value is None:
+        return None
+    meta = _get_redmine_meta()
+    if name == 'status_id':
+        return meta.get('statuses', {}).get(value, value)
+    if name == 'priority_id':
+        return meta.get('priorities', {}).get(value, value)
+    if name in ('assigned_to_id',):
+        users: dict = meta.get('users', {})
+        if value in users:
+            return users[value]
+        try:
+            u = req_lib.get(
+                f'{REDMINE_URL}/users/{value}.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                timeout=5,
+            ).json().get('user', {})
+            name_str = f"{u.get('firstname', '')} {u.get('lastname', '')}".strip()
+            users[value] = name_str
+            return name_str
+        except Exception:
+            return value
+    if name == 'done_ratio':
+        return f'{value}%'
+    return value
+
+
+def _build_attr_changes(details: list[dict]) -> list[dict]:
+    changes = []
+    for d in details:
+        if d.get('property') != 'attr':
+            continue
+        field = d.get('name', '')
+        label = _ATTR_LABELS.get(field, field)
+        old = _resolve_attr(field, d.get('old_value'))
+        new = _resolve_attr(field, d.get('new_value'))
+        changes.append({'label': label, 'old': old, 'new': new})
+    return changes
 
 
 @app.get('/api/avatar/{user_id}')

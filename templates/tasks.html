@@ -144,6 +144,15 @@ function toggleIssue(header) {
                                       }).join('') +
                                       '</div>'
                                     : '';
+                                const attrHtml = (j.attr_changes && j.attr_changes.length)
+                                    ? '<ul class="journal-changes">' +
+                                      j.attr_changes.map(c => {
+                                          const oldPart = c.old ? '<span class="change-old">' + escapeHtml(c.old) + '</span> → ' : '';
+                                          const newPart = c.new ? '<span class="change-new">' + escapeHtml(c.new) + '</span>' : '<em>пусто</em>';
+                                          return '<li><span class="change-label">' + escapeHtml(c.label) + '</span>: ' + oldPart + newPart + '</li>';
+                                      }).join('') +
+                                      '</ul>'
+                                    : '';
                                 return '<div class="journal-entry">' +
                                     '<div class="journal-meta">' +
                                     '<img class="journal-avatar" src="/api/avatar/' + uid + '" alt="' + escapeHtml(initials) + '" ' +
@@ -152,6 +161,7 @@ function toggleIssue(header) {
                                     '<span class="journal-author">' + escapeHtml(author) + '</span>' +
                                     (date ? '<span class="journal-date">' + date + '</span>' : '') +
                                     '</div>' +
+                                    attrHtml +
                                     attachHtml +
                                     (j.notes_html ? '<div class="journal-notes markdown-body">' + j.notes_html + '</div>' : '') +
                                     '</div>';
