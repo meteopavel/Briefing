@@ -11,7 +11,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.config import REDMINE_API_KEY, REDMINE_URL
+from app.config import REDMINE_API_KEY, REDMINE_API_KEY_ADMIN, REDMINE_URL
 from app.services.redmine.client import RedmineClient
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -96,7 +96,14 @@ def index(request: Request):
 @app.get('/api/issues/{issue_id}/journals')
 def issue_journals(issue_id: int):
     try:
-        issue = RedmineClient.fetch_issue_with_journals(issue_id)
+        r = req_lib.get(
+            f'{REDMINE_URL}/issues/{issue_id}.json',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY_ADMIN},
+            params={'include': 'journals'},
+            timeout=60,
+        )
+        r.raise_for_status()
+        issue = r.json()['issue']
         journals = []
         for note_idx, j in enumerate(issue.get('journals', []), start=1):
             notes = j.get('notes', '').strip()

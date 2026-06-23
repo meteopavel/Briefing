@@ -505,6 +505,7 @@
 
 .journal-note-link:hover { opacity: 1; color: var(--tint-blue-text); }
 
+
 .journal-changes {
     list-style: none;
     padding: 0;

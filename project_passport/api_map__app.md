@@ -10,7 +10,7 @@
 - dataclass: 1
 - функций: 76
 - методов: 5
-- констант: 30
+- констант: 31
 
 ---
 
@@ -84,6 +84,7 @@ CLI-точка входа для генерации документов и эк
 - `TIMELOGS_DIR = os.path.join(LOCAL_RUNTIME_DIR, 'timelogs')`
 - `REDMINE_URL = os.getenv('REDMINE_URL', '').rstrip('/')`
 - `REDMINE_API_KEY = os.getenv('REDMINE_API_KEY')`
+- `REDMINE_API_KEY_ADMIN = os.getenv('REDMINE_API_KEY_ADMIN') or os.getenv('REDMINE_API_KEY')`
 - `REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')`
 - `DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')`
 - `USER_MAP = load_int_key_dict_env('USER_MAP', {})`
