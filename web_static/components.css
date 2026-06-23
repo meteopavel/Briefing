@@ -263,15 +263,14 @@
 
 .issue-card.issue-open .issue-body {
     border-top: 1px solid var(--border);
-    padding: 0;
+    padding: 14px 14px 14px;
 }
 
-.issue-sticky-header {
+.issue-card.issue-open .issue-header {
     position: sticky;
     top: 0;
-    z-index: 5;
+    z-index: 10;
     background: var(--card-bg);
-    padding: 14px 14px 10px;
     border-bottom: 1px solid var(--border);
 }
 
