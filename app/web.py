@@ -112,7 +112,7 @@ def issue_journals(issue_id: int):
                     j['notes_html'] = _render(notes)
                 j['attachments'] = attachments
                 j['attr_changes'] = attr_changes
-                j['_note_index'] = note_idx
+                j['_note_index'] = j.get('id', note_idx)
                 journals.append(j)
         return {'journals': journals}
     except Exception as e:
