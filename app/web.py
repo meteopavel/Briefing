@@ -37,7 +37,7 @@ _REAL_TAGS = {
 }
 _ANGLE_RE = re.compile(r'</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')
 _NOTEXTILE_RE = re.compile(r'<notextile>(.*?)</notextile>', re.DOTALL)
-_QUOTE_RE = re.compile(r'^> ?(.*)$', re.MULTILINE)
+_QUOTE_BLOCK_RE = re.compile(r'((?:^> ?.*$\n?)+)', re.MULTILINE)
 
 
 def _fix_spans(html: str) -> str:
@@ -64,11 +64,19 @@ def _render(text: str | None) -> str:
         tokens.append(content)
         return f'\x01TOK{len(tokens) - 1}\x01'
 
-    # 1. > quote lines → bq. textile syntax
-    text = _QUOTE_RE.sub(lambda m: "bq. " + m.group(1), text)
+    # 1. > quote blocks → <blockquote> (render inner via textile)
+    def _make_blockquote(m: re.Match) -> str:
+        lines = m.group(1).splitlines()
+        inner = '\n'.join(ln[2:] if ln.startswith('> ') else ln[1:] if ln.startswith('>') else ln for ln in lines).strip()
+        try:
+            inner_html = textile.textile(inner)
+        except Exception:
+            inner_html = inner
+        return _store_raw(f'<blockquote class="redmine-quote">{inner_html}</blockquote>')
+    text = _QUOTE_BLOCK_RE.sub(_make_blockquote, text)
     # 2. <notextile>...</notextile> → защищаем содержимое, теги выбрасываем
     text = _NOTEXTILE_RE.sub(lambda m: _store_raw(m.group(1)), text)
-    # 2. Email-адреса (включая прилегающие _) → токены
+    # 3. Email-адреса (включая прилегающие _) → токены
     protected = _escape_template_vars(_EMAIL_RE.sub(lambda m: _store_raw(m.group(0)), text))
     try:
         html = textile.textile(protected)
