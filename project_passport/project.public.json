@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T08:44:44.269708+00:00",
+  "generated_at": "2026-06-23T10:33:40.125513+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -59,7 +59,7 @@
     "scanned_python_files": 22,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 67,
+    "functions": 69,
     "methods": 5,
     "constants": 24,
     "has_cli": true,
@@ -126,6 +126,17 @@
         }
       },
       {
+        "path": "app/web.py",
+        "summary": "FastAPI web application: маршруты Briefing.",
+        "stats": {
+          "classes": 0,
+          "dataclasses": 0,
+          "functions": 5,
+          "methods": 0,
+          "constants": 3
+        }
+      },
+      {
         "path": "app/services/redmine/client.py",
         "summary": "HTTP-клиент для получения данных из Redmine API.",
         "stats": {
@@ -134,17 +145,6 @@
           "functions": 0,
           "methods": 5,
           "constants": 0
-        }
-      },
-      {
-        "path": "app/web.py",
-        "summary": "FastAPI web application: маршруты Briefing.",
-        "stats": {
-          "classes": 0,
-          "dataclasses": 0,
-          "functions": 3,
-          "methods": 0,
-          "constants": 3
         }
       }
     ]
@@ -157,7 +157,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-06-23T08:44:44.201514+00:00",
+    "api_map_generated_at": "2026-06-23T10:33:40.046267+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"

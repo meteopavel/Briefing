@@ -8,7 +8,7 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 67
+- функций: 69
 - методов: 5
 - констант: 24
 
@@ -555,10 +555,16 @@ FastAPI web application: маршруты Briefing.
 
 Функции:
 
+- `_render_md(text: str | None) -> str`
+  Нет докстринга.
+
 - `index(request: Request)`
   Нет докстринга.
 
 - `issue_journals(issue_id: int)`
+  Нет докстринга.
+
+- `avatar(user_id: int)`
   Нет докстринга.
 
 - `health()`
