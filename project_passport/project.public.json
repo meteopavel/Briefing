@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T11:34:29.188460+00:00",
+  "generated_at": "2026-06-23T11:37:23.984281+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -61,7 +61,7 @@
     "dataclasses": 1,
     "functions": 76,
     "methods": 5,
-    "constants": 29,
+    "constants": 30,
     "has_cli": true,
     "has_redmine_integration": true,
     "has_document_generation": true,
@@ -100,7 +100,7 @@
           "dataclasses": 0,
           "functions": 12,
           "methods": 0,
-          "constants": 8
+          "constants": 9
         }
       },
       {
@@ -157,7 +157,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-06-23T11:34:29.132862+00:00",
+    "api_map_generated_at": "2026-06-23T11:37:23.922832+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"
