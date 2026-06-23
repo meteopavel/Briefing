@@ -199,6 +199,40 @@ function closeImgModal() {
     document.body.style.overflow = '';
 }
 
+async function copyImgToClipboard() {
+    const img = document.getElementById('img-modal-img');
+    const btn = document.getElementById('img-copy-btn');
+    try {
+        const r = await fetch(img.src);
+        const blob = await r.blob();
+        const pngBlob = blob.type === 'image/png' ? blob : await convertToPng(blob);
+        await navigator.clipboard.write([new ClipboardItem({'image/png': pngBlob})]);
+        btn.textContent = 'Скопировано ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Копировать'; btn.classList.remove('copied'); }, 2000);
+    } catch(e) {
+        btn.textContent = 'Ошибка';
+        setTimeout(() => { btn.textContent = 'Копировать'; }, 2000);
+    }
+}
+
+function convertToPng(blob) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            URL.revokeObjectURL(url);
+            canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/png');
+        };
+        img.onerror = reject;
+        img.src = url;
+    });
+}
+
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModal(); });
 
 function escapeHtml(s) {
@@ -220,7 +254,10 @@ function escapeHtml(s) {
 </script>
 
 <div id="img-modal" class="img-modal" onclick="closeImgModal()">
-    <img id="img-modal-img" src="" alt="">
+    <div class="img-modal-toolbar" onclick="event.stopPropagation()">
+        <button class="img-modal-btn" id="img-copy-btn" onclick="copyImgToClipboard()">Копировать</button>
+    </div>
+    <img id="img-modal-img" src="" alt="" onclick="event.stopPropagation()">
 </div>
 
 {% endblock %}
