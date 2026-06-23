@@ -205,42 +205,22 @@ function closeImgModal() {
 async function copyImgToClipboard() {
     const img = document.getElementById('img-modal-img');
     const btn = document.getElementById('img-copy-btn');
+    if (!window.isSecureContext) {
+        // HTTP — ClipboardItem недоступен, предлагаем скачать
+        btn.title = 'Копирование требует HTTPS.\nChrome: chrome://flags → Insecure origins treated as secure → добавить http://briefing.local';
+        btn.classList.add('error');
+        setTimeout(() => { btn.classList.remove('error'); btn.title = 'Копировать'; }, 3000);
+        return;
+    }
     try {
-        // Рисуем в canvas (same-origin → не tainted), получаем data: URL → копируем битмап
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         canvas.getContext('2d').drawImage(img, 0, 0);
-        const dataUrl = canvas.toDataURL('image/png');
-
-        // Clipboard API (HTTPS) — пробуем первым
-        if (navigator.clipboard && navigator.clipboard.write) {
-            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-            await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-            btn.classList.add('copied');
-            setTimeout(() => btn.classList.remove('copied'), 2000);
-            return;
-        }
-
-        // execCommand с data: URL — работает без HTTPS
-        const tmpImg = new Image();
-        tmpImg.src = dataUrl;
-        await new Promise(r => { tmpImg.onload = r; if (tmpImg.complete) r(); });
-        const div = document.createElement('div');
-        div.contentEditable = 'true';
-        div.style.cssText = 'position:fixed;opacity:0;top:0;left:0;pointer-events:none;';
-        div.appendChild(tmpImg);
-        document.body.appendChild(div);
-        const range = document.createRange();
-        range.selectNodeContents(div);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-        const ok = document.execCommand('copy');
-        sel.removeAllRanges();
-        document.body.removeChild(div);
-        btn.classList.add(ok ? 'copied' : 'error');
-        setTimeout(() => { btn.classList.remove('copied'); btn.classList.remove('error'); }, 2000);
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 2000);
     } catch(e) {
         btn.classList.add('error');
         setTimeout(() => btn.classList.remove('error'), 2000);
