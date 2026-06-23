@@ -35,7 +35,6 @@
         <span class="issue-chevron">▸</span>
     </div>
     <div class="issue-body">
-        <div class="issue-sticky-header">
         {% if issue.get('done_ratio', 0) > 0 %}
         <div class="issue-progress-wrap">
             <div class="issue-progress-full">
@@ -89,8 +88,6 @@
             </div>
             {% endif %}
         </div>
-        </div><!-- /issue-sticky-header -->
-
         <div class="issue-journals" data-loaded="false"></div>
 
         <div class="issue-footer">
