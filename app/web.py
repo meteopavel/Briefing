@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-import mistune
 import requests as req_lib
+import textile
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -21,16 +21,14 @@ app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
 
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-_md = mistune.create_markdown(
-    plugins=['strikethrough', 'table', 'url'],
-    escape=False,
-)
 
-
-def _render_md(text: str | None) -> str:
+def _render(text: str | None) -> str:
     if not text:
         return ''
-    return _md(text)
+    try:
+        return textile.textile(text)
+    except Exception:
+        return text
 
 
 @app.get('/')
@@ -38,7 +36,7 @@ def index(request: Request):
     try:
         issues = RedmineClient.fetch_my_issues()
         for issue in issues:
-            issue['_desc_html'] = _render_md(issue.get('description', ''))
+            issue['_desc_html'] = _render(issue.get('description'))
         error = None
     except Exception as e:
         issues = []
@@ -58,7 +56,7 @@ def issue_journals(issue_id: int):
         for j in issue.get('journals', []):
             notes = j.get('notes', '').strip()
             if notes:
-                j['notes_html'] = _render_md(notes)
+                j['notes_html'] = _render(notes)
                 journals.append(j)
         return {'journals': journals}
     except Exception as e:

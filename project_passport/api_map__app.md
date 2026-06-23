@@ -555,7 +555,7 @@ FastAPI web application: маршруты Briefing.
 
 Функции:
 
-- `_render_md(text: str | None) -> str`
+- `_render(text: str | None) -> str`
   Нет докстринга.
 
 - `index(request: Request)`
