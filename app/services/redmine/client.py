@@ -100,6 +100,7 @@ class RedmineClient:
             params={
                 'assigned_to_id': REDMINE_USER_ID,
                 'status_id': status_id,
+                'include': 'spent_time',
                 'limit': 100,
                 'sort': 'priority:desc,updated_on:desc',
             },
