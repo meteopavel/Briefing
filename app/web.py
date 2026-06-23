@@ -25,8 +25,8 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 _SPAN_RE = re.compile(r'%\{([^}]+)\}([^%]*)%')
-_EMAIL_RE = re.compile(r'[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')
-_AT_PLACEHOLDER = '\x01AT\x01'
+# Захватываем опциональные _ вокруг адреса — они ломают textile-курсив
+_EMAIL_RE = re.compile(r'_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+_?')
 
 
 def _fix_spans(html: str) -> str:
@@ -36,13 +36,20 @@ def _fix_spans(html: str) -> str:
 def _render(text: str | None) -> str:
     if not text:
         return ''
-    # Protect @ in emails from textile @code@ syntax
-    protected = _EMAIL_RE.sub(lambda m: m.group(0).replace('@', _AT_PLACEHOLDER), text)
+    # Сохраняем все email-подобные токены (включая прилегающие _) → placeholders
+    tokens: list[str] = []
+
+    def _store(m: re.Match) -> str:
+        tokens.append(m.group(0))
+        return f'\x01TOK{len(tokens) - 1}\x01'
+
+    protected = _EMAIL_RE.sub(_store, text)
     try:
         html = textile.textile(protected)
     except Exception:
         html = protected
-    html = html.replace(_AT_PLACEHOLDER, '@')
+    for i, tok in enumerate(tokens):
+        html = html.replace(f'\x01TOK{i}\x01', tok)
     return _fix_spans(html)
 
 
