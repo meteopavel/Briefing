@@ -8,21 +8,51 @@
 {% else %}
 <div class="issue-list">
 {% for issue in issues %}
-<div class="issue-card priority-{{ issue.priority.name | lower | replace(' ', '-') }}">
-    <div class="issue-meta">
-        <span class="issue-id">#{{ issue.id }}</span>
-        <span class="issue-priority">{{ issue.priority.name }}</span>
-        <span class="issue-status">{{ issue.status.name }}</span>
+<div class="issue-card priority-{{ issue.priority.name | lower | replace(' ', '-') }}" data-id="{{ issue.id }}">
+    <div class="issue-header" onclick="toggleIssue(this)">
+        <div class="issue-meta">
+            <span class="issue-id">#{{ issue.id }}</span>
+            <span class="issue-priority">{{ issue.priority.name }}</span>
+            <span class="issue-status">{{ issue.status.name }}</span>
+            {% if issue.project %}<span class="issue-project-tag">{{ issue.project.name }}</span>{% endif %}
+        </div>
+        <div class="issue-subject">{{ issue.subject }}</div>
+        <span class="issue-chevron">▸</span>
     </div>
-    <div class="issue-subject">
-        <a href="{{ redmine_url }}/issues/{{ issue.id }}" target="_blank">{{ issue.subject }}</a>
+    <div class="issue-body">
+        {% if issue.description %}
+        <div class="issue-description">{{ issue.description }}</div>
+        {% else %}
+        <div class="issue-description issue-description-empty">Описание не заполнено</div>
+        {% endif %}
+        <div class="issue-footer">
+            <a class="issue-link" href="{{ redmine_url }}/issues/{{ issue.id }}" target="_blank">Открыть в Redmine →</a>
+            {% if issue.updated_on %}<span class="issue-updated">Обновлено: {{ issue.updated_on[:10] }}</span>{% endif %}
+        </div>
     </div>
-    {% if issue.project %}
-    <div class="issue-project">{{ issue.project.name }}</div>
-    {% endif %}
 </div>
 {% endfor %}
 </div>
 {% endif %}
+
+<script>
+function toggleIssue(header) {
+    const card = header.parentElement;
+    const body = card.querySelector('.issue-body');
+    const chevron = card.querySelector('.issue-chevron');
+    const isOpen = card.classList.contains('issue-open');
+    // Закрываем все
+    document.querySelectorAll('.issue-card.issue-open').forEach(c => {
+        c.classList.remove('issue-open');
+        c.querySelector('.issue-body').style.maxHeight = null;
+        c.querySelector('.issue-chevron').textContent = '▸';
+    });
+    if (!isOpen) {
+        card.classList.add('issue-open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+        chevron.textContent = '▾';
+    }
+}
+</script>
 
 {% endblock %}
