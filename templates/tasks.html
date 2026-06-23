@@ -263,9 +263,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModa
 
 document.addEventListener('click', e => {
     const open = document.querySelector('.issue-card.issue-open');
-    if (open && !open.contains(e.target)) {
+    if (!open) return;
+    const body = open.querySelector('.issue-body');
+    if (body.contains(e.target) && !e.target.closest('.journal-entry')) {
         open.classList.remove('issue-open');
-        open.querySelector('.issue-body').style.maxHeight = null;
+        body.style.maxHeight = null;
         open.querySelector('.issue-chevron').textContent = '▸';
     }
 });
