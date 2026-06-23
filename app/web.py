@@ -231,7 +231,7 @@ def avatar(user_id: int):
         if not email:
             return Response(status_code=404)
         email_hash = hashlib.md5(email.encode()).hexdigest()
-        gravatar_url = f'https://www.gravatar.com/avatar/{email_hash}?size=48&rating=PG&default=404'
+        gravatar_url = f'https://www.gravatar.com/avatar/{email_hash}?size=48&rating=PG&default=monsterid'
         r = req_lib.get(gravatar_url, timeout=5)
         if r.status_code == 200:
             _avatar_cache[user_id] = r.content
