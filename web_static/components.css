@@ -544,9 +544,11 @@
 
 .journal-attach-img {
     display: block;
-    width: 160px;
-    height: 110px;
-    object-fit: cover;
+    max-width: 200px;
+    max-height: 160px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 /* Image modal */
@@ -570,6 +572,30 @@
     border-radius: var(--radius-card);
     box-shadow: 0 8px 40px rgba(0,0,0,0.6);
 }
+
+.img-modal-toolbar {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.img-modal-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    border-radius: var(--radius-pill);
+    padding: 5px 14px;
+    font-size: var(--fs-xs);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background var(--transition);
+    line-height: 1.4;
+}
+
+.img-modal-btn:hover { background: rgba(255,255,255,0.28); }
+.img-modal-btn.copied { background: rgba(80,180,80,0.5); }
 
 .journal-attach-file {
     font-size: var(--fs-xs);
