@@ -536,13 +536,39 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-row);
     overflow: hidden;
+    cursor: zoom-in;
+    transition: border-color var(--transition);
 }
+
+.journal-attach-img-wrap:hover { border-color: var(--tint-blue-border); }
 
 .journal-attach-img {
     display: block;
-    max-width: 200px;
-    max-height: 150px;
+    width: 160px;
+    height: 110px;
     object-fit: cover;
+}
+
+/* Image modal */
+.img-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+.img-modal.img-modal-open { display: flex; }
+
+.img-modal img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: var(--radius-card);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
 }
 
 .journal-attach-file {

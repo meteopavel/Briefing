@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T11:21:25.014241+00:00",
+  "generated_at": "2026-06-23T11:26:14.190628+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,7 +17,7 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 75,
+    "functions": 76,
     "methods": 5,
     "constants": 29
   },
@@ -1240,14 +1240,26 @@
           "end_lineno": 131
         },
         {
+          "name": "attachment_download",
+          "signature": "attachment_download(attachment_id: int, filename: str = '')",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/api/attachment/download/{attachment_id}')"
+          ],
+          "lineno": 135,
+          "end_lineno": 149
+        },
+        {
           "name": "_get_redmine_meta",
           "signature": "_get_redmine_meta() -> dict",
           "docstring": null,
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 153,
-          "end_lineno": 176
+          "lineno": 171,
+          "end_lineno": 194
         },
         {
           "name": "_resolve_attr",
@@ -1256,8 +1268,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 179,
-          "end_lineno": 204
+          "lineno": 197,
+          "end_lineno": 222
         },
         {
           "name": "_build_attr_changes",
@@ -1266,8 +1278,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 207,
-          "end_lineno": 217
+          "lineno": 225,
+          "end_lineno": 235
         },
         {
           "name": "avatar",
@@ -1278,8 +1290,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 221,
-          "end_lineno": 241
+          "lineno": 239,
+          "end_lineno": 259
         },
         {
           "name": "health",
@@ -1290,8 +1302,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 245,
-          "end_lineno": 246
+          "lineno": 263,
+          "end_lineno": 264
         }
       ],
       "constants": [
@@ -1341,13 +1353,13 @@
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 137
+          "lineno": 155
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 11,
+        "functions": 12,
         "methods": 0,
         "constants": 8
       }
