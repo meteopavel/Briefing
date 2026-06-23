@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T10:48:57.993679+00:00",
+  "generated_at": "2026-06-23T10:50:32.097219+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,9 +17,9 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 72,
+    "functions": 71,
     "methods": 5,
-    "constants": 26
+    "constants": 27
   },
   "modules": [
     {
@@ -1180,18 +1180,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 31,
-          "end_lineno": 32
-        },
-        {
-          "name": "_protect_emails",
-          "signature": "_protect_emails(text: str) -> str",
-          "docstring": "Оборачивает email-адреса в <notextile>, чтобы @ не интерпретировался как код.",
-          "summary": "Оборачивает email-адреса в <notextile>, чтобы @ не интерпретировался как код.",
-          "kind": "function",
-          "decorators": [],
-          "lineno": 35,
-          "end_lineno": 37
+          "lineno": 32,
+          "end_lineno": 33
         },
         {
           "name": "_render",
@@ -1200,8 +1190,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 40,
-          "end_lineno": 47
+          "lineno": 36,
+          "end_lineno": 46
         },
         {
           "name": "index",
@@ -1212,8 +1202,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 51,
-          "end_lineno": 64
+          "lineno": 50,
+          "end_lineno": 63
         },
         {
           "name": "issue_journals",
@@ -1224,8 +1214,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 68,
-          "end_lineno": 86
+          "lineno": 67,
+          "end_lineno": 85
         },
         {
           "name": "attachment_thumbnail",
@@ -1236,8 +1226,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 90,
-          "end_lineno": 102
+          "lineno": 89,
+          "end_lineno": 101
         },
         {
           "name": "avatar",
@@ -1248,8 +1238,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 106,
-          "end_lineno": 119
+          "lineno": 105,
+          "end_lineno": 118
         },
         {
           "name": "health",
@@ -1260,8 +1250,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 123,
-          "end_lineno": 124
+          "lineno": 122,
+          "end_lineno": 123
         }
       ],
       "constants": [
@@ -1294,14 +1284,20 @@
           "annotation": null,
           "value_repr": "re.compile('[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}')",
           "lineno": 28
+        },
+        {
+          "name": "_AT_PLACEHOLDER",
+          "annotation": null,
+          "value_repr": "'\\x01AT\\x01'",
+          "lineno": 29
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 8,
+        "functions": 7,
         "methods": 0,
-        "constants": 5
+        "constants": 6
       }
     }
   ]
