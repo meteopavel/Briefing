@@ -89,6 +89,8 @@
             {% endif %}
         </div>
 
+        <div class="issue-journals" data-loaded="false"></div>
+
         <div class="issue-footer">
             <a class="issue-link" href="{{ redmine_url }}/issues/{{ issue.id }}" target="_blank">Открыть в Redmine →</a>
             {% if issue.updated_on %}<span class="issue-updated">Обновлено: {{ issue.updated_on[:10] }}</span>{% endif %}
@@ -112,9 +114,46 @@ function toggleIssue(header) {
     });
     if (!isOpen) {
         card.classList.add('issue-open');
-        body.style.maxHeight = body.scrollHeight + 'px';
         chevron.textContent = '▾';
+        const journals = card.querySelector('.issue-journals');
+        if (journals && journals.dataset.loaded === 'false') {
+            journals.dataset.loaded = 'loading';
+            journals.innerHTML = '<div class="journals-loading">Загружаем комментарии…</div>';
+            body.style.maxHeight = body.scrollHeight + 'px';
+            fetch('/api/issues/' + card.dataset.id + '/journals')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.journals && data.journals.length > 0) {
+                        journals.innerHTML = '<div class="journals-title">Комментарии (' + data.journals.length + ')</div>' +
+                            data.journals.map(j => {
+                                const date = j.created_on ? j.created_on.slice(0, 10) : '';
+                                const author = j.user ? j.user.name : '';
+                                return '<div class="journal-entry">' +
+                                    '<div class="journal-meta"><span class="journal-author">' + author + '</span>' +
+                                    (date ? '<span class="journal-date">' + date + '</span>' : '') +
+                                    '</div>' +
+                                    '<div class="journal-notes">' + escapeHtml(j.notes) + '</div>' +
+                                    '</div>';
+                            }).join('');
+                    } else {
+                        journals.innerHTML = '';
+                    }
+                    journals.dataset.loaded = 'true';
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                })
+                .catch(() => {
+                    journals.innerHTML = '';
+                    journals.dataset.loaded = 'true';
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                });
+        } else {
+            body.style.maxHeight = body.scrollHeight + 'px';
+        }
     }
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // Цвет дедлайна

@@ -35,6 +35,19 @@ def index(request: Request):
     )
 
 
+@app.get('/api/issues/{issue_id}/journals')
+def issue_journals(issue_id: int):
+    try:
+        issue = RedmineClient.fetch_issue_with_journals(issue_id)
+        journals = [
+            j for j in issue.get('journals', [])
+            if j.get('notes', '').strip()
+        ]
+        return {'journals': journals}
+    except Exception as e:
+        return {'error': str(e), 'journals': []}
+
+
 @app.get('/health')
 def health():
     return {'status': 'ok'}
