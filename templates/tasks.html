@@ -12,7 +12,7 @@
 <div class="issue-list">
 {% for issue in issues %}
 <div class="issue-card priority-{{ issue.priority.name | lower | replace(' ', '-') }}" data-id="{{ issue.id }}">
-    <div class="issue-header" onclick="toggleIssue(this)">
+    <div class="issue-header">
         <div class="issue-meta">
             <span class="issue-id">#{{ issue.id }}</span>
             <span class="issue-badge badge-priority-{{ issue.priority.name | lower | replace(' ', '-') }}">{{ issue.priority.name }}</span>
@@ -242,6 +242,24 @@ function convertToPng(blob) {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModal(); });
+
+// Долгое нажатие на хедер — открыть/закрыть задачу
+(function() {
+    const LONG_PRESS = 500;
+    let _timer = null, _moved = false;
+    document.addEventListener('pointerdown', e => {
+        const header = e.target.closest('.issue-header');
+        if (!header || e.target.closest('.issue-info-panel')) return;
+        _moved = false;
+        _timer = setTimeout(() => {
+            _timer = null;
+            toggleIssue(header);
+        }, LONG_PRESS);
+    });
+    document.addEventListener('pointermove', () => { _moved = true; if (_timer) { clearTimeout(_timer); _timer = null; } });
+    document.addEventListener('pointerup', () => { if (_timer) { clearTimeout(_timer); _timer = null; } });
+    document.addEventListener('pointercancel', () => { if (_timer) { clearTimeout(_timer); _timer = null; } });
+})();
 
 document.addEventListener('click', e => {
     const open = document.querySelector('.issue-card.issue-open');
