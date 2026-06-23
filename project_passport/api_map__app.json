@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T04:21:08.169075+00:00",
+  "generated_at": "2026-06-23T04:46:44.981725+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
-  "scanned_python_files": 21,
-  "files_count": 16,
+  "scanned_python_files": 22,
+  "files_count": 17,
   "skipped_files_count": 5,
   "skipped_files": [
     "app/__init__.py",
@@ -14,12 +14,12 @@
     "app/utils/__init__.py"
   ],
   "stats": {
-    "modules": 16,
+    "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 64,
+    "functions": 66,
     "methods": 4,
-    "constants": 21
+    "constants": 24
   },
   "modules": [
     {
@@ -1153,6 +1153,65 @@
         "functions": 1,
         "methods": 0,
         "constants": 0
+      }
+    },
+    {
+      "path": "app/web.py",
+      "module_docstring": "FastAPI web application: маршруты Briefing.",
+      "module_summary": "FastAPI web application: маршруты Briefing.",
+      "classes": [],
+      "functions": [
+        {
+          "name": "index",
+          "signature": "index(request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/')"
+          ],
+          "lineno": 21,
+          "end_lineno": 26
+        },
+        {
+          "name": "health",
+          "signature": "health()",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/health')"
+          ],
+          "lineno": 30,
+          "end_lineno": 31
+        }
+      ],
+      "constants": [
+        {
+          "name": "PROJECT_ROOT",
+          "annotation": null,
+          "value_repr": "Path(__file__).resolve().parent.parent",
+          "lineno": 9
+        },
+        {
+          "name": "STATIC_DIR",
+          "annotation": null,
+          "value_repr": "PROJECT_ROOT / 'web_static'",
+          "lineno": 10
+        },
+        {
+          "name": "TEMPLATES_DIR",
+          "annotation": null,
+          "value_repr": "PROJECT_ROOT / 'templates'",
+          "lineno": 11
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 2,
+        "methods": 0,
+        "constants": 3
       }
     }
   ]

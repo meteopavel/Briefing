@@ -1,16 +1,16 @@
 # API map: app
 
-Просканировано Python-файлов: 21
-Включено в карту: 16
+Просканировано Python-файлов: 22
+Включено в карту: 17
 Пропущено без значимой API-информации: 5
 
 Сводная статистика:
-- модулей: 16
+- модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 64
+- функций: 66
 - методов: 4
-- констант: 21
+- констант: 24
 
 ---
 
@@ -538,3 +538,23 @@ HTTP-клиент для получения данных из Redmine API.
 
 - `build_redmine_report_url(start_date: str, end_date: str) -> str`
   Собирает ссылку на отчёт Redmine по time entries за указанный период.
+
+---
+
+# app/web.py
+
+Модуль:
+FastAPI web application: маршруты Briefing.
+
+Константы:
+- `PROJECT_ROOT = Path(__file__).resolve().parent.parent`
+- `STATIC_DIR = PROJECT_ROOT / 'web_static'`
+- `TEMPLATES_DIR = PROJECT_ROOT / 'templates'`
+
+Функции:
+
+- `index(request: Request)`
+  Нет докстринга.
+
+- `health()`
+  Нет докстринга.
