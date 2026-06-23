@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T10:50:32.097219+00:00",
+  "generated_at": "2026-06-23T10:53:01.040767+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -19,7 +19,7 @@
     "dataclasses": 1,
     "functions": 71,
     "methods": 5,
-    "constants": 27
+    "constants": 26
   },
   "modules": [
     {
@@ -1191,7 +1191,7 @@
           "kind": "function",
           "decorators": [],
           "lineno": 36,
-          "end_lineno": 46
+          "end_lineno": 53
         },
         {
           "name": "index",
@@ -1202,8 +1202,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 50,
-          "end_lineno": 63
+          "lineno": 57,
+          "end_lineno": 70
         },
         {
           "name": "issue_journals",
@@ -1214,8 +1214,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 67,
-          "end_lineno": 85
+          "lineno": 74,
+          "end_lineno": 92
         },
         {
           "name": "attachment_thumbnail",
@@ -1226,8 +1226,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 89,
-          "end_lineno": 101
+          "lineno": 96,
+          "end_lineno": 108
         },
         {
           "name": "avatar",
@@ -1238,8 +1238,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 105,
-          "end_lineno": 118
+          "lineno": 112,
+          "end_lineno": 125
         },
         {
           "name": "health",
@@ -1250,8 +1250,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 122,
-          "end_lineno": 123
+          "lineno": 129,
+          "end_lineno": 130
         }
       ],
       "constants": [
@@ -1282,13 +1282,7 @@
         {
           "name": "_EMAIL_RE",
           "annotation": null,
-          "value_repr": "re.compile('[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}')",
-          "lineno": 28
-        },
-        {
-          "name": "_AT_PLACEHOLDER",
-          "annotation": null,
-          "value_repr": "'\\x01AT\\x01'",
+          "value_repr": "re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\\\.[a-zA-Z0-9._-]+_?')",
           "lineno": 29
         }
       ],
@@ -1297,7 +1291,7 @@
         "dataclasses": 0,
         "functions": 7,
         "methods": 0,
-        "constants": 6
+        "constants": 5
       }
     }
   ]

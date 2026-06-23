@@ -10,7 +10,7 @@
 - dataclass: 1
 - функций: 71
 - методов: 5
-- констант: 27
+- констант: 26
 
 ---
 
@@ -553,8 +553,7 @@ FastAPI web application: маршруты Briefing.
 - `STATIC_DIR = PROJECT_ROOT / 'web_static'`
 - `TEMPLATES_DIR = PROJECT_ROOT / 'templates'`
 - `_SPAN_RE = re.compile('%\\{([^}]+)\\}([^%]*)%')`
-- `_EMAIL_RE = re.compile('[a-zA-Z0-9._+%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}')`
-- `_AT_PLACEHOLDER = '\x01AT\x01'`
+- `_EMAIL_RE = re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+_?')`
 
 Функции:
 
