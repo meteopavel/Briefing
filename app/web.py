@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import hashlib
 import re
 
 import requests as req_lib
@@ -127,18 +128,28 @@ def attachment_thumbnail(attachment_id: int):
     return Response(status_code=404)
 
 
+_avatar_cache: dict[int, bytes] = {}
+
+
 @app.get('/api/avatar/{user_id}')
 def avatar(user_id: int):
+    if user_id in _avatar_cache:
+        return Response(content=_avatar_cache[user_id], media_type='image/jpeg')
     try:
-        r = req_lib.get(
-            f'{REDMINE_URL}/users/{user_id}/avatar',
+        u = req_lib.get(
+            f'{REDMINE_URL}/users/{user_id}.json',
             headers={'X-Redmine-API-Key': REDMINE_API_KEY},
             timeout=5,
-            allow_redirects=True,
-        )
+        ).json().get('user', {})
+        email = (u.get('mail') or u.get('login') or '').strip().lower()
+        if not email:
+            return Response(status_code=404)
+        email_hash = hashlib.md5(email.encode()).hexdigest()
+        gravatar_url = f'https://www.gravatar.com/avatar/{email_hash}?size=48&rating=PG&default=404'
+        r = req_lib.get(gravatar_url, timeout=5)
         if r.status_code == 200:
-            ct = r.headers.get('content-type', 'image/png')
-            return Response(content=r.content, media_type=ct)
+            _avatar_cache[user_id] = r.content
+            return Response(content=r.content, media_type=r.headers.get('content-type', 'image/jpeg'))
     except Exception:
         pass
     return Response(status_code=404)

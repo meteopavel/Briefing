@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T10:56:53.260688+00:00",
+  "generated_at": "2026-06-23T11:00:08.531375+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -1180,8 +1180,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 40,
-          "end_lineno": 41
+          "lineno": 41,
+          "end_lineno": 42
         },
         {
           "name": "_escape_template_vars",
@@ -1190,8 +1190,8 @@
           "summary": "Экранирует <placeholder> которые не являются HTML-тегами.",
           "kind": "function",
           "decorators": [],
-          "lineno": 44,
-          "end_lineno": 52
+          "lineno": 45,
+          "end_lineno": 53
         },
         {
           "name": "_render",
@@ -1200,8 +1200,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 55,
-          "end_lineno": 72
+          "lineno": 56,
+          "end_lineno": 73
         },
         {
           "name": "index",
@@ -1212,8 +1212,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 76,
-          "end_lineno": 89
+          "lineno": 77,
+          "end_lineno": 90
         },
         {
           "name": "issue_journals",
@@ -1224,8 +1224,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 93,
-          "end_lineno": 111
+          "lineno": 94,
+          "end_lineno": 112
         },
         {
           "name": "attachment_thumbnail",
@@ -1236,8 +1236,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 115,
-          "end_lineno": 127
+          "lineno": 116,
+          "end_lineno": 128
         },
         {
           "name": "avatar",
@@ -1248,8 +1248,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 131,
-          "end_lineno": 144
+          "lineno": 135,
+          "end_lineno": 155
         },
         {
           "name": "health",
@@ -1260,8 +1260,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 148,
-          "end_lineno": 149
+          "lineno": 159,
+          "end_lineno": 160
         }
       ],
       "constants": [
@@ -1269,43 +1269,43 @@
           "name": "PROJECT_ROOT",
           "annotation": null,
           "value_repr": "Path(__file__).resolve().parent.parent",
-          "lineno": 16
+          "lineno": 17
         },
         {
           "name": "STATIC_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'web_static'",
-          "lineno": 17
+          "lineno": 18
         },
         {
           "name": "TEMPLATES_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'templates'",
-          "lineno": 18
+          "lineno": 19
         },
         {
           "name": "_SPAN_RE",
           "annotation": null,
           "value_repr": "re.compile('%\\\\{([^}]+)\\\\}([^%]*)%')",
-          "lineno": 27
+          "lineno": 28
         },
         {
           "name": "_EMAIL_RE",
           "annotation": null,
           "value_repr": "re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\\\.[a-zA-Z0-9._-]+_?')",
-          "lineno": 29
+          "lineno": 30
         },
         {
           "name": "_REAL_TAGS",
           "annotation": null,
           "value_repr": "{'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre', 'span', 'div', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'del', 'ins', 'sub', 'sup', 'tt'}",
-          "lineno": 31
+          "lineno": 32
         },
         {
           "name": "_ANGLE_RE",
           "annotation": null,
           "value_repr": "re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')",
-          "lineno": 37
+          "lineno": 38
         }
       ],
       "stats": {
