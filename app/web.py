@@ -2,11 +2,13 @@
 
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+import mistune
+import requests as req_lib
+from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.config import REDMINE_URL
+from app.config import REDMINE_API_KEY, REDMINE_URL
 from app.services.redmine.client import RedmineClient
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -19,11 +21,24 @@ app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
 
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
+_md = mistune.create_markdown(
+    plugins=['strikethrough', 'table', 'url'],
+    escape=False,
+)
+
+
+def _render_md(text: str | None) -> str:
+    if not text:
+        return ''
+    return _md(text)
+
 
 @app.get('/')
 def index(request: Request):
     try:
         issues = RedmineClient.fetch_my_issues()
+        for issue in issues:
+            issue['_desc_html'] = _render_md(issue.get('description', ''))
         error = None
     except Exception as e:
         issues = []
@@ -39,13 +54,32 @@ def index(request: Request):
 def issue_journals(issue_id: int):
     try:
         issue = RedmineClient.fetch_issue_with_journals(issue_id)
-        journals = [
-            j for j in issue.get('journals', [])
-            if j.get('notes', '').strip()
-        ]
+        journals = []
+        for j in issue.get('journals', []):
+            notes = j.get('notes', '').strip()
+            if notes:
+                j['notes_html'] = _render_md(notes)
+                journals.append(j)
         return {'journals': journals}
     except Exception as e:
         return {'error': str(e), 'journals': []}
+
+
+@app.get('/api/avatar/{user_id}')
+def avatar(user_id: int):
+    try:
+        r = req_lib.get(
+            f'{REDMINE_URL}/users/{user_id}/avatar',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+            timeout=5,
+            allow_redirects=True,
+        )
+        if r.status_code == 200:
+            ct = r.headers.get('content-type', 'image/png')
+            return Response(content=r.content, media_type=ct)
+    except Exception:
+        pass
+    return Response(status_code=404)
 
 
 @app.get('/health')

@@ -44,8 +44,8 @@
         </div>
         {% endif %}
 
-        {% if issue.description %}
-        <div class="issue-description">{{ issue.description }}</div>
+        {% if issue._desc_html %}
+        <div class="issue-description markdown-body">{{ issue._desc_html | safe }}</div>
         {% else %}
         <div class="issue-description issue-description-empty">Описание не заполнено</div>
         {% endif %}
@@ -128,11 +128,17 @@ function toggleIssue(header) {
                             data.journals.map(j => {
                                 const date = j.created_on ? j.created_on.slice(0, 10) : '';
                                 const author = j.user ? j.user.name : '';
+                                const uid = j.user ? j.user.id : 0;
+                                const initials = author.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
                                 return '<div class="journal-entry">' +
-                                    '<div class="journal-meta"><span class="journal-author">' + author + '</span>' +
+                                    '<div class="journal-meta">' +
+                                    '<img class="journal-avatar" src="/api/avatar/' + uid + '" alt="' + escapeHtml(initials) + '" ' +
+                                    'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+                                    '<span class="journal-avatar journal-avatar-fallback" style="display:none">' + escapeHtml(initials) + '</span>' +
+                                    '<span class="journal-author">' + escapeHtml(author) + '</span>' +
                                     (date ? '<span class="journal-date">' + date + '</span>' : '') +
                                     '</div>' +
-                                    '<div class="journal-notes">' + escapeHtml(j.notes) + '</div>' +
+                                    '<div class="journal-notes markdown-body">' + (j.notes_html || escapeHtml(j.notes || '')) + '</div>' +
                                     '</div>';
                             }).join('');
                     } else {

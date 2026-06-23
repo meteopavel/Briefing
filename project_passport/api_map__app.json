@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T08:44:44.201514+00:00",
+  "generated_at": "2026-06-23T10:33:40.046267+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,7 +17,7 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 67,
+    "functions": 69,
     "methods": 5,
     "constants": 24
   },
@@ -1174,6 +1174,16 @@
       "classes": [],
       "functions": [
         {
+          "name": "_render_md",
+          "signature": "_render_md(text: str | None) -> str",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 30,
+          "end_lineno": 33
+        },
+        {
           "name": "index",
           "signature": "index(request: Request)",
           "docstring": null,
@@ -1182,8 +1192,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 24,
-          "end_lineno": 35
+          "lineno": 37,
+          "end_lineno": 50
         },
         {
           "name": "issue_journals",
@@ -1194,8 +1204,20 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 39,
-          "end_lineno": 48
+          "lineno": 54,
+          "end_lineno": 65
+        },
+        {
+          "name": "avatar",
+          "signature": "avatar(user_id: int)",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/api/avatar/{user_id}')"
+          ],
+          "lineno": 69,
+          "end_lineno": 82
         },
         {
           "name": "health",
@@ -1206,8 +1228,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 52,
-          "end_lineno": 53
+          "lineno": 86,
+          "end_lineno": 87
         }
       ],
       "constants": [
@@ -1215,25 +1237,25 @@
           "name": "PROJECT_ROOT",
           "annotation": null,
           "value_repr": "Path(__file__).resolve().parent.parent",
-          "lineno": 12
+          "lineno": 14
         },
         {
           "name": "STATIC_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'web_static'",
-          "lineno": 13
+          "lineno": 15
         },
         {
           "name": "TEMPLATES_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'templates'",
-          "lineno": 14
+          "lineno": 16
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 3,
+        "functions": 5,
         "methods": 0,
         "constants": 3
       }
