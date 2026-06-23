@@ -175,6 +175,9 @@ function toggleIssue(header) {
                     }
                     journals.dataset.loaded = 'true';
                     body.style.maxHeight = 'none';
+                    const entries = journals.querySelectorAll('.journal-entry');
+                    const target = entries[Math.max(0, entries.length - 3)];
+                    if (target) requestAnimationFrame(() => target.scrollIntoView({behavior: 'smooth', block: 'start'}));
                 })
                 .catch(() => {
                     journals.innerHTML = '';
