@@ -36,6 +36,7 @@ _REAL_TAGS = {
     'img', 'blockquote', 'del', 'ins', 'sub', 'sup', 'tt',
 }
 _ANGLE_RE = re.compile(r'</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')
+_NOTEXTILE_RE = re.compile(r'<notextile>(.*?)</notextile>', re.DOTALL)
 
 
 def _fix_spans(html: str) -> str:
@@ -56,14 +57,16 @@ def _escape_template_vars(text: str) -> str:
 def _render(text: str | None) -> str:
     if not text:
         return ''
-    # Сохраняем email-токены (включая прилегающие _) → placeholders
     tokens: list[str] = []
 
-    def _store(m: re.Match) -> str:
-        tokens.append(m.group(0))
+    def _store_raw(content: str) -> str:
+        tokens.append(content)
         return f'\x01TOK{len(tokens) - 1}\x01'
 
-    protected = _escape_template_vars(_EMAIL_RE.sub(_store, text))
+    # 1. <notextile>...</notextile> → защищаем содержимое, теги выбрасываем
+    text = _NOTEXTILE_RE.sub(lambda m: _store_raw(m.group(1)), text)
+    # 2. Email-адреса (включая прилегающие _) → токены
+    protected = _escape_template_vars(_EMAIL_RE.sub(lambda m: _store_raw(m.group(0)), text))
     try:
         html = textile.textile(protected)
     except Exception:
