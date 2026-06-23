@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T08:42:24.081033+00:00",
+  "generated_at": "2026-06-23T08:44:44.201514+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,7 +17,7 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 66,
+    "functions": 67,
     "methods": 5,
     "constants": 24
   },
@@ -1186,6 +1186,18 @@
           "end_lineno": 35
         },
         {
+          "name": "issue_journals",
+          "signature": "issue_journals(issue_id: int)",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/api/issues/{issue_id}/journals')"
+          ],
+          "lineno": 39,
+          "end_lineno": 48
+        },
+        {
           "name": "health",
           "signature": "health()",
           "docstring": null,
@@ -1194,8 +1206,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 39,
-          "end_lineno": 40
+          "lineno": 52,
+          "end_lineno": 53
         }
       ],
       "constants": [
@@ -1221,7 +1233,7 @@
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 2,
+        "functions": 3,
         "methods": 0,
         "constants": 3
       }

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T08:42:24.144884+00:00",
+  "generated_at": "2026-06-23T08:44:44.269708+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -59,7 +59,7 @@
     "scanned_python_files": 22,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 66,
+    "functions": 67,
     "methods": 5,
     "constants": 24,
     "has_cli": true,
@@ -137,14 +137,14 @@
         }
       },
       {
-        "path": "app/utils/docx_utils.py",
-        "summary": "Утилиты для работы с DOCX-документами.",
+        "path": "app/web.py",
+        "summary": "FastAPI web application: маршруты Briefing.",
         "stats": {
           "classes": 0,
           "dataclasses": 0,
-          "functions": 6,
+          "functions": 3,
           "methods": 0,
-          "constants": 0
+          "constants": 3
         }
       }
     ]
@@ -157,7 +157,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-06-23T08:42:24.081033+00:00",
+    "api_map_generated_at": "2026-06-23T08:44:44.201514+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"
