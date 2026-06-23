@@ -263,7 +263,16 @@
 
 .issue-card.issue-open .issue-body {
     border-top: 1px solid var(--border);
-    padding: 14px 14px 14px;
+    padding: 0;
+}
+
+.issue-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--card-bg);
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid var(--border);
 }
 
 /* Progress bar full */
@@ -410,6 +419,7 @@ blockquote.redmine-quote {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding: 0 14px 14px;
 }
 
 .issue-link {
@@ -429,6 +439,7 @@ blockquote.redmine-quote {
 /* Journals */
 .issue-journals {
     margin-bottom: 12px;
+    padding: 0 14px;
 }
 
 .journals-loading {
