@@ -27,23 +27,42 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 _SPAN_RE = re.compile(r'%\{([^}]+)\}([^%]*)%')
 # Захватываем опциональные _ вокруг адреса — они ломают textile-курсив
 _EMAIL_RE = re.compile(r'_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+_?')
+# Настоящие HTML-теги, которые трогать нельзя
+_REAL_TAGS = {
+    'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre',
+    'span', 'div', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tfoot',
+    'tr', 'th', 'td', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'img', 'blockquote', 'del', 'ins', 'sub', 'sup', 'tt',
+}
+_ANGLE_RE = re.compile(r'</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')
 
 
 def _fix_spans(html: str) -> str:
     return _SPAN_RE.sub(lambda m: f'<span style="{m.group(1)}">{m.group(2)}</span>', html)
 
 
+def _escape_template_vars(text: str) -> str:
+    """Экранирует <placeholder> которые не являются HTML-тегами."""
+    def _replace(m: re.Match) -> str:
+        full = m.group(0)
+        tag_name = (m.group(1) or m.group(2) or '').lower()
+        if tag_name in _REAL_TAGS:
+            return full
+        return full.replace('<', '&lt;').replace('>', '&gt;')
+    return _ANGLE_RE.sub(_replace, text)
+
+
 def _render(text: str | None) -> str:
     if not text:
         return ''
-    # Сохраняем все email-подобные токены (включая прилегающие _) → placeholders
+    # Сохраняем email-токены (включая прилегающие _) → placeholders
     tokens: list[str] = []
 
     def _store(m: re.Match) -> str:
         tokens.append(m.group(0))
         return f'\x01TOK{len(tokens) - 1}\x01'
 
-    protected = _EMAIL_RE.sub(_store, text)
+    protected = _escape_template_vars(_EMAIL_RE.sub(_store, text))
     try:
         html = textile.textile(protected)
     except Exception:
