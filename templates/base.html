@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div>
+            <div class="eyebrow">Личный центр управления</div>
+            <h1>Briefing</h1>
+        </div>
+        <div class="header-badge">
+            <span class="status-dot status-dot-green"></span>
+            Онлайн
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <a class="tab {% if active_tab == 'tasks' %}tab-active{% endif %}" href="/">Задачи</a>
+        <a class="tab {% if active_tab == 'projects' %}tab-active{% endif %}" href="/projects">Проекты</a>
+        <a class="tab {% if active_tab == 'docs' %}tab-active{% endif %}" href="/docs">Документы</a>
+        <a class="tab {% if active_tab == 'chronicle' %}tab-active{% endif %}" href="/chronicle">Хроника</a>
+    </nav>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        Briefing · local only
+    </footer>
+</div>
+</body>
+</html>
