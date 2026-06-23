@@ -33,61 +33,43 @@
             {% endif %}
         </div>
         <span class="issue-chevron">▸</span>
+        <div class="issue-info-panel" onclick="event.stopPropagation()">
+            {% if issue.get('done_ratio', 0) > 0 %}
+            <div class="issue-progress-wrap">
+                <div class="issue-progress-full">
+                    <div class="issue-progress-fill" style="width: {{ issue.done_ratio }}%"></div>
+                </div>
+                <span class="issue-progress-label">{{ issue.done_ratio }}% выполнено</span>
+            </div>
+            {% endif %}
+            {% if issue._desc_html %}
+            <div class="issue-description markdown-body">{{ issue._desc_html | safe }}</div>
+            {% else %}
+            <div class="issue-description issue-description-empty">Описание не заполнено</div>
+            {% endif %}
+            <div class="issue-meta-grid">
+                {% if issue.get('tracker') %}
+                <div class="issue-meta-item"><span class="issue-meta-label">Трекер</span><span class="issue-meta-value">{{ issue.tracker.name }}</span></div>
+                {% endif %}
+                {% if issue.get('author') %}
+                <div class="issue-meta-item"><span class="issue-meta-label">Автор</span><span class="issue-meta-value">{{ issue.author.name }}</span></div>
+                {% endif %}
+                {% if issue.get('start_date') %}
+                <div class="issue-meta-item"><span class="issue-meta-label">Начало</span><span class="issue-meta-value">{{ issue.start_date }}</span></div>
+                {% endif %}
+                {% if issue.get('due_date') %}
+                <div class="issue-meta-item"><span class="issue-meta-label">Дедлайн</span><span class="issue-meta-value issue-due" data-due="{{ issue.due_date }}">{{ issue.due_date }}</span></div>
+                {% endif %}
+                {% if issue.get('estimated_hours') %}
+                <div class="issue-meta-item"><span class="issue-meta-label">Оценка</span><span class="issue-meta-value">{{ "%.1f"|format(issue.estimated_hours) }} ч</span></div>
+                {% endif %}
+                {% if issue.get('spent_hours') %}
+                <div class="issue-meta-item"><span class="issue-meta-label">Затрачено</span><span class="issue-meta-value">{{ "%.1f"|format(issue.spent_hours) }} ч</span></div>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class="issue-body">
-        {% if issue.get('done_ratio', 0) > 0 %}
-        <div class="issue-progress-wrap">
-            <div class="issue-progress-full">
-                <div class="issue-progress-fill" style="width: {{ issue.done_ratio }}%"></div>
-            </div>
-            <span class="issue-progress-label">{{ issue.done_ratio }}% выполнено</span>
-        </div>
-        {% endif %}
-
-        {% if issue._desc_html %}
-        <div class="issue-description markdown-body">{{ issue._desc_html | safe }}</div>
-        {% else %}
-        <div class="issue-description issue-description-empty">Описание не заполнено</div>
-        {% endif %}
-
-        <div class="issue-meta-grid">
-            {% if issue.get('tracker') %}
-            <div class="issue-meta-item">
-                <span class="issue-meta-label">Трекер</span>
-                <span class="issue-meta-value">{{ issue.tracker.name }}</span>
-            </div>
-            {% endif %}
-            {% if issue.get('author') %}
-            <div class="issue-meta-item">
-                <span class="issue-meta-label">Автор</span>
-                <span class="issue-meta-value">{{ issue.author.name }}</span>
-            </div>
-            {% endif %}
-            {% if issue.get('start_date') %}
-            <div class="issue-meta-item">
-                <span class="issue-meta-label">Начало</span>
-                <span class="issue-meta-value">{{ issue.start_date }}</span>
-            </div>
-            {% endif %}
-            {% if issue.get('due_date') %}
-            <div class="issue-meta-item">
-                <span class="issue-meta-label">Дедлайн</span>
-                <span class="issue-meta-value issue-due" data-due="{{ issue.due_date }}">{{ issue.due_date }}</span>
-            </div>
-            {% endif %}
-            {% if issue.get('estimated_hours') %}
-            <div class="issue-meta-item">
-                <span class="issue-meta-label">Оценка</span>
-                <span class="issue-meta-value">{{ "%.1f"|format(issue.estimated_hours) }} ч</span>
-            </div>
-            {% endif %}
-            {% if issue.get('spent_hours') %}
-            <div class="issue-meta-item">
-                <span class="issue-meta-label">Затрачено</span>
-                <span class="issue-meta-value">{{ "%.1f"|format(issue.spent_hours) }} ч</span>
-            </div>
-            {% endif %}
-        </div>
         <div class="issue-journals" data-loaded="false"></div>
 
         <div class="issue-footer">

@@ -261,6 +261,13 @@
     transition: max-height 0.3s ease;
 }
 
+.issue-info-panel {
+    display: none;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+}
+.issue-card.issue-open .issue-info-panel { display: block; }
+
 .issue-card.issue-open .issue-body {
     border-top: 1px solid var(--border);
     padding: 14px 14px 14px;
