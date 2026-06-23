@@ -98,7 +98,7 @@ def issue_journals(issue_id: int):
     try:
         issue = RedmineClient.fetch_issue_with_journals(issue_id)
         journals = []
-        for j in issue.get('journals', []):
+        for note_idx, j in enumerate(issue.get('journals', []), start=1):
             notes = j.get('notes', '').strip()
             details = j.get('details', [])
             attachments = [
@@ -112,6 +112,7 @@ def issue_journals(issue_id: int):
                     j['notes_html'] = _render(notes)
                 j['attachments'] = attachments
                 j['attr_changes'] = attr_changes
+                j['_note_index'] = note_idx
                 journals.append(j)
         return {'journals': journals}
     except Exception as e:

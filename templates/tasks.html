@@ -130,6 +130,8 @@ function toggleIssue(header) {
                                 const author = j.user ? j.user.name : '';
                                 const uid = j.user ? j.user.id : 0;
                                 const initials = author.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                                const noteIdx = j._note_index || '';
+                                const noteHref = noteIdx ? '{{ redmine_url }}/issues/' + card.dataset.id + '#note-' + noteIdx : '';
                                 const attachHtml = (j.attachments && j.attachments.length)
                                     ? '<div class="journal-attachments">' +
                                       j.attachments.map(a => {
@@ -161,6 +163,7 @@ function toggleIssue(header) {
                                     '<span class="journal-avatar journal-avatar-fallback" style="display:none">' + escapeHtml(initials) + '</span>' +
                                     '<span class="journal-author">' + escapeHtml(author) + '</span>' +
                                     (date ? '<span class="journal-date">' + date + '</span>' : '') +
+                                    (noteHref ? '<a class="journal-note-link" href="' + noteHref + '" target="_blank" title="Открыть в Redmine">#' + noteIdx + '</a>' : '') +
                                     '</div>' +
                                     attrHtml +
                                     attachHtml +
