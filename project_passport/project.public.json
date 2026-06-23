@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T04:46:45.048262+00:00",
+  "generated_at": "2026-06-23T08:31:58.263423+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -60,7 +60,7 @@
     "classes": 2,
     "dataclasses": 1,
     "functions": 66,
-    "methods": 4,
+    "methods": 5,
     "constants": 24,
     "has_cli": true,
     "has_redmine_integration": true,
@@ -126,6 +126,17 @@
         }
       },
       {
+        "path": "app/services/redmine/client.py",
+        "summary": "HTTP-клиент для получения данных из Redmine API.",
+        "stats": {
+          "classes": 1,
+          "dataclasses": 0,
+          "functions": 0,
+          "methods": 5,
+          "constants": 0
+        }
+      },
+      {
         "path": "app/utils/docx_utils.py",
         "summary": "Утилиты для работы с DOCX-документами.",
         "stats": {
@@ -133,17 +144,6 @@
           "dataclasses": 0,
           "functions": 6,
           "methods": 0,
-          "constants": 0
-        }
-      },
-      {
-        "path": "app/services/redmine/client.py",
-        "summary": "HTTP-клиент для получения данных из Redmine API.",
-        "stats": {
-          "classes": 1,
-          "dataclasses": 0,
-          "functions": 0,
-          "methods": 4,
           "constants": 0
         }
       }
@@ -157,7 +157,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-06-23T04:46:44.981725+00:00",
+    "api_map_generated_at": "2026-06-23T08:31:58.196557+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"

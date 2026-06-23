@@ -90,3 +90,20 @@ class RedmineClient:
         )
         response.raise_for_status()
         return response.json()['issue']
+
+    @staticmethod
+    def fetch_my_issues(status_id: str = 'open') -> list[dict[str, Any]]:
+        """Загружает задачи, назначенные на текущего пользователя."""
+        response = requests.get(
+            f'{REDMINE_URL}/issues.json',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+            params={
+                'assigned_to_id': REDMINE_USER_ID,
+                'status_id': status_id,
+                'limit': 100,
+                'sort': 'priority:desc,updated_on:desc',
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json().get('issues', [])
