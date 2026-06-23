@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T04:46:44.981725+00:00",
+  "generated_at": "2026-06-23T08:31:58.196557+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -18,7 +18,7 @@
     "classes": 2,
     "dataclasses": 1,
     "functions": 66,
-    "methods": 4,
+    "methods": 5,
     "constants": 24
   },
   "modules": [
@@ -591,10 +591,22 @@
               ],
               "lineno": 82,
               "end_lineno": 92
+            },
+            {
+              "name": "fetch_my_issues",
+              "signature": "fetch_my_issues(status_id: str = 'open') -> list[dict[str, Any]]",
+              "docstring": "Загружает задачи, назначенные на текущего пользователя.",
+              "summary": "Загружает задачи, назначенные на текущего пользователя.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 95,
+              "end_lineno": 109
             }
           ],
           "lineno": 18,
-          "end_lineno": 92
+          "end_lineno": 109
         }
       ],
       "functions": [],
@@ -603,7 +615,7 @@
         "classes": 1,
         "dataclasses": 0,
         "functions": 0,
-        "methods": 4,
+        "methods": 5,
         "constants": 0
       }
     },
@@ -1170,8 +1182,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 21,
-          "end_lineno": 26
+          "lineno": 24,
+          "end_lineno": 35
         },
         {
           "name": "health",
@@ -1182,8 +1194,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 30,
-          "end_lineno": 31
+          "lineno": 39,
+          "end_lineno": 40
         }
       ],
       "constants": [
@@ -1191,19 +1203,19 @@
           "name": "PROJECT_ROOT",
           "annotation": null,
           "value_repr": "Path(__file__).resolve().parent.parent",
-          "lineno": 9
+          "lineno": 12
         },
         {
           "name": "STATIC_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'web_static'",
-          "lineno": 10
+          "lineno": 13
         },
         {
           "name": "TEMPLATES_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'templates'",
-          "lineno": 11
+          "lineno": 14
         }
       ],
       "stats": {

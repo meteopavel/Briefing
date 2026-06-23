@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if error %}
+<div class="alert alert-error">Ошибка Redmine: {{ error }}</div>
+{% elif not issues %}
+<div class="empty-state">Нет активных задач</div>
+{% else %}
+<div class="issue-list">
+{% for issue in issues %}
+<div class="issue-card priority-{{ issue.priority.name | lower | replace(' ', '-') }}">
+    <div class="issue-meta">
+        <span class="issue-id">#{{ issue.id }}</span>
+        <span class="issue-priority">{{ issue.priority.name }}</span>
+        <span class="issue-status">{{ issue.status.name }}</span>
+    </div>
+    <div class="issue-subject">
+        <a href="{{ redmine_url }}/issues/{{ issue.id }}" target="_blank">{{ issue.subject }}</a>
+    </div>
+    {% if issue.project %}
+    <div class="issue-project">{{ issue.project.name }}</div>
+    {% endif %}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
