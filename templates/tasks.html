@@ -130,6 +130,20 @@ function toggleIssue(header) {
                                 const author = j.user ? j.user.name : '';
                                 const uid = j.user ? j.user.id : 0;
                                 const initials = author.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                                const attachHtml = (j.attachments && j.attachments.length)
+                                    ? '<div class="journal-attachments">' +
+                                      j.attachments.map(a => {
+                                          const isImage = /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(a.filename);
+                                          const dlUrl = '/api/attachment/thumbnail/' + a.id;
+                                          if (isImage) {
+                                              return '<a class="journal-attach-img-wrap" href="' + dlUrl + '" target="_blank">' +
+                                                     '<img class="journal-attach-img" src="' + dlUrl + '" alt="' + escapeHtml(a.filename) + '" loading="lazy">' +
+                                                     '</a>';
+                                          }
+                                          return '<a class="journal-attach-file" href="' + dlUrl + '" target="_blank">📎 ' + escapeHtml(a.filename) + '</a>';
+                                      }).join('') +
+                                      '</div>'
+                                    : '';
                                 return '<div class="journal-entry">' +
                                     '<div class="journal-meta">' +
                                     '<img class="journal-avatar" src="/api/avatar/' + uid + '" alt="' + escapeHtml(initials) + '" ' +
@@ -138,7 +152,8 @@ function toggleIssue(header) {
                                     '<span class="journal-author">' + escapeHtml(author) + '</span>' +
                                     (date ? '<span class="journal-date">' + date + '</span>' : '') +
                                     '</div>' +
-                                    '<div class="journal-notes markdown-body">' + (j.notes_html || escapeHtml(j.notes || '')) + '</div>' +
+                                    attachHtml +
+                                    (j.notes_html ? '<div class="journal-notes markdown-body">' + j.notes_html + '</div>' : '') +
                                     '</div>';
                             }).join('');
                     } else {
