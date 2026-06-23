@@ -35,6 +35,7 @@
         <span class="issue-chevron">▸</span>
     </div>
     <div class="issue-body">
+        <div class="issue-sticky-header">
         {% if issue.get('done_ratio', 0) > 0 %}
         <div class="issue-progress-wrap">
             <div class="issue-progress-full">
@@ -88,6 +89,7 @@
             </div>
             {% endif %}
         </div>
+        </div><!-- /issue-sticky-header -->
 
         <div class="issue-journals" data-loaded="false"></div>
 
@@ -109,7 +111,7 @@ function toggleIssue(header) {
     const isOpen = card.classList.contains('issue-open');
     document.querySelectorAll('.issue-card.issue-open').forEach(c => {
         c.classList.remove('issue-open');
-        c.querySelector('.issue-body').style.maxHeight = null;
+        const b = c.querySelector('.issue-body'); b.style.maxHeight = null; b.style.overflow = '';
         c.querySelector('.issue-chevron').textContent = '▸';
     });
     if (!isOpen) {
@@ -183,6 +185,7 @@ function toggleIssue(header) {
                     journals.innerHTML = '';
                     journals.dataset.loaded = 'true';
                     body.style.maxHeight = 'none';
+                    body.style.overflow = 'visible';
                 });
         } else {
             body.style.maxHeight = body.scrollHeight + 'px';
@@ -268,7 +271,7 @@ document.addEventListener('click', e => {
     const journals = open.querySelector('.issue-journals');
     if (journals && journals.contains(e.target) && !e.target.closest('.journal-entry')) {
         open.classList.remove('issue-open');
-        body.style.maxHeight = null;
+        body.style.maxHeight = null; body.style.overflow = '';
         open.querySelector('.issue-chevron').textContent = '▸';
     }
 });
