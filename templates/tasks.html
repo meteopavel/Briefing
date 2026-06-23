@@ -4,7 +4,10 @@
 {% if error %}
 <div class="alert alert-error">Ошибка Redmine: {{ error }}</div>
 {% elif not issues %}
-<div class="empty-state">Нет активных задач</div>
+<div class="empty-state">
+    <div class="empty-state-icon">✓</div>
+    <div class="empty-state-text">Нет активных задач</div>
+</div>
 {% else %}
 <div class="issue-list">
 {% for issue in issues %}
@@ -12,19 +15,80 @@
     <div class="issue-header" onclick="toggleIssue(this)">
         <div class="issue-meta">
             <span class="issue-id">#{{ issue.id }}</span>
-            <span class="issue-priority">{{ issue.priority.name }}</span>
-            <span class="issue-status">{{ issue.status.name }}</span>
-            {% if issue.project %}<span class="issue-project-tag">{{ issue.project.name }}</span>{% endif %}
+            <span class="issue-badge badge-priority-{{ issue.priority.name | lower | replace(' ', '-') }}">{{ issue.priority.name }}</span>
+            <span class="issue-badge badge-status">{{ issue.status.name }}</span>
+            {% if issue.get('tracker') %}<span class="issue-badge badge-tracker">{{ issue.tracker.name }}</span>{% endif %}
+            {% if issue.project %}<span class="issue-badge badge-project">{{ issue.project.name }}</span>{% endif %}
         </div>
         <div class="issue-subject">{{ issue.subject }}</div>
+        <div class="issue-header-footer">
+            {% if issue.get('due_date') %}
+            <span class="issue-due" data-due="{{ issue.due_date }}">{{ issue.due_date }}</span>
+            {% endif %}
+            {% if issue.get('done_ratio', 0) > 0 %}
+            <span class="issue-progress-inline">
+                <span class="issue-progress-bar-inline" style="width: {{ issue.done_ratio }}%"></span>
+                <span class="issue-progress-text">{{ issue.done_ratio }}%</span>
+            </span>
+            {% endif %}
+        </div>
         <span class="issue-chevron">▸</span>
     </div>
     <div class="issue-body">
+        {% if issue.get('done_ratio', 0) > 0 %}
+        <div class="issue-progress-wrap">
+            <div class="issue-progress-full">
+                <div class="issue-progress-fill" style="width: {{ issue.done_ratio }}%"></div>
+            </div>
+            <span class="issue-progress-label">{{ issue.done_ratio }}% выполнено</span>
+        </div>
+        {% endif %}
+
         {% if issue.description %}
         <div class="issue-description">{{ issue.description }}</div>
         {% else %}
         <div class="issue-description issue-description-empty">Описание не заполнено</div>
         {% endif %}
+
+        <div class="issue-meta-grid">
+            {% if issue.get('tracker') %}
+            <div class="issue-meta-item">
+                <span class="issue-meta-label">Трекер</span>
+                <span class="issue-meta-value">{{ issue.tracker.name }}</span>
+            </div>
+            {% endif %}
+            {% if issue.get('author') %}
+            <div class="issue-meta-item">
+                <span class="issue-meta-label">Автор</span>
+                <span class="issue-meta-value">{{ issue.author.name }}</span>
+            </div>
+            {% endif %}
+            {% if issue.get('start_date') %}
+            <div class="issue-meta-item">
+                <span class="issue-meta-label">Начало</span>
+                <span class="issue-meta-value">{{ issue.start_date }}</span>
+            </div>
+            {% endif %}
+            {% if issue.get('due_date') %}
+            <div class="issue-meta-item">
+                <span class="issue-meta-label">Дедлайн</span>
+                <span class="issue-meta-value issue-due" data-due="{{ issue.due_date }}">{{ issue.due_date }}</span>
+            </div>
+            {% endif %}
+            {% if issue.get('estimated_hours') %}
+            <div class="issue-meta-item">
+                <span class="issue-meta-label">Оценка</span>
+                <span class="issue-meta-value">{{ "%.1f"|format(issue.estimated_hours) }} ч</span>
+            </div>
+            {% endif %}
+            {% if issue.get('spent_hours') %}
+            <div class="issue-meta-item">
+                <span class="issue-meta-label">Затрачено</span>
+                <span class="issue-meta-value">{{ "%.1f"|format(issue.spent_hours) }} ч</span>
+            </div>
+            {% endif %}
+        </div>
+
         <div class="issue-footer">
             <a class="issue-link" href="{{ redmine_url }}/issues/{{ issue.id }}" target="_blank">Открыть в Redmine →</a>
             {% if issue.updated_on %}<span class="issue-updated">Обновлено: {{ issue.updated_on[:10] }}</span>{% endif %}
@@ -41,7 +105,6 @@ function toggleIssue(header) {
     const body = card.querySelector('.issue-body');
     const chevron = card.querySelector('.issue-chevron');
     const isOpen = card.classList.contains('issue-open');
-    // Закрываем все
     document.querySelectorAll('.issue-card.issue-open').forEach(c => {
         c.classList.remove('issue-open');
         c.querySelector('.issue-body').style.maxHeight = null;
@@ -53,6 +116,19 @@ function toggleIssue(header) {
         chevron.textContent = '▾';
     }
 }
+
+// Цвет дедлайна
+(function() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    document.querySelectorAll('.issue-due[data-due]').forEach(el => {
+        const d = new Date(el.dataset.due);
+        const diff = Math.round((d - today) / 86400000);
+        if (diff < 0) el.classList.add('due-overdue');
+        else if (diff <= 3) el.classList.add('due-soon');
+        else el.classList.add('due-ok');
+    });
+})();
 </script>
 
 {% endblock %}
