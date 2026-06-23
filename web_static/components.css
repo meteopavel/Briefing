@@ -579,25 +579,33 @@
     line-height: 0;
 }
 
-.img-modal-btn {
+.img-modal-actions {
     position: absolute;
     top: 8px;
     right: 8px;
     z-index: 10;
-    background: rgba(0,0,0,0.45);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #fff;
-    border-radius: var(--radius-pill);
-    padding: 4px 12px;
-    font-size: var(--fs-xs);
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: background var(--transition);
-    line-height: 1.4;
+    display: flex;
+    gap: 4px;
 }
 
-.img-modal-btn:hover { background: rgba(0,0,0,0.7); }
-.img-modal-btn.copied { background: rgba(80,180,80,0.7); }
+.img-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    border-radius: 7px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background var(--transition), color var(--transition);
+}
+
+.img-action-btn:hover { background: rgba(0, 0, 0, 0.65); color: #fff; }
+.img-action-btn.copied { background: rgba(60, 160, 80, 0.75); color: #fff; }
+.img-action-btn.error { background: rgba(180, 60, 60, 0.75); color: #fff; }
 
 .journal-attach-file {
     font-size: var(--fs-xs);

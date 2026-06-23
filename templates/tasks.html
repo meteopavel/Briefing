@@ -187,6 +187,9 @@ function toggleIssue(header) {
 function openImgModal(url) {
     const modal = document.getElementById('img-modal');
     const img = document.getElementById('img-modal-img');
+    const inner = document.getElementById('img-modal-inner');
+    inner.style.visibility = 'hidden';
+    img.onload = () => { inner.style.visibility = 'visible'; };
     img.src = url;
     modal.classList.add('img-modal-open');
     document.body.style.overflow = 'hidden';
@@ -202,33 +205,26 @@ function closeImgModal() {
 async function copyImgToClipboard() {
     const img = document.getElementById('img-modal-img');
     const btn = document.getElementById('img-copy-btn');
-    const src = img.src;
     try {
-        const r = await fetch(src);
+        const r = await fetch(img.src);
         const blob = await r.blob();
         const pngBlob = blob.type === 'image/png' ? blob : await convertToPng(blob);
-        if (navigator.clipboard && navigator.clipboard.write) {
-            await navigator.clipboard.write([new ClipboardItem({'image/png': pngBlob})]);
-            btn.textContent = 'Скопировано ✓';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'Копировать'; btn.classList.remove('copied'); }, 2000);
-        } else {
-            triggerDownload(src, img);
-        }
+        await navigator.clipboard.write([new ClipboardItem({'image/png': pngBlob})]);
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 2000);
     } catch(e) {
-        triggerDownload(src, img);
+        btn.classList.add('error');
+        setTimeout(() => btn.classList.remove('error'), 2000);
     }
 }
 
-function triggerDownload(src, img) {
-    const btn = document.getElementById('img-copy-btn');
+function downloadImg() {
+    const img = document.getElementById('img-modal-img');
     const a = document.createElement('a');
-    a.href = src;
-    const parts = src.split('?')[0].split('/');
+    a.href = img.src;
+    const parts = img.src.split('?')[0].split('/');
     a.download = parts[parts.length - 1] || 'image.png';
     a.click();
-    btn.textContent = 'Скачивается…';
-    setTimeout(() => { btn.textContent = 'Копировать'; }, 2000);
 }
 
 function convertToPng(blob) {
@@ -269,8 +265,19 @@ function escapeHtml(s) {
 </script>
 
 <div id="img-modal" class="img-modal" onclick="closeImgModal()">
-    <div class="img-modal-inner">
-        <button class="img-modal-btn" id="img-copy-btn" onclick="event.stopPropagation(); copyImgToClipboard()">Копировать</button>
+    <div class="img-modal-inner" id="img-modal-inner">
+        <div class="img-modal-actions" onclick="event.stopPropagation()">
+            <button class="img-action-btn" id="img-copy-btn" onclick="copyImgToClipboard()" title="Копировать">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+            </button>
+            <button class="img-action-btn" onclick="downloadImg()" title="Скачать">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </button>
+        </div>
         <img id="img-modal-img" src="" alt="">
     </div>
 </div>
