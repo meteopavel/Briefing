@@ -66,12 +66,35 @@ def issue_journals(issue_id: int):
         journals = []
         for j in issue.get('journals', []):
             notes = j.get('notes', '').strip()
-            if notes:
-                j['notes_html'] = _render(notes)
+            attachments = [
+                {'id': d['name'], 'filename': d['new_value']}
+                for d in j.get('details', [])
+                if d.get('property') == 'attachment' and d.get('new_value')
+            ]
+            if notes or attachments:
+                if notes:
+                    j['notes_html'] = _render(notes)
+                j['attachments'] = attachments
                 journals.append(j)
         return {'journals': journals}
     except Exception as e:
         return {'error': str(e), 'journals': []}
+
+
+@app.get('/api/attachment/thumbnail/{attachment_id}')
+def attachment_thumbnail(attachment_id: int):
+    try:
+        r = req_lib.get(
+            f'{REDMINE_URL}/attachments/thumbnail/{attachment_id}',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+            timeout=10,
+        )
+        if r.status_code == 200 and r.content:
+            ct = r.headers.get('content-type', 'image/png')
+            return Response(content=r.content, media_type=ct)
+    except Exception:
+        pass
+    return Response(status_code=404)
 
 
 @app.get('/api/avatar/{user_id}')
