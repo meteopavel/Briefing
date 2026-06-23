@@ -174,12 +174,12 @@ function toggleIssue(header) {
                         journals.innerHTML = '';
                     }
                     journals.dataset.loaded = 'true';
-                    body.style.maxHeight = body.scrollHeight + 'px';
+                    body.style.maxHeight = 'none';
                 })
                 .catch(() => {
                     journals.innerHTML = '';
                     journals.dataset.loaded = 'true';
-                    body.style.maxHeight = body.scrollHeight + 'px';
+                    body.style.maxHeight = 'none';
                 });
         } else {
             body.style.maxHeight = body.scrollHeight + 'px';
