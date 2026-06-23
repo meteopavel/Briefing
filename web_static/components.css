@@ -573,20 +573,22 @@
     box-shadow: 0 8px 40px rgba(0,0,0,0.6);
 }
 
-.img-modal-toolbar {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    display: flex;
-    gap: 8px;
+.img-modal-inner {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
 }
 
 .img-modal-btn {
-    background: rgba(255,255,255,0.15);
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    background: rgba(0,0,0,0.45);
     border: 1px solid rgba(255,255,255,0.25);
     color: #fff;
     border-radius: var(--radius-pill);
-    padding: 5px 14px;
+    padding: 4px 12px;
     font-size: var(--fs-xs);
     cursor: pointer;
     backdrop-filter: blur(4px);
@@ -594,8 +596,8 @@
     line-height: 1.4;
 }
 
-.img-modal-btn:hover { background: rgba(255,255,255,0.28); }
-.img-modal-btn.copied { background: rgba(80,180,80,0.5); }
+.img-modal-btn:hover { background: rgba(0,0,0,0.7); }
+.img-modal-btn.copied { background: rgba(80,180,80,0.7); }
 
 .journal-attach-file {
     font-size: var(--fs-xs);
