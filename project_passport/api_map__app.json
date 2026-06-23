@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T10:33:40.046267+00:00",
+  "generated_at": "2026-06-23T10:39:09.812550+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -1174,14 +1174,14 @@
       "classes": [],
       "functions": [
         {
-          "name": "_render_md",
-          "signature": "_render_md(text: str | None) -> str",
+          "name": "_render",
+          "signature": "_render(text: str | None) -> str",
           "docstring": null,
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 30,
-          "end_lineno": 33
+          "lineno": 25,
+          "end_lineno": 31
         },
         {
           "name": "index",
@@ -1192,8 +1192,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 37,
-          "end_lineno": 50
+          "lineno": 35,
+          "end_lineno": 48
         },
         {
           "name": "issue_journals",
@@ -1204,8 +1204,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 54,
-          "end_lineno": 65
+          "lineno": 52,
+          "end_lineno": 63
         },
         {
           "name": "avatar",
@@ -1216,8 +1216,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 69,
-          "end_lineno": 82
+          "lineno": 67,
+          "end_lineno": 80
         },
         {
           "name": "health",
@@ -1228,8 +1228,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 86,
-          "end_lineno": 87
+          "lineno": 84,
+          "end_lineno": 85
         }
       ],
       "constants": [
