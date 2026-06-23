@@ -49,8 +49,8 @@ Python, Redmine API, pandas, python-docx, python-dotenv, JSON, CSV, Markdown.
 Рекомендуется виртуальное окружение Python 3.9.
 
 ```bash
-git clone https://github.com/meteopavel/Chronicle_Reporting_Automation.git
-cd Chronicle_Reporting_Automation
+git clone https://github.com/meteopavel/Briefing.git
+cd Briefing
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

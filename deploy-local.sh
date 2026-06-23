@@ -11,7 +11,7 @@ for ((i=0; i<${#args[@]}; i++)); do
   esac
 done
 
-REPO_REQUIRED_REMOTE='git@github.com:meteopavel/Chronicle_Reporting_Automation.git'
+REPO_REQUIRED_REMOTE='git@github.com:meteopavel/Briefing.git'
 BRANCH_NAME='main'
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 ENV_FILE="${REPO_ROOT}/.env"
