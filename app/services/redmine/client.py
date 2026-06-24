@@ -115,22 +115,30 @@ class RedmineClient:
         from datetime import date
         today_str = date.today().isoformat()
         try:
-            response = requests.get(
-                f'{REDMINE_URL}/time_entries.json',
-                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
-                params={'user_id': REDMINE_USER_ID, 'limit': 500},
-                timeout=15,
-            )
-            response.raise_for_status()
             result: dict[int, dict] = {}
-            for entry in response.json().get('time_entries', []):
-                issue = entry.get('issue', {})
-                iid = issue.get('id')
-                if iid:
-                    rec = result.setdefault(iid, {'hours': 0.0, 'today': False})
-                    rec['hours'] += entry.get('hours', 0.0)
-                    if entry.get('spent_on') == today_str:
-                        rec['today'] = True
+            offset = 0
+            limit = 100
+            while True:
+                response = requests.get(
+                    f'{REDMINE_URL}/time_entries.json',
+                    headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                    params={'user_id': REDMINE_USER_ID, 'limit': limit, 'offset': offset},
+                    timeout=15,
+                )
+                response.raise_for_status()
+                data = response.json()
+                entries = data.get('time_entries', [])
+                for entry in entries:
+                    issue = entry.get('issue', {})
+                    iid = issue.get('id')
+                    if iid:
+                        rec = result.setdefault(iid, {'hours': 0.0, 'today': False})
+                        rec['hours'] += entry.get('hours', 0.0)
+                        if entry.get('spent_on') == today_str:
+                            rec['today'] = True
+                offset += limit
+                if offset >= data.get('total_count', 0):
+                    break
             return result
         except Exception:
             return {}

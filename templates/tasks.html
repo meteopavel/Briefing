@@ -16,7 +16,7 @@
             {% endif %}
         </div>
         <div class="issue-header-right">
-            {% if issue._spent_hours %}<span class="issue-spent{% if issue._spent_today %} spent-today{% endif %}">{{ "%.1f"|format(issue._spent_hours) }} ч</span>{% endif %}
+            {% if issue._spent_hours %}<span class="issue-spent{% if issue._spent_today %} spent-today{% endif %}">{{ "%.2f"|format(issue._spent_hours) }} ч</span>{% endif %}
             {% if issue._workdays is not none %}
                 {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
                 {% elif issue._workdays == 0 %}<span class="issue-due due-soon">сегодня</span>
