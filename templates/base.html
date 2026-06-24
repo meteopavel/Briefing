@@ -21,10 +21,13 @@
     </header>
 
     <nav class="tabs">
-        <a class="tab {% if active_tab == 'tasks' %}tab-active{% endif %}" href="/">Задачи</a>
+        <a class="tab {% if active_tab == 'tasks' %}tab-active{% endif %}" href="/">Задачи{% if issues_count %} ({{ issues_count }}){% endif %}</a>
         <a class="tab {% if active_tab == 'projects' %}tab-active{% endif %}" href="/projects">Проекты</a>
         <a class="tab {% if active_tab == 'docs' %}tab-active{% endif %}" href="/docs">Документы</a>
         <a class="tab {% if active_tab == 'chronicle' %}tab-active{% endif %}" href="/chronicle">Хроника</a>
+        <form class="issue-search-form" onsubmit="event.preventDefault(); const v=this.q.value.trim().replace(/^#/,''); if(v) window.location='/issue/'+v;">
+            <input class="issue-search-input" name="q" type="text" placeholder="#номер" maxlength="10">
+        </form>
     </nav>
 
     <main class="content">

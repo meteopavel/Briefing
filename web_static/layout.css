@@ -81,6 +81,29 @@
     border-bottom-color: var(--blue);
 }
 
+.issue-search-form {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+}
+.issue-search-input {
+    background: var(--bg-input, var(--bg-row));
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    padding: 4px 10px;
+    width: 90px;
+    outline: none;
+    transition: border-color var(--transition), width var(--transition);
+}
+.issue-search-input:focus {
+    border-color: var(--blue);
+    width: 130px;
+}
+.issue-search-input::placeholder { color: var(--muted); }
+
 .content {
     display: flex;
     flex-direction: column;
