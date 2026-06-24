@@ -298,6 +298,20 @@
 .issue-card.label-ai .issue-subject { color: #a5f3fc; }
 
 .issue-mrs { display: flex; gap: 4px; align-items: center; }
+.issue-mrs-loading { position: relative; min-width: 14px; min-height: 14px; }
+.issue-mrs-loading .mr-badge { display: none; }
+.issue-mrs-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--muted);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: issue-spin 0.7s linear infinite;
+}
 
 .mr-badge {
     display: inline-flex;
