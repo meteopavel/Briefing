@@ -32,7 +32,7 @@ class GitLabClient:
         data = response.json()
         result = {
             'state': data.get('state', 'unknown'),
-            'has_conflicts': data.get('has_conflicts', False),
+            'has_conflicts': data.get('merge_status') == 'cannot_be_merged' or data.get('has_conflicts', False),
         }
         _mr_cache[mr_iid] = {'data': result, 'ts': now}
         return result
