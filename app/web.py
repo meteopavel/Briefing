@@ -161,12 +161,23 @@ def _detect_label(subject: str) -> str:
     return ''
 
 
+_PRIORITY_ORDER = {
+    'критичный баг': 0,
+    'недельный фокус': 1,
+    'высокий': 2, 'high': 2,
+    'нормальный': 3, 'normal': 3,
+    'низкий': 4, 'low': 4,
+}
+
+
 def _issue_sort_key(issue: dict) -> tuple:
-    label       = issue.get('_label', '')
-    status_name = (issue.get('status') or {}).get('name', '').lower()
-    due         = issue.get('due_date') or ''
-    in_progress = 'работ' in status_name
-    on_review   = 'ревью' in status_name or 'review' in status_name
+    label         = issue.get('_label', '')
+    status_name   = (issue.get('status') or {}).get('name', '').lower()
+    priority_name = (issue.get('priority') or {}).get('name', '').lower()
+    due           = issue.get('due_date') or ''
+    in_progress   = 'работ' in status_name
+    on_review     = 'ревью' in status_name or 'review' in status_name
+    prio          = _PRIORITY_ORDER.get(priority_name, 3)
     if label == 'q':
         group = 0 if due else 1
     elif in_progress and due:
@@ -177,7 +188,7 @@ def _issue_sort_key(issue: dict) -> tuple:
         group = 4
     else:
         group = 5
-    return (group, due if due else 'z')
+    return (group, prio, due if due else 'z')
 
 
 @app.get('/')

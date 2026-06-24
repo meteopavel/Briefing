@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 83
+- функций: 82
 - методов: 5
-- констант: 35
+- констант: 36
 
 ---
 
@@ -562,6 +562,7 @@ FastAPI web application: маршруты Briefing.
 - `_GROUP_DEFS = [('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s …`
 - `_LABEL_Q_RE = re.compile('\\[Q', re.IGNORECASE)`
 - `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`
+- `_PRIORITY_ORDER = {'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, '…`
 - `_ATTR_LABELS: dict[str, str] = {'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Г…`
 
 Функции:
@@ -618,7 +619,4 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `health()`
-  Нет докстринга.
-
-- `demo(request: Request)`
   Нет докстринга.
