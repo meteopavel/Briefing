@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.config import REDMINE_API_KEY, REDMINE_API_KEY_ADMIN, REDMINE_URL
+from app.services.gitlab.client import GitLabClient
 from app.services.redmine.client import RedmineClient
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -120,10 +121,30 @@ def _calc_workdays(due_str: str | None) -> int | None:
         return -count
 
 
+_MR_URL_RE = re.compile(
+    r'(https?://\S+/merge_requests/(\d+))\s*[-–]?\s*(stage|master)?',
+    re.IGNORECASE,
+)
+
+
+def _parse_mrs(custom_fields: list) -> list[dict]:
+    field_40 = next((f for f in custom_fields if f.get('id') == 40), None)
+    if not field_40 or not field_40.get('value'):
+        return []
+    mrs, seen = [], set()
+    for m in _MR_URL_RE.finditer(field_40['value']):
+        url, mr_iid, mr_type = m.group(1), int(m.group(2)), (m.group(3) or '').lower()
+        if mr_iid not in seen:
+            seen.add(mr_iid)
+            mrs.append({'url': url, 'mr_iid': mr_iid, 'mr_type': mr_type})
+    return mrs
+
+
 def _enrich(issue: dict, spent_map: dict | None = None) -> dict:
     issue['_desc_html'] = issue.get('_desc_html', '')
     issue['_label']      = _detect_label(issue.get('subject', ''))
     issue['_workdays']   = _calc_workdays(issue.get('due_date'))
+    issue['_mrs']        = _parse_mrs(issue.get('custom_fields', []))
     if spent_map is not None:
         rec = spent_map.get(issue.get('id'), {})
         issue['_spent_hours'] = rec.get('hours', 0.0)
@@ -228,6 +249,20 @@ def api_spent():
         return {'by_issue': by_issue}
     except Exception as e:
         return {'error': str(e), 'by_issue': {}, 'daily': []}
+
+
+@app.get('/api/mrs')
+def api_mrs(iids: str = ''):
+    if not iids:
+        return {}
+    mr_iids = [int(x) for x in iids.split(',') if x.strip().isdigit()]
+    result = {}
+    for iid in mr_iids:
+        try:
+            result[str(iid)] = GitLabClient.fetch_mr_status(iid)
+        except Exception:
+            result[str(iid)] = {'state': 'unknown', 'has_conflicts': False}
+    return result
 
 
 @app.get('/issue/{issue_id}')

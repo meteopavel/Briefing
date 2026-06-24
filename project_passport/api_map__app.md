@@ -1,16 +1,16 @@
 # API map: app
 
-Просканировано Python-файлов: 22
-Включено в карту: 17
-Пропущено без значимой API-информации: 5
+Просканировано Python-файлов: 24
+Включено в карту: 18
+Пропущено без значимой API-информации: 6
 
 Сводная статистика:
-- модулей: 17
-- классов: 1
+- модулей: 18
+- классов: 2
 - dataclass: 1
-- функций: 83
-- методов: 9
-- констант: 37
+- функций: 85
+- методов: 10
+- констант: 42
 
 ---
 
@@ -86,6 +86,9 @@ CLI-точка входа для генерации документов и эк
 - `REDMINE_API_KEY = os.getenv('REDMINE_API_KEY')`
 - `REDMINE_API_KEY_ADMIN = os.getenv('REDMINE_API_KEY_ADMIN') or os.getenv('REDMINE_API_KEY')`
 - `REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')`
+- `GITLAB_URL = os.getenv('GITLAB_URL', '').rstrip('/')`
+- `GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')`
+- `GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')`
 - `DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')`
 - `USER_MAP = load_int_key_dict_env('USER_MAP', {})`
 - `ISSUE_STATUS_MAP = load_int_key_dict_env('ISSUE_STATUS_MAP', {})`
@@ -225,6 +228,21 @@ README с дальнейшими шагами и итогового prompt'а д
   Загружает таблицу трудозатрат, рассчитывает распределение суммы
   вознаграждения по задачам, формирует итоговую таблицу и вставляет
   её в шаблон отчёта.
+
+---
+
+# app/services/gitlab/client.py
+
+Константы:
+- `_MR_CACHE_TTL = 300`
+
+Классы:
+
+- `GitLabClient`
+  Нет докстринга.
+  Методы:
+  - `fetch_mr_status(mr_iid: int) -> dict`
+    Возвращает {state, has_conflicts} для MR. Кэширует на 5 минут.
 
 ---
 
@@ -571,6 +589,7 @@ FastAPI web application: маршруты Briefing.
 - `_NOTEXTILE_RE = re.compile('<notextile>(.*?)</notextile>', re.DOTALL)`
 - `_QUOTE_BLOCK_RE = re.compile('((?:^> ?.*$\\n?)+)', re.MULTILINE)`
 - `_GROUP_DEFS = [('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s …`
+- `_MR_URL_RE = re.compile('(https?://\\S+/merge_requests/(\\d+))\\s*[-–]?\\s*(stage|master)?', re.IGNORECASE)`
 - `_LABEL_Q_RE = re.compile('\\[Q', re.IGNORECASE)`
 - `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`
 - `_PRIORITY_ORDER = {'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, '…`
@@ -590,6 +609,9 @@ FastAPI web application: маршруты Briefing.
 - `_calc_workdays(due_str: str | None) -> int | None`
   Нет докстринга.
 
+- `_parse_mrs(custom_fields: list) -> list[dict]`
+  Нет докстринга.
+
 - `_enrich(issue: dict, spent_map: dict | None = None) -> dict`
   Нет докстринга.
 
@@ -606,6 +628,9 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `api_spent()`
+  Нет докстринга.
+
+- `api_mrs(iids: str = '')`
   Нет докстринга.
 
 - `issue_by_id(request: Request, issue_id: int)`

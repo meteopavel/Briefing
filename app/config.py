@@ -64,6 +64,10 @@ REDMINE_API_KEY = os.getenv('REDMINE_API_KEY')
 REDMINE_API_KEY_ADMIN = os.getenv('REDMINE_API_KEY_ADMIN') or os.getenv('REDMINE_API_KEY')
 REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')
 
+GITLAB_URL = os.getenv('GITLAB_URL', '').rstrip('/')
+GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')
+GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')
+
 DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')
 
 USER_MAP = load_int_key_dict_env('USER_MAP', {})
