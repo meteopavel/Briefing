@@ -99,6 +99,23 @@
 </div>
 {% endif %}
 
+{% if daily_summary %}
+<div class="timelog-section">
+    <div class="timelog-header">Трудозатраты · 3 дня</div>
+    {% for day in daily_summary %}
+    <div class="timelog-row">
+        <span class="timelog-date">{{ day.date }}</span>
+        <span class="timelog-total {% if day.total == 0 %}timelog-zero{% endif %}">{{ "%.2f"|format(day.total) }} ч</span>
+        <span class="timelog-entries">
+            {% for e in day.entries | sort(attribute='hours', reverse=True) %}
+            <a class="timelog-chip" href="{{ redmine_url }}/issues/{{ e.issue_id }}" target="_blank">#{{ e.issue_id }} {{ "%.2f"|format(e.hours) }} ч</a>
+            {% endfor %}
+        </span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <script>
 function toggleIssue(header) {
     const card = header.parentElement;

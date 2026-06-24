@@ -116,40 +116,74 @@ class RedmineClient:
         return response.json().get('issues', [])
 
     @staticmethod
-    def fetch_my_spent_hours() -> dict[int, dict]:
-        """Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя."""
+    def _fetch_and_cache() -> None:
+        """Загружает все записи времени и сохраняет в кэш."""
         from datetime import date
         today_str = date.today().isoformat()
-        cached = _spent_cache.get('data')
-        if cached and time.monotonic() - _spent_cache.get('ts', 0) < _SPENT_CACHE_TTL:
-            return cached
-        try:
-            result: dict[int, dict] = {}
-            offset = 0
-            limit = 100
-            while True:
-                response = requests.get(
-                    f'{REDMINE_URL}/time_entries.json',
-                    headers={'X-Redmine-API-Key': REDMINE_API_KEY},
-                    params={'user_id': REDMINE_USER_ID, 'limit': limit, 'offset': offset},
-                    timeout=15,
-                )
-                response.raise_for_status()
-                data = response.json()
-                entries = data.get('time_entries', [])
-                for entry in entries:
-                    issue = entry.get('issue', {})
-                    iid = issue.get('id')
+        by_issue: dict[int, dict] = {}
+        by_day: dict[str, dict] = {}
+        offset = 0
+        limit = 100
+        while True:
+            response = requests.get(
+                f'{REDMINE_URL}/time_entries.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                params={'user_id': REDMINE_USER_ID, 'limit': limit, 'offset': offset},
+                timeout=15,
+            )
+            response.raise_for_status()
+            data = response.json()
+            for entry in data.get('time_entries', []):
+                issue = entry.get('issue', {})
+                iid = issue.get('id')
+                hours = entry.get('hours', 0.0)
+                spent_on = entry.get('spent_on', '')
+                if iid:
+                    rec = by_issue.setdefault(iid, {'hours': 0.0, 'today': False})
+                    rec['hours'] += hours
+                    if spent_on == today_str:
+                        rec['today'] = True
+                if spent_on:
+                    day = by_day.setdefault(spent_on, {'total': 0.0, 'entries': []})
+                    day['total'] += hours
                     if iid:
-                        rec = result.setdefault(iid, {'hours': 0.0, 'today': False})
-                        rec['hours'] += entry.get('hours', 0.0)
-                        if entry.get('spent_on') == today_str:
-                            rec['today'] = True
-                offset += limit
-                if offset >= data.get('total_count', 0):
-                    break
-            _spent_cache['data'] = result
-            _spent_cache['ts'] = time.monotonic()
-            return result
+                        day['entries'].append({'issue_id': iid, 'hours': hours,
+                                               'subject': issue.get('subject', '')})
+            offset += limit
+            if offset >= data.get('total_count', 0):
+                break
+        _spent_cache['by_issue'] = by_issue
+        _spent_cache['by_day'] = by_day
+        _spent_cache['ts'] = time.monotonic()
+
+    @staticmethod
+    def _ensure_cache() -> None:
+        if not _spent_cache.get('by_issue') or                 time.monotonic() - _spent_cache.get('ts', 0) >= _SPENT_CACHE_TTL:
+            RedmineClient._fetch_and_cache()
+
+    @staticmethod
+    def fetch_my_spent_hours() -> dict[int, dict]:
+        """Возвращает {issue_id: {hours: float, today: bool}}."""
+        try:
+            RedmineClient._ensure_cache()
+            return _spent_cache.get('by_issue', {})
         except Exception:
             return {}
+
+    @staticmethod
+    def fetch_daily_summary(days: int = 3) -> list[dict]:
+        """Возвращает список {date, total, entries} за последние N дней (включая дни без записей)."""
+        from datetime import date, timedelta
+        try:
+            RedmineClient._ensure_cache()
+            by_day = _spent_cache.get('by_day', {})
+        except Exception:
+            by_day = {}
+        today = date.today()
+        result = []
+        for i in range(days):
+            d = today - timedelta(days=i)
+            ds = d.isoformat()
+            day_data = by_day.get(ds, {'total': 0.0, 'entries': []})
+            result.append({'date': ds, 'total': day_data['total'], 'entries': day_data['entries']})
+        return result

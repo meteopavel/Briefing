@@ -9,7 +9,7 @@
 - классов: 1
 - dataclass: 1
 - функций: 82
-- методов: 6
+- методов: 9
 - констант: 37
 
 ---
@@ -256,8 +256,14 @@ HTTP-клиент для получения данных из Redmine API.
     Загружает полные данные одной задачи без journals.
   - `fetch_my_issues(status_id: str = 'open') -> list[dict[str, Any]]`
     Загружает задачи, назначенные на текущего пользователя.
+  - `_fetch_and_cache() -> None`
+    Загружает все записи времени и сохраняет в кэш.
+  - `_ensure_cache() -> None`
+    Нет докстринга.
   - `fetch_my_spent_hours() -> dict[int, dict]`
-    Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя.
+    Возвращает {issue_id: {hours: float, today: bool}}.
+  - `fetch_daily_summary(days: int = 3) -> list[dict]`
+    Возвращает список {date, total, entries} за последние N дней (включая дни без записей).
 
 ---
 
