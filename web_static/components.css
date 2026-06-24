@@ -289,11 +289,15 @@
     font-size: var(--fs-xs);
     font-weight: 500;
     color: var(--muted);
+    min-width: 44px;
+    text-align: right;
 }
 
 .issue-due {
     font-size: var(--fs-xs);
     font-weight: 600;
+    min-width: 56px;
+    text-align: right;
 }
 .issue-due.due-overdue { color: var(--tint-red-text); }
 .issue-due.due-soon    { color: var(--tint-yellow-text); }
