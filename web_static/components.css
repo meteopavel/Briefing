@@ -183,10 +183,12 @@
     cursor: default;
 }
 
-.issue-card.priority-urgent, .issue-card.priority-срочный    { border-left-color: var(--tint-red-border); }
-.issue-card.priority-high, .issue-card.priority-высокий      { border-left-color: var(--tint-yellow-border); }
-.issue-card.priority-normal, .issue-card.priority-нормальный { border-left-color: var(--tint-blue-border); }
-.issue-card.priority-low, .issue-card.priority-низкий        { border-left-color: var(--tint-gray-border); }
+.issue-card.priority-urgent,           .issue-card.priority-срочный            { border-left-color: var(--tint-red-border); }
+.issue-card.priority-критичный-баг                                              { border-left-color: var(--tint-red-border); }
+.issue-card.priority-недельный-фокус                                            { border-left-color: rgba(190, 18, 60, 0.7); }
+.issue-card.priority-high,             .issue-card.priority-высокий             { border-left-color: var(--tint-yellow-border); }
+.issue-card.priority-normal,           .issue-card.priority-нормальный          { border-left-color: var(--tint-blue-border); }
+.issue-card.priority-low,              .issue-card.priority-низкий              { border-left-color: var(--tint-gray-border); }
 
 /* Card header */
 .issue-header {
@@ -257,14 +259,18 @@
 }
 
 /* Priority colors for ID and subject */
-.priority-urgent .issue-id, .priority-срочный .issue-id,
-.priority-urgent .issue-subject, .priority-срочный .issue-subject    { color: var(--tint-red-text); }
-.priority-high .issue-id, .priority-высокий .issue-id,
-.priority-high .issue-subject, .priority-высокий .issue-subject      { color: var(--tint-yellow-text); }
-.priority-normal .issue-id, .priority-нормальный .issue-id,
-.priority-normal .issue-subject, .priority-нормальный .issue-subject { color: var(--text); }
-.priority-low .issue-id, .priority-низкий .issue-id,
-.priority-low .issue-subject, .priority-низкий .issue-subject        { color: var(--muted); }
+.priority-urgent .issue-id,           .priority-срочный .issue-id,
+.priority-urgent .issue-subject,      .priority-срочный .issue-subject       { color: var(--tint-red-text); }
+.priority-критичный-баг .issue-id,
+.priority-критичный-баг .issue-subject                                        { color: var(--tint-red-text); }
+.priority-недельный-фокус .issue-id,
+.priority-недельный-фокус .issue-subject                                      { color: #fda4af; }
+.priority-high .issue-id,             .priority-высокий .issue-id,
+.priority-high .issue-subject,        .priority-высокий .issue-subject        { color: var(--tint-yellow-text); }
+.priority-normal .issue-id,           .priority-нормальный .issue-id,
+.priority-normal .issue-subject,      .priority-нормальный .issue-subject     { color: var(--text); }
+.priority-low .issue-id,              .priority-низкий .issue-id,
+.priority-low .issue-subject,         .priority-низкий .issue-subject         { color: var(--muted); }
 
 /* Label: q (quarterly — orange-red) */
 .issue-card.label-q { border-left-color: rgba(251, 146, 60, 0.8); }
