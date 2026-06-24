@@ -34,6 +34,7 @@
         </div>
         <button class="issue-toggle-btn" onclick="toggleIssue(this.closest('.issue-header'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         <div class="issue-info-panel" onclick="event.stopPropagation()">
+            <button class="info-panel-toggle" onclick="toggleInfoPanel(this.closest('.issue-header'))" title="Свернуть описание"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
             {% if issue.get('done_ratio', 0) > 0 %}
             <div class="issue-progress-wrap">
                 <div class="issue-progress-full">
@@ -250,6 +251,11 @@ document.addEventListener('keydown', e => {
         }
     }
 });
+
+function toggleInfoPanel(header) {
+    const card = header.parentElement;
+    card.classList.toggle('info-panel-collapsed');
+}
 
 function escapeHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
