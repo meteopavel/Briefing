@@ -261,10 +261,16 @@
     font-size: var(--fs-sm);
     color: var(--text);
     margin-right: 4px;
-    max-width: 600px;
+    max-width: 500px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.issue-open .issue-subject {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    max-width: none;
 }
 
 /* Priority colors for ID and subject */
