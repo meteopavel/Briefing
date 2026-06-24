@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T04:49:23.677624+00:00",
+  "generated_at": "2026-06-24T04:55:59.502488+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -18,7 +18,7 @@
     "classes": 2,
     "dataclasses": 1,
     "functions": 82,
-    "methods": 6,
+    "methods": 9,
     "constants": 37
   },
   "modules": [
@@ -611,20 +611,56 @@
               "end_lineno": 116
             },
             {
-              "name": "fetch_my_spent_hours",
-              "signature": "fetch_my_spent_hours() -> dict[int, dict]",
-              "docstring": "Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя.",
-              "summary": "Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя.",
+              "name": "_fetch_and_cache",
+              "signature": "_fetch_and_cache() -> None",
+              "docstring": "Загружает все записи времени и сохраняет в кэш.",
+              "summary": "Загружает все записи времени и сохраняет в кэш.",
               "kind": "method",
               "decorators": [
                 "staticmethod"
               ],
               "lineno": 119,
-              "end_lineno": 155
+              "end_lineno": 157
+            },
+            {
+              "name": "_ensure_cache",
+              "signature": "_ensure_cache() -> None",
+              "docstring": null,
+              "summary": null,
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 160,
+              "end_lineno": 162
+            },
+            {
+              "name": "fetch_my_spent_hours",
+              "signature": "fetch_my_spent_hours() -> dict[int, dict]",
+              "docstring": "Возвращает {issue_id: {hours: float, today: bool}}.",
+              "summary": "Возвращает {issue_id: {hours: float, today: bool}}.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 165,
+              "end_lineno": 171
+            },
+            {
+              "name": "fetch_daily_summary",
+              "signature": "fetch_daily_summary(days: int = 3) -> list[dict]",
+              "docstring": "Возвращает список {date, total, entries} за последние N дней (включая дни без записей).",
+              "summary": "Возвращает список {date, total, entries} за последние N дней (включая дни без записей).",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 174,
+              "end_lineno": 189
             }
           ],
           "lineno": 24,
-          "end_lineno": 155
+          "end_lineno": 189
         }
       ],
       "functions": [],
@@ -640,7 +676,7 @@
         "classes": 1,
         "dataclasses": 0,
         "functions": 0,
-        "methods": 6,
+        "methods": 9,
         "constants": 1
       }
     },
@@ -1288,7 +1324,7 @@
             "app.get('/')"
           ],
           "lineno": 199,
-          "end_lineno": 216
+          "end_lineno": 217
         },
         {
           "name": "issue_by_id",
@@ -1299,8 +1335,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 220,
-          "end_lineno": 241
+          "lineno": 221,
+          "end_lineno": 242
         },
         {
           "name": "issue_journals",
@@ -1311,8 +1347,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 245,
-          "end_lineno": 274
+          "lineno": 246,
+          "end_lineno": 275
         },
         {
           "name": "attachment_thumbnail",
@@ -1323,8 +1359,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 278,
-          "end_lineno": 290
+          "lineno": 279,
+          "end_lineno": 291
         },
         {
           "name": "attachment_download",
@@ -1335,8 +1371,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 294,
-          "end_lineno": 308
+          "lineno": 295,
+          "end_lineno": 309
         },
         {
           "name": "_get_redmine_meta",
@@ -1345,8 +1381,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 330,
-          "end_lineno": 353
+          "lineno": 331,
+          "end_lineno": 354
         },
         {
           "name": "_resolve_attr",
@@ -1355,8 +1391,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 356,
-          "end_lineno": 381
+          "lineno": 357,
+          "end_lineno": 382
         },
         {
           "name": "_build_attr_changes",
@@ -1365,8 +1401,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 384,
-          "end_lineno": 394
+          "lineno": 385,
+          "end_lineno": 395
         },
         {
           "name": "avatar",
@@ -1377,8 +1413,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 398,
-          "end_lineno": 418
+          "lineno": 399,
+          "end_lineno": 419
         },
         {
           "name": "health",
@@ -1389,8 +1425,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 422,
-          "end_lineno": 423
+          "lineno": 423,
+          "end_lineno": 424
         }
       ],
       "constants": [
@@ -1476,7 +1512,7 @@
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 314
+          "lineno": 315
         }
       ],
       "stats": {

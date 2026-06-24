@@ -776,3 +776,42 @@ blockquote.redmine-quote {
     padding: 12px 16px;
     font-size: var(--fs-sm);
 }
+
+/* Timelog section */
+.timelog-section {
+    margin-top: 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+.timelog-header {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+.timelog-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-xs);
+}
+.timelog-row:last-child { border-bottom: none; }
+.timelog-date  { color: var(--muted); min-width: 90px; flex-shrink: 0; }
+.timelog-total { font-weight: 700; min-width: 52px; text-align: right; flex-shrink: 0; }
+.timelog-zero  { color: var(--muted); font-weight: 400; }
+.timelog-entries { display: flex; flex-wrap: wrap; gap: 4px; }
+.timelog-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color var(--transition), color var(--transition);
+}
+.timelog-chip:hover { border-color: var(--blue); color: var(--text); text-decoration: none; }
