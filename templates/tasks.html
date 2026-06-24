@@ -32,7 +32,7 @@
             </span>
             {% endif %}
         </div>
-        <button class="issue-toggle-btn" onclick="toggleIssue(this.closest('.issue-header'))"><span class="issue-chevron">▸</span></button>
+        <button class="issue-toggle-btn" onclick="toggleIssue(this.closest('.issue-header'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         <div class="issue-info-panel" onclick="event.stopPropagation()">
             {% if issue.get('done_ratio', 0) > 0 %}
             <div class="issue-progress-wrap">
@@ -86,16 +86,13 @@
 function toggleIssue(header) {
     const card = header.parentElement;
     const body = card.querySelector('.issue-body');
-    const chevron = card.querySelector('.issue-chevron');
     const isOpen = card.classList.contains('issue-open');
     document.querySelectorAll('.issue-card.issue-open').forEach(c => {
         c.classList.remove('issue-open');
         const b = c.querySelector('.issue-body'); b.style.maxHeight = null; b.style.overflow = '';
-        c.querySelector('.issue-chevron').textContent = '▸';
     });
     if (!isOpen) {
         card.classList.add('issue-open');
-        chevron.textContent = '▾';
         const journals = card.querySelector('.issue-journals');
         if (journals && journals.dataset.loaded === 'false') {
             journals.dataset.loaded = 'loading';
