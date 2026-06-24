@@ -100,7 +100,30 @@ def index(request: Request):
     return templates.TemplateResponse(
         request=request,
         name='tasks.html',
-        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'error': error, 'redmine_url': REDMINE_URL},
+        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues)},
+    )
+
+
+@app.get('/issue/{issue_id}')
+def issue_by_id(request: Request, issue_id: int):
+    try:
+        r = req_lib.get(
+            f'{REDMINE_URL}/issues/{issue_id}.json',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+            timeout=30,
+        )
+        r.raise_for_status()
+        issue = r.json()['issue']
+        issue['_desc_html'] = _render(issue.get('description'))
+        issues = [issue]
+        error = None
+    except Exception as e:
+        issues = []
+        error = str(e)
+    return templates.TemplateResponse(
+        request=request,
+        name='tasks.html',
+        context={'title': f'#{issue_id}', 'active_tab': 'tasks', 'issues': issues, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': None},
     )
 
 
