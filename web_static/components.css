@@ -155,15 +155,12 @@
 .issue-header {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto auto;
-    gap: 5px 8px;
+    gap: 0 8px;
     padding: 12px 14px;
 }
 
-.issue-header .issue-meta      { grid-column: 1; grid-row: 1; }
-.issue-header .issue-subject   { grid-column: 1; grid-row: 2; }
-.issue-header .issue-header-footer { grid-column: 1; grid-row: 3; }
-.issue-toggle-btn              { grid-column: 2; grid-row: 1 / 4; align-self: center; justify-self: center; background: none; border: none; padding: 8px; cursor: pointer; line-height: 1; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background var(--transition); }
+.issue-header .issue-meta      { grid-column: 1; grid-row: 1; align-self: center; }
+.issue-toggle-btn              { grid-column: 2; grid-row: 1; align-self: center; justify-self: center; background: none; border: none; padding: 8px; cursor: pointer; line-height: 1; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background var(--transition); }
 .issue-toggle-btn:hover        { background: var(--bg-hover, rgba(0,0,0,0.06)); }
 
 /* Meta badges row */
@@ -200,21 +197,23 @@
 .badge-tracker  { color: var(--muted); }
 .badge-project  { color: var(--muted); }
 
-/* Subject */
+/* Subject — inline inside meta row */
 .issue-subject {
     font-weight: 500;
     font-size: var(--fs-sm);
-    line-height: 1.4;
     color: var(--text);
+    margin-right: 4px;
 }
 
-/* Header footer: due + progress inline */
-.issue-header-footer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 16px;
-}
+/* Priority colors for ID and subject */
+.priority-urgent .issue-id, .priority-срочный .issue-id,
+.priority-urgent .issue-subject, .priority-срочный .issue-subject    { color: var(--tint-red-text); }
+.priority-high .issue-id, .priority-высокий .issue-id,
+.priority-high .issue-subject, .priority-высокий .issue-subject      { color: var(--tint-yellow-text); }
+.priority-normal .issue-id, .priority-нормальный .issue-id,
+.priority-normal .issue-subject, .priority-нормальный .issue-subject { color: var(--text); }
+.priority-low .issue-id, .priority-низкий .issue-id,
+.priority-low .issue-subject, .priority-низкий .issue-subject        { color: var(--muted); }
 
 .issue-due {
     font-size: var(--fs-xs);
