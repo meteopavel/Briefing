@@ -10,9 +10,15 @@ from __future__ import annotations
 
 from typing import Any
 
+import time
+
 import requests
 
 from app.config import REDMINE_API_KEY, REDMINE_USER_ID, REDMINE_URL
+
+
+_spent_cache: dict = {}
+_SPENT_CACHE_TTL = 300  # 5 минут
 
 
 class RedmineClient:
@@ -114,6 +120,9 @@ class RedmineClient:
         """Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя."""
         from datetime import date
         today_str = date.today().isoformat()
+        cached = _spent_cache.get('data')
+        if cached and time.monotonic() - _spent_cache.get('ts', 0) < _SPENT_CACHE_TTL:
+            return cached
         try:
             result: dict[int, dict] = {}
             offset = 0
@@ -139,6 +148,8 @@ class RedmineClient:
                 offset += limit
                 if offset >= data.get('total_count', 0):
                     break
+            _spent_cache['data'] = result
+            _spent_cache['ts'] = time.monotonic()
             return result
         except Exception:
             return {}

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T04:47:17.234370+00:00",
+  "generated_at": "2026-06-24T04:49:23.677624+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -19,7 +19,7 @@
     "dataclasses": 1,
     "functions": 82,
     "methods": 6,
-    "constants": 36
+    "constants": 37
   },
   "modules": [
     {
@@ -559,8 +559,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 24,
-              "end_lineno": 38
+              "lineno": 30,
+              "end_lineno": 44
             },
             {
               "name": "fetch_issue_subjects",
@@ -571,8 +571,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 42,
-              "end_lineno": 62
+              "lineno": 48,
+              "end_lineno": 68
             },
             {
               "name": "fetch_issue_with_journals",
@@ -583,8 +583,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 66,
-              "end_lineno": 78
+              "lineno": 72,
+              "end_lineno": 84
             },
             {
               "name": "fetch_issue",
@@ -595,8 +595,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 82,
-              "end_lineno": 92
+              "lineno": 88,
+              "end_lineno": 98
             },
             {
               "name": "fetch_my_issues",
@@ -607,8 +607,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 95,
-              "end_lineno": 110
+              "lineno": 101,
+              "end_lineno": 116
             },
             {
               "name": "fetch_my_spent_hours",
@@ -619,22 +619,29 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 113,
-              "end_lineno": 144
+              "lineno": 119,
+              "end_lineno": 155
             }
           ],
-          "lineno": 18,
-          "end_lineno": 144
+          "lineno": 24,
+          "end_lineno": 155
         }
       ],
       "functions": [],
-      "constants": [],
+      "constants": [
+        {
+          "name": "_SPENT_CACHE_TTL",
+          "annotation": null,
+          "value_repr": "300",
+          "lineno": 21
+        }
+      ],
       "stats": {
         "classes": 1,
         "dataclasses": 0,
         "functions": 0,
         "methods": 6,
-        "constants": 0
+        "constants": 1
       }
     },
     {
