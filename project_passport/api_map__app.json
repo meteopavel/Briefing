@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T06:47:38.407908+00:00",
+  "generated_at": "2026-06-24T06:55:56.180894+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 24,
@@ -760,7 +760,7 @@
                 "staticmethod"
               ],
               "lineno": 119,
-              "end_lineno": 164
+              "end_lineno": 182
             },
             {
               "name": "_fetch_and_cache",
@@ -771,8 +771,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 167,
-              "end_lineno": 205
+              "lineno": 185,
+              "end_lineno": 223
             },
             {
               "name": "_ensure_cache",
@@ -783,8 +783,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 208,
-              "end_lineno": 210
+              "lineno": 226,
+              "end_lineno": 228
             },
             {
               "name": "fetch_my_spent_hours",
@@ -795,8 +795,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 213,
-              "end_lineno": 219
+              "lineno": 231,
+              "end_lineno": 237
             },
             {
               "name": "fetch_daily_summary",
@@ -807,12 +807,12 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 222,
-              "end_lineno": 253
+              "lineno": 240,
+              "end_lineno": 271
             }
           ],
           "lineno": 24,
-          "end_lineno": 253
+          "end_lineno": 271
         }
       ],
       "functions": [],

@@ -118,29 +118,7 @@ class RedmineClient:
     @staticmethod
     def fetch_passive_issues() -> dict:
         """Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь."""
-        status_groups = {
-            'review': REDMINE_REVIEW_STATUS_IDS,
-            'stage':  REDMINE_STAGE_STATUS_IDS,
-            'prod':   REDMINE_PROD_STATUS_IDS,
-            'closed': REDMINE_CLOSED_STATUS_IDS,
-        }
-        candidates_by_key: dict = {k: [] for k in status_groups}
-        for key, status_ids in status_groups.items():
-            limit = 20 if key == 'closed' else 100
-            for status_id in status_ids:
-                response = requests.get(
-                    f'{REDMINE_URL}/issues.json',
-                    headers={'X-Redmine-API-Key': REDMINE_API_KEY},
-                    params={'status_id': status_id, 'limit': limit, 'sort': 'updated_on:desc'},
-                    timeout=30,
-                )
-                response.raise_for_status()
-                candidates_by_key[key].extend(response.json().get('issues', []))
-
-        all_candidates = [i for lst in candidates_by_key.values() for i in lst]
-        if not all_candidates:
-            return {k: [] for k in status_groups}
-
+        # 1. Получаем все задачи, над которыми работал пользователь
         te_response = requests.get(
             f'{REDMINE_URL}/time_entries.json',
             headers={'X-Redmine-API-Key': REDMINE_API_KEY},
@@ -150,7 +128,45 @@ class RedmineClient:
         te_response.raise_for_status()
         worked_ids = {e['issue']['id'] for e in te_response.json().get('time_entries', []) if e.get('issue')}
 
-        result: dict = {k: [] for k in status_groups}
+        if not worked_ids:
+            return {'review': [], 'stage': [], 'prod': [], 'closed': []}
+
+        # 2. Для ревью/stage/prod: берём задачи по статусу и фильтруем по worked_ids
+        active_groups = {
+            'review': REDMINE_REVIEW_STATUS_IDS,
+            'stage':  REDMINE_STAGE_STATUS_IDS,
+            'prod':   REDMINE_PROD_STATUS_IDS,
+        }
+        candidates_by_key: dict = {'review': [], 'stage': [], 'prod': [], 'closed': []}
+        for key, status_ids in active_groups.items():
+            for status_id in status_ids:
+                response = requests.get(
+                    f'{REDMINE_URL}/issues.json',
+                    headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                    params={'status_id': status_id, 'limit': 100, 'sort': 'updated_on:desc'},
+                    timeout=30,
+                )
+                response.raise_for_status()
+                candidates_by_key[key].extend(response.json().get('issues', []))
+
+        # 3. Для закрытых: идём от worked_ids — батчами запрашиваем конкретные задачи
+        closed_set = set(REDMINE_CLOSED_STATUS_IDS)
+        worked_ids_list = sorted(worked_ids)
+        for i in range(0, len(worked_ids_list), 100):
+            batch = worked_ids_list[i:i + 100]
+            response = requests.get(
+                f'{REDMINE_URL}/issues.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                params={'issue_id': ','.join(str(x) for x in batch), 'status_id': '*', 'limit': 100},
+                timeout=30,
+            )
+            response.raise_for_status()
+            for issue in response.json().get('issues', []):
+                if issue['status']['id'] in closed_set:
+                    candidates_by_key['closed'].append(issue)
+
+        # 4. Фильтрация и группировка
+        result: dict = {'review': [], 'stage': [], 'prod': [], 'closed': []}
         seen_ids: set = set()
         for key, candidates in candidates_by_key.items():
             for issue in candidates:
@@ -161,6 +177,8 @@ class RedmineClient:
                     continue
                 seen_ids.add(iid)
                 result[key].append(issue)
+
+        result['closed'].sort(key=lambda x: x.get('updated_on', ''), reverse=True)
         return result
 
     @staticmethod

@@ -94,6 +94,29 @@
     </div>
 </div>
 {% endfor %}
+{% if daily_summary %}
+<div class="section-label">Трудозатраты · 3 дня</div>
+{% for day in daily_summary %}
+<div class="timelog-card">
+    <div class="timelog-card-header">
+        <span class="timelog-date">{{ day.date }}</span>
+        <span class="timelog-total{% if day.total == 0 %} timelog-zero{% endif %}">{{ "%.2f"|format(day.total) }} ч</span>
+    </div>
+    {% if day.entries %}
+    <div class="timelog-card-entries">
+        {% for e in day.entries %}
+        <a class="timelog-entry {% if e.hours >= 4 %}entry-major{% elif e.hours >= 1 %}entry-mid{% else %}entry-minor{% endif %}"
+           href="{{ redmine_url }}/issues/{{ e.issue_id }}" target="_blank"
+           title="{{ e.subject }}">
+            <span class="timelog-entry-id">#{{ e.issue_id }}</span>
+            <span class="timelog-entry-hours">{{ "%.2f"|format(e.hours) }} ч</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
 {% if passive.review %}
 <div class="issue-group">
     <div class="issue-group-header">
@@ -142,30 +165,6 @@
 <div class="issue-list">
     {% for issue in issues %}{{ render_issue(issue) }}{% endfor %}
 </div>
-{% endif %}
-
-{% if daily_summary %}
-<div class="section-label">Трудозатраты · 3 дня</div>
-{% for day in daily_summary %}
-<div class="timelog-card">
-    <div class="timelog-card-header">
-        <span class="timelog-date">{{ day.date }}</span>
-        <span class="timelog-total{% if day.total == 0 %} timelog-zero{% endif %}">{{ "%.2f"|format(day.total) }} ч</span>
-    </div>
-    {% if day.entries %}
-    <div class="timelog-card-entries">
-        {% for e in day.entries %}
-        <a class="timelog-entry {% if e.hours >= 4 %}entry-major{% elif e.hours >= 1 %}entry-mid{% else %}entry-minor{% endif %}"
-           href="{{ redmine_url }}/issues/{{ e.issue_id }}" target="_blank"
-           title="{{ e.subject }}">
-            <span class="timelog-entry-id">#{{ e.issue_id }}</span>
-            <span class="timelog-entry-hours">{{ "%.2f"|format(e.hours) }} ч</span>
-        </a>
-        {% endfor %}
-    </div>
-    {% endif %}
-</div>
-{% endfor %}
 {% endif %}
 
 <script>
