@@ -110,8 +110,10 @@ class RedmineClient:
         return response.json().get('issues', [])
 
     @staticmethod
-    def fetch_my_spent_hours() -> dict[int, float]:
-        """Возвращает {issue_id: total_hours} по записям времени текущего пользователя."""
+    def fetch_my_spent_hours() -> dict[int, dict]:
+        """Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя."""
+        from datetime import date
+        today_str = date.today().isoformat()
         try:
             response = requests.get(
                 f'{REDMINE_URL}/time_entries.json',
@@ -120,12 +122,15 @@ class RedmineClient:
                 timeout=15,
             )
             response.raise_for_status()
-            result: dict[int, float] = {}
+            result: dict[int, dict] = {}
             for entry in response.json().get('time_entries', []):
                 issue = entry.get('issue', {})
                 iid = issue.get('id')
                 if iid:
-                    result[iid] = result.get(iid, 0.0) + entry.get('hours', 0.0)
+                    rec = result.setdefault(iid, {'hours': 0.0, 'today': False})
+                    rec['hours'] += entry.get('hours', 0.0)
+                    if entry.get('spent_on') == today_str:
+                        rec['today'] = True
             return result
         except Exception:
             return {}

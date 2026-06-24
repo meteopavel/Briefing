@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T04:43:21.226926+00:00",
+  "generated_at": "2026-06-24T04:45:28.034113+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -612,19 +612,19 @@
             },
             {
               "name": "fetch_my_spent_hours",
-              "signature": "fetch_my_spent_hours() -> dict[int, float]",
-              "docstring": "Возвращает {issue_id: total_hours} по записям времени текущего пользователя.",
-              "summary": "Возвращает {issue_id: total_hours} по записям времени текущего пользователя.",
+              "signature": "fetch_my_spent_hours() -> dict[int, dict]",
+              "docstring": "Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя.",
+              "summary": "Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя.",
               "kind": "method",
               "decorators": [
                 "staticmethod"
               ],
               "lineno": 113,
-              "end_lineno": 131
+              "end_lineno": 136
             }
           ],
           "lineno": 18,
-          "end_lineno": 131
+          "end_lineno": 136
         }
       ],
       "functions": [],
@@ -1239,7 +1239,7 @@
           "kind": "function",
           "decorators": [],
           "lineno": 123,
-          "end_lineno": 129
+          "end_lineno": 131
         },
         {
           "name": "_group_issues",
@@ -1248,8 +1248,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 132,
-          "end_lineno": 151
+          "lineno": 134,
+          "end_lineno": 153
         },
         {
           "name": "_detect_label",
@@ -1258,8 +1258,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 158,
-          "end_lineno": 163
+          "lineno": 160,
+          "end_lineno": 165
         },
         {
           "name": "_issue_sort_key",
@@ -1268,8 +1268,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 175,
-          "end_lineno": 193
+          "lineno": 177,
+          "end_lineno": 195
         },
         {
           "name": "index",
@@ -1280,8 +1280,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 197,
-          "end_lineno": 214
+          "lineno": 199,
+          "end_lineno": 216
         },
         {
           "name": "issue_by_id",
@@ -1292,8 +1292,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 218,
-          "end_lineno": 239
+          "lineno": 220,
+          "end_lineno": 241
         },
         {
           "name": "issue_journals",
@@ -1304,8 +1304,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 243,
-          "end_lineno": 272
+          "lineno": 245,
+          "end_lineno": 274
         },
         {
           "name": "attachment_thumbnail",
@@ -1316,8 +1316,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 276,
-          "end_lineno": 288
+          "lineno": 278,
+          "end_lineno": 290
         },
         {
           "name": "attachment_download",
@@ -1328,8 +1328,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 292,
-          "end_lineno": 306
+          "lineno": 294,
+          "end_lineno": 308
         },
         {
           "name": "_get_redmine_meta",
@@ -1338,8 +1338,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 328,
-          "end_lineno": 351
+          "lineno": 330,
+          "end_lineno": 353
         },
         {
           "name": "_resolve_attr",
@@ -1348,8 +1348,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 354,
-          "end_lineno": 379
+          "lineno": 356,
+          "end_lineno": 381
         },
         {
           "name": "_build_attr_changes",
@@ -1358,8 +1358,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 382,
-          "end_lineno": 392
+          "lineno": 384,
+          "end_lineno": 394
         },
         {
           "name": "avatar",
@@ -1370,8 +1370,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 396,
-          "end_lineno": 416
+          "lineno": 398,
+          "end_lineno": 418
         },
         {
           "name": "health",
@@ -1382,8 +1382,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 420,
-          "end_lineno": 421
+          "lineno": 422,
+          "end_lineno": 423
         }
       ],
       "constants": [
@@ -1451,25 +1451,25 @@
           "name": "_LABEL_Q_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[Q', re.IGNORECASE)",
-          "lineno": 154
+          "lineno": 156
         },
         {
           "name": "_LABEL_AI_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[ai\\\\]', re.IGNORECASE)",
-          "lineno": 155
+          "lineno": 157
         },
         {
           "name": "_PRIORITY_ORDER",
           "annotation": null,
           "value_repr": "{'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, 'низкий': 4, 'low': 4}",
-          "lineno": 166
+          "lineno": 168
         },
         {
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 312
+          "lineno": 314
         }
       ],
       "stats": {

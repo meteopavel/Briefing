@@ -253,8 +253,8 @@ HTTP-клиент для получения данных из Redmine API.
     Загружает полные данные одной задачи без journals.
   - `fetch_my_issues(status_id: str = 'open') -> list[dict[str, Any]]`
     Загружает задачи, назначенные на текущего пользователя.
-  - `fetch_my_spent_hours() -> dict[int, float]`
-    Возвращает {issue_id: total_hours} по записям времени текущего пользователя.
+  - `fetch_my_spent_hours() -> dict[int, dict]`
+    Возвращает {issue_id: {hours: float, today: bool}} по записям времени текущего пользователя.
 
 ---
 
