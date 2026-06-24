@@ -156,6 +156,7 @@ function toggleIssue(header) {
                     body.style.maxHeight = 'none';
                     const entries = journals.querySelectorAll('.journal-entry');
                     if (entries.length >= 5) {
+                        card.classList.add('info-panel-collapsed');
                         const target = entries[Math.max(0, entries.length - 3)];
                         if (target) requestAnimationFrame(() => target.scrollIntoView({behavior: 'smooth', block: 'start'}));
                     }
