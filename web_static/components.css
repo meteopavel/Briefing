@@ -329,8 +329,10 @@
 }
 .mr-badge:hover { opacity: 0.7; text-decoration: none; }
 .mr-badge-loading { color: var(--muted); border-color: var(--border); pointer-events: none; }
-.mr-badge-open    { color: var(--tint-green-text); border-color: var(--tint-green-border); background: var(--tint-green-bg); }
-.mr-badge-conflict { color: var(--tint-red-text); border-color: var(--tint-red-border); background: var(--tint-red-bg); }
+.mr-badge-open     { color: var(--tint-green-text);  border-color: var(--tint-green-border);  background: var(--tint-green-bg); }
+.mr-badge-conflict { color: var(--tint-red-text);    border-color: var(--tint-red-border);    background: var(--tint-red-bg); }
+.mr-badge-merged   { color: var(--tint-blue-text);   border-color: var(--tint-blue-border);   background: var(--tint-blue-bg); }
+.mr-badge-alarm    { color: var(--tint-yellow-text); border-color: var(--tint-yellow-border); background: var(--tint-yellow-bg); }
 
 .issue-spent {
     font-size: var(--fs-xs);

@@ -252,16 +252,18 @@ def api_spent():
 
 
 @app.get('/api/mrs')
-def api_mrs(iids: str = ''):
-    if not iids:
+def api_mrs(issue_ids: str = ''):
+    if not issue_ids:
         return {}
-    mr_iids = [int(x) for x in iids.split(',') if x.strip().isdigit()]
+    ids = [int(x) for x in issue_ids.split(',') if x.strip().isdigit()]
     result = {}
-    for iid in mr_iids:
-        try:
-            result[str(iid)] = GitLabClient.fetch_mr_status(iid)
-        except Exception:
-            result[str(iid)] = {'state': 'unknown', 'has_conflicts': False}
+    try:
+        for issue_id in ids:
+            mrs = GitLabClient.get_mrs_for_issue(issue_id)
+            if mrs:
+                result[str(issue_id)] = mrs
+    except Exception:
+        pass
     return result
 
 

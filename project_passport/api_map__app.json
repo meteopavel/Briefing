@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T06:04:34.863804+00:00",
+  "generated_at": "2026-06-24T06:24:22.711102+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 24,
@@ -19,8 +19,8 @@
     "classes": 3,
     "dataclasses": 1,
     "functions": 85,
-    "methods": 10,
-    "constants": 42
+    "methods": 13,
+    "constants": 44
   },
   "modules": [
     {
@@ -295,58 +295,64 @@
           "lineno": 69
         },
         {
+          "name": "GITLAB_AUTHOR_ID",
+          "annotation": null,
+          "value_repr": "int(os.getenv('GITLAB_AUTHOR_ID', '68'))",
+          "lineno": 70
+        },
+        {
           "name": "DOCUMENT_OWNER",
           "annotation": null,
           "value_repr": "os.getenv('DOCUMENT_OWNER', 'Contractor')",
-          "lineno": 71
+          "lineno": 72
         },
         {
           "name": "USER_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('USER_MAP', {})",
-          "lineno": 73
+          "lineno": 74
         },
         {
           "name": "ISSUE_STATUS_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_STATUS_MAP', {})",
-          "lineno": 74
+          "lineno": 75
         },
         {
           "name": "ISSUE_PRIORITY_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})",
-          "lineno": 75
+          "lineno": 76
         },
         {
           "name": "CUSTOM_FIELD_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('CUSTOM_FIELD_MAP', {})",
-          "lineno": 76
+          "lineno": 77
         },
         {
           "name": "CUSTOM_FIELDS_HIDE_IF_NEGATIVE",
           "annotation": null,
           "value_repr": "load_set_dict_env('CUSTOM_FIELDS_HIDE_IF_NEGATIVE', {})",
-          "lineno": 77
+          "lineno": 78
         },
         {
           "name": "USER_REFERENCE_CUSTOM_FIELD_IDS",
           "annotation": null,
           "value_repr": "{16, 17, 18, 19}",
-          "lineno": 78
+          "lineno": 79
         },
         {
           "name": "MONTH_NAMES",
           "annotation": null,
           "value_repr": "{'01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля', '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа', '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'}",
-          "lineno": 80
+          "lineno": 81
         },
         {
           "name": "REPORT_TABLE_COLUMN_WIDTHS_INCH",
           "annotation": null,
           "value_repr": "[0.4, 1.6, 2.9, 1.3]",
-          "lineno": 84
+          "lineno": 85
         }
       ],
       "stats": {
@@ -354,7 +360,7 @@
         "dataclasses": 0,
         "functions": 3,
         "methods": 0,
-        "constants": 24
+        "constants": 25
       }
     },
     {
@@ -570,20 +576,56 @@
           "fields": [],
           "methods": [
             {
-              "name": "fetch_mr_status",
-              "signature": "fetch_mr_status(mr_iid: int) -> dict",
-              "docstring": "Возвращает {state, has_conflicts} для MR. Кэширует на 5 минут.",
-              "summary": "Возвращает {state, has_conflicts} для MR. Кэширует на 5 минут.",
+              "name": "_fetch_all_mrs",
+              "signature": "_fetch_all_mrs() -> list[dict]",
+              "docstring": null,
+              "summary": null,
               "kind": "method",
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 15,
-              "end_lineno": 38
+              "lineno": 18,
+              "end_lineno": 39
+            },
+            {
+              "name": "_ensure_cache",
+              "signature": "_ensure_cache() -> None",
+              "docstring": null,
+              "summary": null,
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 42,
+              "end_lineno": 51
+            },
+            {
+              "name": "get_mrs_for_issue",
+              "signature": "get_mrs_for_issue(issue_id: int) -> list[dict]",
+              "docstring": "Возвращает список MR, связанных с задачей, по номеру в имени ветки.",
+              "summary": "Возвращает список MR, связанных с задачей, по номеру в имени ветки.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 54,
+              "end_lineno": 83
+            },
+            {
+              "name": "invalidate_cache",
+              "signature": "invalidate_cache() -> None",
+              "docstring": null,
+              "summary": null,
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 86,
+              "end_lineno": 87
             }
           ],
-          "lineno": 12,
-          "end_lineno": 38
+          "lineno": 15,
+          "end_lineno": 87
         }
       ],
       "functions": [],
@@ -592,15 +634,21 @@
           "name": "_MR_CACHE_TTL",
           "annotation": null,
           "value_repr": "300",
-          "lineno": 9
+          "lineno": 10
+        },
+        {
+          "name": "_BRANCH_SEP_RE",
+          "annotation": null,
+          "value_repr": "re.compile('[-/._]')",
+          "lineno": 12
         }
       ],
       "stats": {
         "classes": 1,
         "dataclasses": 0,
         "functions": 0,
-        "methods": 1,
-        "constants": 1
+        "methods": 4,
+        "constants": 2
       }
     },
     {
@@ -1418,7 +1466,7 @@
         },
         {
           "name": "api_mrs",
-          "signature": "api_mrs(iids: str = '')",
+          "signature": "api_mrs(issue_ids: str = '')",
           "docstring": null,
           "summary": null,
           "kind": "function",
@@ -1426,7 +1474,7 @@
             "app.get('/api/mrs')"
           ],
           "lineno": 255,
-          "end_lineno": 265
+          "end_lineno": 267
         },
         {
           "name": "issue_by_id",
@@ -1437,8 +1485,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 269,
-          "end_lineno": 290
+          "lineno": 271,
+          "end_lineno": 292
         },
         {
           "name": "issue_journals",
@@ -1449,8 +1497,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 294,
-          "end_lineno": 323
+          "lineno": 296,
+          "end_lineno": 325
         },
         {
           "name": "attachment_thumbnail",
@@ -1461,8 +1509,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 327,
-          "end_lineno": 339
+          "lineno": 329,
+          "end_lineno": 341
         },
         {
           "name": "attachment_download",
@@ -1473,8 +1521,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 343,
-          "end_lineno": 357
+          "lineno": 345,
+          "end_lineno": 359
         },
         {
           "name": "_get_redmine_meta",
@@ -1483,8 +1531,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 379,
-          "end_lineno": 402
+          "lineno": 381,
+          "end_lineno": 404
         },
         {
           "name": "_resolve_attr",
@@ -1493,8 +1541,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 405,
-          "end_lineno": 430
+          "lineno": 407,
+          "end_lineno": 432
         },
         {
           "name": "_build_attr_changes",
@@ -1503,8 +1551,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 433,
-          "end_lineno": 443
+          "lineno": 435,
+          "end_lineno": 445
         },
         {
           "name": "avatar",
@@ -1515,8 +1563,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 447,
-          "end_lineno": 467
+          "lineno": 449,
+          "end_lineno": 469
         },
         {
           "name": "health",
@@ -1527,8 +1575,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 471,
-          "end_lineno": 472
+          "lineno": 473,
+          "end_lineno": 474
         }
       ],
       "constants": [
@@ -1620,7 +1668,7 @@
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 363
+          "lineno": 365
         }
       ],
       "stats": {

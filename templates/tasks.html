@@ -16,11 +16,7 @@
             {% endif %}
         </div>
         <div class="issue-header-right">
-            {% if issue._mrs %}
-            <div class="issue-mrs issue-mrs-loading">
-                {% for mr in issue._mrs %}<a class="mr-badge mr-badge-loading" data-mr-iid="{{ mr.mr_iid }}" data-mr-type="{{ mr.mr_type }}" href="{{ mr.url }}" target="_blank" title="MR #{{ mr.mr_iid }} → {{ mr.mr_type }}">{{ 'S' if mr.mr_type == 'stage' else 'M' if mr.mr_type == 'master' else '?' }}</a>{% endfor %}
-            </div>
-            {% endif %}
+            <div class="issue-mrs issue-mrs-loading" data-redmine-iids="{{ issue._mrs | map(attribute='mr_iid') | join(',') }}"></div>
             <span class="issue-spent issue-spent-loading" data-issue-id="{{ issue.id }}"></span>
             {% if issue._workdays is not none %}
                 {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
@@ -323,21 +319,42 @@ function escapeHtml(s) {
 
 // Асинхронная загрузка статусов MR
 (function() {
-    const badges = document.querySelectorAll('.mr-badge[data-mr-iid]');
-    if (!badges.length) return;
-    const iids = [...new Set([...badges].map(el => el.dataset.mrIid))];
-    fetch('/api/mrs?iids=' + iids.join(','))
+    const cards = document.querySelectorAll('.issue-card[data-id]');
+    if (!cards.length) return;
+    const issueIds = [...cards].map(c => c.dataset.id);
+    fetch('/api/mrs?issue_ids=' + issueIds.join(','))
         .then(r => r.json())
         .then(data => {
-            badges.forEach(el => {
-                const mr = data[el.dataset.mrIid];
-                if (!mr || mr.state !== 'opened') { el.remove(); return; }
-                el.classList.remove('mr-badge-loading');
-                el.classList.add(mr.has_conflicts ? 'mr-badge-conflict' : 'mr-badge-open');
-            });
-            document.querySelectorAll('.issue-mrs-loading').forEach(div => {
-                div.classList.remove('issue-mrs-loading');
-                if (!div.querySelector('.mr-badge')) div.remove();
+            cards.forEach(card => {
+                const container = card.querySelector('.issue-mrs');
+                if (!container) return;
+                container.classList.remove('issue-mrs-loading');
+                container.innerHTML = '';
+                const mrs = data[card.dataset.id];
+                if (!mrs || !mrs.length) { container.remove(); return; }
+                const redmineIids = new Set((container.dataset.redmineIids || '').split(',').filter(Boolean));
+                mrs.forEach(mr => {
+                    if (mr.state === 'closed') return;
+                    const a = document.createElement('a');
+                    a.className = 'mr-badge';
+                    a.href = mr.url;
+                    a.target = '_blank';
+                    a.title = 'MR #' + mr.mr_iid + ' → ' + mr.type;
+                    a.textContent = mr.type === 'stage' ? 'S' : 'M';
+                    if (mr.state === 'merged') {
+                        a.classList.add('mr-badge-merged');
+                    } else if (mr.state === 'opened') {
+                        if (mr.has_conflicts) {
+                            a.classList.add('mr-badge-conflict');
+                        } else if (!redmineIids.has(String(mr.mr_iid))) {
+                            a.classList.add('mr-badge-alarm');
+                        } else {
+                            a.classList.add('mr-badge-open');
+                        }
+                    }
+                    container.appendChild(a);
+                });
+                if (!container.children.length) container.remove();
             });
         })
         .catch(() => {

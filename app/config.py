@@ -67,6 +67,7 @@ REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')
 GITLAB_URL = os.getenv('GITLAB_URL', '').rstrip('/')
 GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')
 GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')
+GITLAB_AUTHOR_ID = int(os.getenv('GITLAB_AUTHOR_ID', '68'))
 
 DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')
 
