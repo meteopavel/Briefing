@@ -266,10 +266,10 @@
 .priority-low .issue-id, .priority-низкий .issue-id,
 .priority-low .issue-subject, .priority-низкий .issue-subject        { color: var(--muted); }
 
-/* Label: q (super high — purple) */
-.issue-card.label-q { border-left-color: rgba(192, 132, 252, 0.7); }
+/* Label: q (quarterly — orange-red) */
+.issue-card.label-q { border-left-color: rgba(251, 146, 60, 0.8); }
 .issue-card.label-q .issue-id,
-.issue-card.label-q .issue-subject { color: #e9d5ff; }
+.issue-card.label-q .issue-subject { color: #fdba74; }
 
 /* Label: ai (cyan) */
 .issue-card.label-ai { border-left-color: rgba(34, 211, 238, 0.55); }

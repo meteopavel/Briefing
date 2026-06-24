@@ -12,7 +12,7 @@
             <div class="issue-meta-bottom">
                 <span class="issue-badge badge-status">{{ issue.status.name }}</span>
                 {% if issue._workdays is not none %}
-                    {% if issue._workdays < 0 %}<span class="issue-due due-overdue">просрочено {{ -issue._workdays }} р.д.</span>
+                    {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
                     {% elif issue._workdays == 0 %}<span class="issue-due due-soon">сегодня</span>
                     {% elif issue._workdays <= 3 %}<span class="issue-due due-soon">{{ issue._workdays }} р.д.</span>
                     {% else %}<span class="issue-due due-ok">{{ issue._workdays }} р.д.</span>

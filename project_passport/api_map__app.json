@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T03:49:41.087601+00:00",
+  "generated_at": "2026-06-24T03:53:49.153429+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -1438,7 +1438,7 @@
         {
           "name": "_LABEL_Q_RE",
           "annotation": null,
-          "value_repr": "re.compile('\\\\[q\\\\d*\\\\]', re.IGNORECASE)",
+          "value_repr": "re.compile('\\\\[Q', re.IGNORECASE)",
           "lineno": 152
         },
         {
