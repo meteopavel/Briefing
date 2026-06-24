@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T06:36:10.588687+00:00",
+  "generated_at": "2026-06-24T06:47:38.407908+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 24,
@@ -20,7 +20,7 @@
     "dataclasses": 1,
     "functions": 85,
     "methods": 14,
-    "constants": 45
+    "constants": 48
   },
   "modules": [
     {
@@ -283,82 +283,100 @@
           "lineno": 66
         },
         {
+          "name": "REDMINE_STAGE_STATUS_IDS",
+          "annotation": null,
+          "value_repr": "[int(x) for x in os.getenv('REDMINE_STAGE_STATUS_IDS', '19').split(',') if x.strip()]",
+          "lineno": 67
+        },
+        {
+          "name": "REDMINE_PROD_STATUS_IDS",
+          "annotation": null,
+          "value_repr": "[int(x) for x in os.getenv('REDMINE_PROD_STATUS_IDS', '12').split(',') if x.strip()]",
+          "lineno": 68
+        },
+        {
+          "name": "REDMINE_CLOSED_STATUS_IDS",
+          "annotation": null,
+          "value_repr": "[int(x) for x in os.getenv('REDMINE_CLOSED_STATUS_IDS', '13,5').split(',') if x.strip()]",
+          "lineno": 69
+        },
+        {
           "name": "GITLAB_URL",
           "annotation": null,
           "value_repr": "os.getenv('GITLAB_URL', '').rstrip('/')",
-          "lineno": 68
+          "lineno": 71
         },
         {
           "name": "GITLAB_TOKEN",
           "annotation": null,
           "value_repr": "os.getenv('GITLAB_TOKEN', '')",
-          "lineno": 69
+          "lineno": 72
         },
         {
           "name": "GITLAB_PROJECT_PATH",
           "annotation": null,
           "value_repr": "os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')",
-          "lineno": 70
+          "lineno": 73
         },
         {
           "name": "GITLAB_AUTHOR_ID",
           "annotation": null,
           "value_repr": "int(os.getenv('GITLAB_AUTHOR_ID', '68'))",
-          "lineno": 71
+          "lineno": 74
         },
         {
           "name": "DOCUMENT_OWNER",
           "annotation": null,
           "value_repr": "os.getenv('DOCUMENT_OWNER', 'Contractor')",
-          "lineno": 73
+          "lineno": 76
         },
         {
           "name": "USER_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('USER_MAP', {})",
-          "lineno": 75
+          "lineno": 78
         },
         {
           "name": "ISSUE_STATUS_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_STATUS_MAP', {})",
-          "lineno": 76
+          "lineno": 79
         },
         {
           "name": "ISSUE_PRIORITY_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})",
-          "lineno": 77
+          "lineno": 80
         },
         {
           "name": "CUSTOM_FIELD_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('CUSTOM_FIELD_MAP', {})",
-          "lineno": 78
+          "lineno": 81
         },
         {
           "name": "CUSTOM_FIELDS_HIDE_IF_NEGATIVE",
           "annotation": null,
           "value_repr": "load_set_dict_env('CUSTOM_FIELDS_HIDE_IF_NEGATIVE', {})",
-          "lineno": 79
+          "lineno": 82
         },
         {
           "name": "USER_REFERENCE_CUSTOM_FIELD_IDS",
           "annotation": null,
           "value_repr": "{16, 17, 18, 19}",
-          "lineno": 80
+          "lineno": 83
         },
         {
           "name": "MONTH_NAMES",
           "annotation": null,
           "value_repr": "{'01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля', '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа', '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'}",
-          "lineno": 82
+          "lineno": 85
         },
         {
           "name": "REPORT_TABLE_COLUMN_WIDTHS_INCH",
           "annotation": null,
           "value_repr": "[0.4, 1.6, 2.9, 1.3]",
-          "lineno": 86
+          "lineno": 89
         }
       ],
       "stats": {
@@ -366,7 +384,7 @@
         "dataclasses": 0,
         "functions": 3,
         "methods": 0,
-        "constants": 26
+        "constants": 29
       }
     },
     {
@@ -733,16 +751,16 @@
               "end_lineno": 116
             },
             {
-              "name": "fetch_on_review_issues",
-              "signature": "fetch_on_review_issues() -> list[dict[str, Any]]",
-              "docstring": "Задачи на ревью, над которыми работал текущий пользователь (есть трудозатраты).",
-              "summary": "Задачи на ревью, над которыми работал текущий пользователь (есть трудозатраты).",
+              "name": "fetch_passive_issues",
+              "signature": "fetch_passive_issues() -> dict",
+              "docstring": "Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь.",
+              "summary": "Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь.",
               "kind": "method",
               "decorators": [
                 "staticmethod"
               ],
               "lineno": 119,
-              "end_lineno": 146
+              "end_lineno": 164
             },
             {
               "name": "_fetch_and_cache",
@@ -753,8 +771,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 149,
-              "end_lineno": 187
+              "lineno": 167,
+              "end_lineno": 205
             },
             {
               "name": "_ensure_cache",
@@ -765,8 +783,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 190,
-              "end_lineno": 192
+              "lineno": 208,
+              "end_lineno": 210
             },
             {
               "name": "fetch_my_spent_hours",
@@ -777,8 +795,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 195,
-              "end_lineno": 201
+              "lineno": 213,
+              "end_lineno": 219
             },
             {
               "name": "fetch_daily_summary",
@@ -789,12 +807,12 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 204,
-              "end_lineno": 235
+              "lineno": 222,
+              "end_lineno": 253
             }
           ],
           "lineno": 24,
-          "end_lineno": 235
+          "end_lineno": 253
         }
       ],
       "functions": [],
@@ -1468,7 +1486,7 @@
             "app.get('/')"
           ],
           "lineno": 220,
-          "end_lineno": 243
+          "end_lineno": 245
         },
         {
           "name": "api_spent",
@@ -1479,8 +1497,8 @@
           "decorators": [
             "app.get('/api/spent')"
           ],
-          "lineno": 247,
-          "end_lineno": 257
+          "lineno": 249,
+          "end_lineno": 259
         },
         {
           "name": "api_mrs",
@@ -1491,8 +1509,8 @@
           "decorators": [
             "app.get('/api/mrs')"
           ],
-          "lineno": 261,
-          "end_lineno": 273
+          "lineno": 263,
+          "end_lineno": 275
         },
         {
           "name": "issue_by_id",
@@ -1503,8 +1521,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 277,
-          "end_lineno": 298
+          "lineno": 279,
+          "end_lineno": 300
         },
         {
           "name": "issue_journals",
@@ -1515,8 +1533,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 302,
-          "end_lineno": 331
+          "lineno": 304,
+          "end_lineno": 333
         },
         {
           "name": "attachment_thumbnail",
@@ -1527,8 +1545,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 335,
-          "end_lineno": 347
+          "lineno": 337,
+          "end_lineno": 349
         },
         {
           "name": "attachment_download",
@@ -1539,8 +1557,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 351,
-          "end_lineno": 365
+          "lineno": 353,
+          "end_lineno": 367
         },
         {
           "name": "_get_redmine_meta",
@@ -1549,8 +1567,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 387,
-          "end_lineno": 410
+          "lineno": 389,
+          "end_lineno": 412
         },
         {
           "name": "_resolve_attr",
@@ -1559,8 +1577,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 413,
-          "end_lineno": 438
+          "lineno": 415,
+          "end_lineno": 440
         },
         {
           "name": "_build_attr_changes",
@@ -1569,8 +1587,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 441,
-          "end_lineno": 451
+          "lineno": 443,
+          "end_lineno": 453
         },
         {
           "name": "avatar",
@@ -1581,8 +1599,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 455,
-          "end_lineno": 475
+          "lineno": 457,
+          "end_lineno": 477
         },
         {
           "name": "health",
@@ -1593,8 +1611,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 479,
-          "end_lineno": 480
+          "lineno": 481,
+          "end_lineno": 482
         }
       ],
       "constants": [
@@ -1686,7 +1704,7 @@
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 371
+          "lineno": 373
         }
       ],
       "stats": {

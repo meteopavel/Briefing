@@ -220,26 +220,28 @@ def _issue_sort_key(issue: dict) -> tuple:
 def index(request: Request):
     try:
         issues = RedmineClient.fetch_my_issues()
-        review_issues = RedmineClient.fetch_on_review_issues()
+        passive = RedmineClient.fetch_passive_issues()
         daily_summary = RedmineClient.fetch_daily_summary(days=3)
         my_issue_ids = {i['id'] for i in issues}
         for issue in issues:
             issue['_desc_html'] = _render(issue.get('description'))
             _enrich(issue)
-        for issue in review_issues:
-            if issue['id'] not in my_issue_ids:
-                issue['_desc_html'] = _render(issue.get('description'))
-                _enrich(issue)
+        for lst in passive.values():
+            for issue in lst:
+                if issue['id'] not in my_issue_ids:
+                    issue['_desc_html'] = _render(issue.get('description'))
+                    _enrich(issue)
         issues.sort(key=_issue_sort_key)
         groups = _group_issues(issues)
         error = None
     except Exception as e:
-        issues = []; groups = []; daily_summary = []; review_issues = []
+        issues = []; groups = []; daily_summary = []
+        passive = {'review': [], 'stage': [], 'prod': [], 'closed': []}
         error = str(e)
     return templates.TemplateResponse(
         request=request,
         name='tasks.html',
-        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'review_issues': review_issues, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues), 'daily_summary': daily_summary},
+        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'passive': passive, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues), 'daily_summary': daily_summary},
     )
 
 
