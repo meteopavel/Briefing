@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T03:53:49.153429+00:00",
+  "generated_at": "2026-06-24T03:57:07.219025+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,7 +17,7 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 82,
+    "functions": 83,
     "methods": 5,
     "constants": 35
   },
@@ -1372,6 +1372,18 @@
           ],
           "lineno": 406,
           "end_lineno": 407
+        },
+        {
+          "name": "demo",
+          "signature": "demo(request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/demo')"
+          ],
+          "lineno": 411,
+          "end_lineno": 432
         }
       ],
       "constants": [
@@ -1457,7 +1469,7 @@
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 18,
+        "functions": 19,
         "methods": 0,
         "constants": 13
       }
