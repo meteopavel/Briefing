@@ -157,8 +157,15 @@
         <span class="issue-group-count">{{ passive.closed | length }}</span>
     </div>
     <div class="issue-list">
-        {% for issue in passive.closed %}{{ render_issue(issue, show_status=False) }}{% endfor %}
+        {% for issue in passive.closed %}
+        <div class="closed-issue-wrap{% if loop.index > 10 %} closed-hidden{% endif %}">{{ render_issue(issue, show_status=False) }}</div>
+        {% endfor %}
     </div>
+    {% if passive.closed | length > 10 %}
+    <button class="closed-show-more" onclick="toggleClosedIssues(this)">
+        Показать все · {{ passive.closed | length }}
+    </button>
+    {% endif %}
 </div>
 {% endif %}
 {% else %}
@@ -168,6 +175,12 @@
 {% endif %}
 
 <script>
+function toggleClosedIssues(btn) {
+    const group = btn.closest('.issue-group');
+    group.querySelectorAll('.closed-hidden').forEach(el => el.classList.remove('closed-hidden'));
+    btn.remove();
+}
+
 function toggleIssue(header) {
     const card = header.parentElement;
     const body = card.querySelector('.issue-body');
