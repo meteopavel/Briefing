@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 79
+- функций: 82
 - методов: 5
-- констант: 34
+- констант: 35
 
 ---
 
@@ -559,6 +559,7 @@ FastAPI web application: маршруты Briefing.
 - `_ANGLE_RE = re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')`
 - `_NOTEXTILE_RE = re.compile('<notextile>(.*?)</notextile>', re.DOTALL)`
 - `_QUOTE_BLOCK_RE = re.compile('((?:^> ?.*$\\n?)+)', re.MULTILINE)`
+- `_GROUP_DEFS = [('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s …`
 - `_LABEL_Q_RE = re.compile('\\[q\\d*\\]', re.IGNORECASE)`
 - `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`
 - `_ATTR_LABELS: dict[str, str] = {'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Г…`
@@ -572,6 +573,15 @@ FastAPI web application: маршруты Briefing.
   Экранирует <placeholder> которые не являются HTML-тегами.
 
 - `_render(text: str | None) -> str`
+  Нет докстринга.
+
+- `_calc_workdays(due_str: str | None) -> int | None`
+  Нет докстринга.
+
+- `_enrich(issue: dict) -> dict`
+  Нет докстринга.
+
+- `_group_issues(issues: list) -> list`
   Нет докстринга.
 
 - `_detect_label(subject: str) -> str`
