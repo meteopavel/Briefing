@@ -17,7 +17,7 @@
         </div>
         <div class="issue-header-right">
             {% if issue._mrs %}
-            <div class="issue-mrs">
+            <div class="issue-mrs issue-mrs-loading">
                 {% for mr in issue._mrs %}<a class="mr-badge mr-badge-loading" data-mr-iid="{{ mr.mr_iid }}" data-mr-type="{{ mr.mr_type }}" href="{{ mr.url }}" target="_blank" title="MR #{{ mr.mr_iid }} → {{ mr.mr_type }}">{{ 'S' if mr.mr_type == 'stage' else 'M' if mr.mr_type == 'master' else '?' }}</a>{% endfor %}
             </div>
             {% endif %}
@@ -335,15 +335,13 @@ function escapeHtml(s) {
                 el.classList.remove('mr-badge-loading');
                 el.classList.add(mr.has_conflicts ? 'mr-badge-conflict' : 'mr-badge-open');
             });
-            document.querySelectorAll('.issue-mrs').forEach(div => {
+            document.querySelectorAll('.issue-mrs-loading').forEach(div => {
+                div.classList.remove('issue-mrs-loading');
                 if (!div.querySelector('.mr-badge')) div.remove();
             });
         })
         .catch(() => {
-            document.querySelectorAll('.mr-badge-loading').forEach(el => el.remove());
-            document.querySelectorAll('.issue-mrs').forEach(div => {
-                if (!div.querySelector('.mr-badge')) div.remove();
-            });
+            document.querySelectorAll('.issue-mrs-loading').forEach(div => div.remove());
         });
 })();
 
