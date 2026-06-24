@@ -100,7 +100,7 @@ class RedmineClient:
             params={
                 'assigned_to_id': REDMINE_USER_ID,
                 'status_id': status_id,
-                'include': 'spent_time',
+
                 'limit': 100,
                 'sort': 'priority:desc,updated_on:desc',
             },
@@ -108,3 +108,24 @@ class RedmineClient:
         )
         response.raise_for_status()
         return response.json().get('issues', [])
+
+    @staticmethod
+    def fetch_my_spent_hours() -> dict[int, float]:
+        """Возвращает {issue_id: total_hours} по записям времени текущего пользователя."""
+        try:
+            response = requests.get(
+                f'{REDMINE_URL}/time_entries.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                params={'user_id': REDMINE_USER_ID, 'limit': 500},
+                timeout=15,
+            )
+            response.raise_for_status()
+            result: dict[int, float] = {}
+            for entry in response.json().get('time_entries', []):
+                issue = entry.get('issue', {})
+                iid = issue.get('id')
+                if iid:
+                    result[iid] = result.get(iid, 0.0) + entry.get('hours', 0.0)
+            return result
+        except Exception:
+            return {}

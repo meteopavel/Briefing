@@ -120,10 +120,12 @@ def _calc_workdays(due_str: str | None) -> int | None:
         return -count
 
 
-def _enrich(issue: dict) -> dict:
+def _enrich(issue: dict, spent_map: dict | None = None) -> dict:
     issue['_desc_html'] = issue.get('_desc_html', '')
     issue['_label']      = _detect_label(issue.get('subject', ''))
     issue['_workdays']   = _calc_workdays(issue.get('due_date'))
+    if spent_map is not None:
+        issue['_spent_hours'] = spent_map.get(issue.get('id'), 0.0)
     return issue
 
 
@@ -195,9 +197,10 @@ def _issue_sort_key(issue: dict) -> tuple:
 def index(request: Request):
     try:
         issues = RedmineClient.fetch_my_issues()
+        spent_map = RedmineClient.fetch_my_spent_hours()
         for issue in issues:
             issue['_desc_html'] = _render(issue.get('description'))
-            _enrich(issue)
+            _enrich(issue, spent_map)
         issues.sort(key=_issue_sort_key)
         groups = _group_issues(issues)
         error = None
