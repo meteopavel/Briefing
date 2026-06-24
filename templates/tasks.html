@@ -32,7 +32,7 @@
             </span>
             {% endif %}
         </div>
-        <span class="issue-chevron">▸</span>
+        <button class="issue-toggle-btn" onclick="toggleIssue(this.closest('.issue-header'))"><span class="issue-chevron">▸</span></button>
         <div class="issue-info-panel" onclick="event.stopPropagation()">
             {% if issue.get('done_ratio', 0) > 0 %}
             <div class="issue-progress-wrap">
@@ -242,36 +242,6 @@ function convertToPng(blob) {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModal(); });
-
-// Долгое нажатие на хедер — открыть/закрыть задачу
-(function() {
-    const LONG_PRESS = 500;
-    let _timer = null, _moved = false;
-    document.addEventListener('pointerdown', e => {
-        const header = e.target.closest('.issue-header');
-        if (!header || e.target.closest('.issue-info-panel')) return;
-        _moved = false;
-        _timer = setTimeout(() => {
-            _timer = null;
-            toggleIssue(header);
-        }, LONG_PRESS);
-    });
-    document.addEventListener('pointermove', () => { _moved = true; if (_timer) { clearTimeout(_timer); _timer = null; } });
-    document.addEventListener('pointerup', () => { if (_timer) { clearTimeout(_timer); _timer = null; } });
-    document.addEventListener('pointercancel', () => { if (_timer) { clearTimeout(_timer); _timer = null; } });
-})();
-
-document.addEventListener('click', e => {
-    const open = document.querySelector('.issue-card.issue-open');
-    if (!open) return;
-    const body = open.querySelector('.issue-body');
-    const journals = open.querySelector('.issue-journals');
-    if (journals && journals.contains(e.target) && !e.target.closest('.journal-entry')) {
-        open.classList.remove('issue-open');
-        body.style.maxHeight = null; body.style.overflow = '';
-        open.querySelector('.issue-chevron').textContent = '▸';
-    }
-});
 
 function escapeHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
