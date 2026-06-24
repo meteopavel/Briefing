@@ -9,7 +9,7 @@
 - классов: 1
 - dataclass: 1
 - функций: 82
-- методов: 5
+- методов: 6
 - констант: 36
 
 ---
@@ -253,6 +253,8 @@ HTTP-клиент для получения данных из Redmine API.
     Загружает полные данные одной задачи без journals.
   - `fetch_my_issues(status_id: str = 'open') -> list[dict[str, Any]]`
     Загружает задачи, назначенные на текущего пользователя.
+  - `fetch_my_spent_hours() -> dict[int, float]`
+    Возвращает {issue_id: total_hours} по записям времени текущего пользователя.
 
 ---
 
@@ -579,7 +581,7 @@ FastAPI web application: маршруты Briefing.
 - `_calc_workdays(due_str: str | None) -> int | None`
   Нет докстринга.
 
-- `_enrich(issue: dict) -> dict`
+- `_enrich(issue: dict, spent_map: dict | None = None) -> dict`
   Нет докстринга.
 
 - `_group_issues(issues: list) -> list`
