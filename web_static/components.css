@@ -166,6 +166,20 @@
 /* Meta badges row */
 .issue-meta {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+}
+
+.issue-meta-top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.issue-meta-bottom {
+    display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 5px;
@@ -214,6 +228,16 @@
 .priority-normal .issue-subject, .priority-нормальный .issue-subject { color: var(--text); }
 .priority-low .issue-id, .priority-низкий .issue-id,
 .priority-low .issue-subject, .priority-низкий .issue-subject        { color: var(--muted); }
+
+/* Label: q (super high — purple) */
+.issue-card.label-q { border-left-color: rgba(192, 132, 252, 0.7); }
+.issue-card.label-q .issue-id,
+.issue-card.label-q .issue-subject { color: #e9d5ff; }
+
+/* Label: ai (cyan) */
+.issue-card.label-ai { border-left-color: rgba(34, 211, 238, 0.55); }
+.issue-card.label-ai .issue-id,
+.issue-card.label-ai .issue-subject { color: #a5f3fc; }
 
 .issue-due {
     font-size: var(--fs-xs);

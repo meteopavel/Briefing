@@ -8,9 +8,9 @@
 - модулей: 17
 - классов: 1
 - dataclass: 1
-- функций: 77
+- функций: 79
 - методов: 5
-- констант: 32
+- констант: 34
 
 ---
 
@@ -559,6 +559,8 @@ FastAPI web application: маршруты Briefing.
 - `_ANGLE_RE = re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')`
 - `_NOTEXTILE_RE = re.compile('<notextile>(.*?)</notextile>', re.DOTALL)`
 - `_QUOTE_BLOCK_RE = re.compile('((?:^> ?.*$\\n?)+)', re.MULTILINE)`
+- `_LABEL_Q_RE = re.compile('\\[q\\d*\\]', re.IGNORECASE)`
+- `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`
 - `_ATTR_LABELS: dict[str, str] = {'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Г…`
 
 Функции:
@@ -570,6 +572,12 @@ FastAPI web application: маршруты Briefing.
   Экранирует <placeholder> которые не являются HTML-тегами.
 
 - `_render(text: str | None) -> str`
+  Нет докстринга.
+
+- `_detect_label(subject: str) -> str`
+  Нет докстринга.
+
+- `_issue_sort_key(issue: dict) -> tuple`
   Нет докстринга.
 
 - `index(request: Request)`

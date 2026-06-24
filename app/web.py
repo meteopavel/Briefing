@@ -87,12 +87,46 @@ def _render(text: str | None) -> str:
     return _fix_spans(html)
 
 
+
+_LABEL_Q_RE  = re.compile(r'\[q\d*\]', re.IGNORECASE)
+_LABEL_AI_RE = re.compile(r'\[ai\]',    re.IGNORECASE)
+
+
+def _detect_label(subject: str) -> str:
+    if _LABEL_Q_RE.search(subject):
+        return 'q'
+    if _LABEL_AI_RE.search(subject):
+        return 'ai'
+    return ''
+
+
+def _issue_sort_key(issue: dict) -> tuple:
+    label       = issue.get('_label', '')
+    status_name = (issue.get('status') or {}).get('name', '').lower()
+    due         = issue.get('due_date') or ''
+    in_progress = 'работ' in status_name
+    on_review   = 'ревью' in status_name or 'review' in status_name
+    if label == 'q':
+        group = 0 if due else 1
+    elif in_progress and due:
+        group = 2
+    elif in_progress:
+        group = 3
+    elif on_review:
+        group = 4
+    else:
+        group = 5
+    return (group, due if due else 'z')
+
+
 @app.get('/')
 def index(request: Request):
     try:
         issues = RedmineClient.fetch_my_issues()
         for issue in issues:
             issue['_desc_html'] = _render(issue.get('description'))
+            issue['_label'] = _detect_label(issue.get('subject', ''))
+        issues.sort(key=_issue_sort_key)
         error = None
     except Exception as e:
         issues = []
@@ -115,6 +149,7 @@ def issue_by_id(request: Request, issue_id: int):
         r.raise_for_status()
         issue = r.json()['issue']
         issue['_desc_html'] = _render(issue.get('description'))
+        issue['_label'] = _detect_label(issue.get('subject', ''))
         issues = [issue]
         error = None
     except Exception as e:
