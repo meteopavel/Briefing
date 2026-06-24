@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T05:25:40.200555+00:00",
+  "generated_at": "2026-06-24T05:27:50.843596+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -649,18 +649,18 @@
             {
               "name": "fetch_daily_summary",
               "signature": "fetch_daily_summary(days: int = 3) -> list[dict]",
-              "docstring": "Возвращает список {date, total, entries} за последние N дней (включая дни без записей).",
-              "summary": "Возвращает список {date, total, entries} за последние N дней (включая дни без записей).",
+              "docstring": "Возвращает список {date, total, entries} за последние N дней — быстрый прямой запрос.",
+              "summary": "Возвращает список {date, total, entries} за последние N дней — быстрый прямой запрос.",
               "kind": "method",
               "decorators": [
                 "staticmethod"
               ],
               "lineno": 174,
-              "end_lineno": 189
+              "end_lineno": 205
             }
           ],
           "lineno": 24,
-          "end_lineno": 189
+          "end_lineno": 205
         }
       ],
       "functions": [],
@@ -1324,7 +1324,7 @@
             "app.get('/')"
           ],
           "lineno": 199,
-          "end_lineno": 215
+          "end_lineno": 216
         },
         {
           "name": "api_spent",
@@ -1335,7 +1335,7 @@
           "decorators": [
             "app.get('/api/spent')"
           ],
-          "lineno": 219,
+          "lineno": 220,
           "end_lineno": 230
         },
         {
