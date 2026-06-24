@@ -305,6 +305,8 @@
     text-align: right;
 }
 .issue-spent.spent-today { color: var(--tint-red-text); }
+.issue-spent-loading { color: var(--muted); opacity: 0.4; letter-spacing: 0.1em; }
+.timelog-loading { color: var(--muted); font-size: var(--fs-xs); }
 
 .issue-due {
     font-size: var(--fs-xs);

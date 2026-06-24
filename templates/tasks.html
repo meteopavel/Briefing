@@ -16,7 +16,7 @@
             {% endif %}
         </div>
         <div class="issue-header-right">
-            <span class="issue-spent" data-issue-id="{{ issue.id }}"></span>
+            <span class="issue-spent issue-spent-loading" data-issue-id="{{ issue.id }}">···</span>
             {% if issue._workdays is not none %}
                 {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
                 {% elif issue._workdays == 0 %}<span class="issue-due due-soon">сегодня</span>
@@ -99,9 +99,9 @@
 </div>
 {% endif %}
 
-<div class="timelog-section" id="timelog-section" style="display:none">
+<div class="timelog-section" id="timelog-section">
     <div class="timelog-header">Трудозатраты · 3 дня</div>
-    <div id="timelog-rows"></div>
+    <div id="timelog-rows"><span class="timelog-loading">Загрузка…</span></div>
 </div>
 
 <script>
@@ -291,10 +291,13 @@ function escapeHtml(s) {
         .then(data => {
             // Часы в карточках
             document.querySelectorAll('.issue-spent[data-issue-id]').forEach(el => {
+                el.classList.remove('issue-spent-loading');
                 const rec = data.by_issue && data.by_issue[el.dataset.issueId];
                 if (rec && rec.hours > 0) {
                     el.textContent = rec.hours.toFixed(2) + ' ч';
                     if (rec.today) el.classList.add('spent-today');
+                } else {
+                    el.textContent = '';
                 }
             });
             // Секция трудозатрат
