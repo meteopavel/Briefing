@@ -10,7 +10,7 @@
 - dataclass: 1
 - функций: 85
 - методов: 14
-- констант: 45
+- констант: 48
 
 ---
 
@@ -87,6 +87,9 @@ CLI-точка входа для генерации документов и эк
 - `REDMINE_API_KEY_ADMIN = os.getenv('REDMINE_API_KEY_ADMIN') or os.getenv('REDMINE_API_KEY')`
 - `REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')`
 - `REDMINE_REVIEW_STATUS_IDS = [int(x) for x in os.getenv('REDMINE_REVIEW_STATUS_IDS', '14').split(',') if x.strip()]`
+- `REDMINE_STAGE_STATUS_IDS = [int(x) for x in os.getenv('REDMINE_STAGE_STATUS_IDS', '19').split(',') if x.strip()]`
+- `REDMINE_PROD_STATUS_IDS = [int(x) for x in os.getenv('REDMINE_PROD_STATUS_IDS', '12').split(',') if x.strip()]`
+- `REDMINE_CLOSED_STATUS_IDS = [int(x) for x in os.getenv('REDMINE_CLOSED_STATUS_IDS', '13,5').split(',') if x.strip()]`
 - `GITLAB_URL = os.getenv('GITLAB_URL', '').rstrip('/')`
 - `GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')`
 - `GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')`
@@ -283,8 +286,8 @@ HTTP-клиент для получения данных из Redmine API.
     Загружает полные данные одной задачи без journals.
   - `fetch_my_issues(status_id: str = 'open') -> list[dict[str, Any]]`
     Загружает задачи, назначенные на текущего пользователя.
-  - `fetch_on_review_issues() -> list[dict[str, Any]]`
-    Задачи на ревью, над которыми работал текущий пользователь (есть трудозатраты).
+  - `fetch_passive_issues() -> dict`
+    Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь.
   - `_fetch_and_cache() -> None`
     Загружает все записи времени и сохраняет в кэш.
   - `_ensure_cache() -> None`

@@ -14,7 +14,7 @@ import time
 
 import requests
 
-from app.config import REDMINE_API_KEY, REDMINE_REVIEW_STATUS_IDS, REDMINE_USER_ID, REDMINE_URL
+from app.config import REDMINE_API_KEY, REDMINE_REVIEW_STATUS_IDS, REDMINE_STAGE_STATUS_IDS, REDMINE_PROD_STATUS_IDS, REDMINE_CLOSED_STATUS_IDS, REDMINE_USER_ID, REDMINE_URL
 
 
 _spent_cache: dict = {}
@@ -116,21 +116,31 @@ class RedmineClient:
         return response.json().get('issues', [])
 
     @staticmethod
-    def fetch_on_review_issues() -> list[dict[str, Any]]:
-        """Задачи на ревью, над которыми работал текущий пользователь (есть трудозатраты)."""
-        candidates: list[dict] = []
-        for status_id in REDMINE_REVIEW_STATUS_IDS:
-            response = requests.get(
-                f'{REDMINE_URL}/issues.json',
-                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
-                params={'status_id': status_id, 'limit': 100},
-                timeout=30,
-            )
-            response.raise_for_status()
-            candidates.extend(response.json().get('issues', []))
-        if not candidates:
-            return []
-        # time_entries API не поддерживает список issue_id — берём все записи пользователя одним запросом
+    def fetch_passive_issues() -> dict:
+        """Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь."""
+        status_groups = {
+            'review': REDMINE_REVIEW_STATUS_IDS,
+            'stage':  REDMINE_STAGE_STATUS_IDS,
+            'prod':   REDMINE_PROD_STATUS_IDS,
+            'closed': REDMINE_CLOSED_STATUS_IDS,
+        }
+        candidates_by_key: dict = {k: [] for k in status_groups}
+        for key, status_ids in status_groups.items():
+            limit = 20 if key == 'closed' else 100
+            for status_id in status_ids:
+                response = requests.get(
+                    f'{REDMINE_URL}/issues.json',
+                    headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                    params={'status_id': status_id, 'limit': limit, 'sort': 'updated_on:desc'},
+                    timeout=30,
+                )
+                response.raise_for_status()
+                candidates_by_key[key].extend(response.json().get('issues', []))
+
+        all_candidates = [i for lst in candidates_by_key.values() for i in lst]
+        if not all_candidates:
+            return {k: [] for k in status_groups}
+
         te_response = requests.get(
             f'{REDMINE_URL}/time_entries.json',
             headers={'X-Redmine-API-Key': REDMINE_API_KEY},
@@ -139,11 +149,19 @@ class RedmineClient:
         )
         te_response.raise_for_status()
         worked_ids = {e['issue']['id'] for e in te_response.json().get('time_entries', []) if e.get('issue')}
-        return [
-            i for i in candidates
-            if i['id'] in worked_ids
-            and str(i.get('assigned_to', {}).get('id', '')) != str(REDMINE_USER_ID)
-        ]
+
+        result: dict = {k: [] for k in status_groups}
+        seen_ids: set = set()
+        for key, candidates in candidates_by_key.items():
+            for issue in candidates:
+                iid = issue['id']
+                if iid not in worked_ids or iid in seen_ids:
+                    continue
+                if key != 'closed' and str(issue.get('assigned_to', {}).get('id', '')) == str(REDMINE_USER_ID):
+                    continue
+                seen_ids.add(iid)
+                result[key].append(issue)
+        return result
 
     @staticmethod
     def _fetch_and_cache() -> None:
@@ -223,7 +241,7 @@ class RedmineClient:
                     day = by_day.setdefault(spent_on, {'total': 0.0, 'entries': []})
                     day['total'] += hours
                     if issue.get('id'):
-                        day['entries'].append({'issue_id': issue['id'], 'hours': hours})
+                        day['entries'].append({'issue_id': issue['id'], 'hours': hours, 'subject': issue.get('subject', '')})
         except Exception:
             pass
         result = []

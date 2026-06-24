@@ -94,14 +94,47 @@
     </div>
 </div>
 {% endfor %}
-{% if review_issues %}
+{% if passive.review %}
 <div class="issue-group">
     <div class="issue-group-header">
         <span class="issue-group-title">Ожидает ревью</span>
-        <span class="issue-group-count">{{ review_issues | length }}</span>
+        <span class="issue-group-count">{{ passive.review | length }}</span>
     </div>
     <div class="issue-list">
-        {% for issue in review_issues %}{{ render_issue(issue, show_status=False) }}{% endfor %}
+        {% for issue in passive.review %}{{ render_issue(issue, show_status=False) }}{% endfor %}
+    </div>
+</div>
+{% endif %}
+{% if passive.stage %}
+<div class="issue-group">
+    <div class="issue-group-header">
+        <span class="issue-group-title">Ожидает stage</span>
+        <span class="issue-group-count">{{ passive.stage | length }}</span>
+    </div>
+    <div class="issue-list">
+        {% for issue in passive.stage %}{{ render_issue(issue, show_status=False) }}{% endfor %}
+    </div>
+</div>
+{% endif %}
+{% if passive.prod %}
+<div class="issue-group">
+    <div class="issue-group-header">
+        <span class="issue-group-title">Ожидает prod</span>
+        <span class="issue-group-count">{{ passive.prod | length }}</span>
+    </div>
+    <div class="issue-list">
+        {% for issue in passive.prod %}{{ render_issue(issue, show_status=False) }}{% endfor %}
+    </div>
+</div>
+{% endif %}
+{% if passive.closed %}
+<div class="issue-group">
+    <div class="issue-group-header">
+        <span class="issue-group-title">Закрытые</span>
+        <span class="issue-group-count">{{ passive.closed | length }}</span>
+    </div>
+    <div class="issue-list">
+        {% for issue in passive.closed %}{{ render_issue(issue, show_status=False) }}{% endfor %}
     </div>
 </div>
 {% endif %}
@@ -112,20 +145,27 @@
 {% endif %}
 
 {% if daily_summary %}
-<div class="timelog-section">
-    <div class="timelog-header">Трудозатраты · 3 дня</div>
-    {% for day in daily_summary %}
-    <div class="timelog-row">
+<div class="section-label">Трудозатраты · 3 дня</div>
+{% for day in daily_summary %}
+<div class="timelog-card">
+    <div class="timelog-card-header">
         <span class="timelog-date">{{ day.date }}</span>
-        <span class="timelog-total {% if day.total == 0 %}timelog-zero{% endif %}">{{ "%.2f"|format(day.total) }} ч</span>
-        <span class="timelog-entries">
-            {% for e in day.entries %}
-            <a class="timelog-chip" href="{{ redmine_url }}/issues/{{ e.issue_id }}" target="_blank">#{{ e.issue_id }} {{ "%.2f"|format(e.hours) }} ч</a>
-            {% endfor %}
-        </span>
+        <span class="timelog-total{% if day.total == 0 %} timelog-zero{% endif %}">{{ "%.2f"|format(day.total) }} ч</span>
     </div>
-    {% endfor %}
+    {% if day.entries %}
+    <div class="timelog-card-entries">
+        {% for e in day.entries %}
+        <a class="timelog-entry {% if e.hours >= 4 %}entry-major{% elif e.hours >= 1 %}entry-mid{% else %}entry-minor{% endif %}"
+           href="{{ redmine_url }}/issues/{{ e.issue_id }}" target="_blank"
+           title="{{ e.subject }}">
+            <span class="timelog-entry-id">#{{ e.issue_id }}</span>
+            <span class="timelog-entry-hours">{{ "%.2f"|format(e.hours) }} ч</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
+{% endfor %}
 {% endif %}
 
 <script>

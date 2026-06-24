@@ -63,7 +63,10 @@ REDMINE_URL = os.getenv('REDMINE_URL', '').rstrip('/')
 REDMINE_API_KEY = os.getenv('REDMINE_API_KEY')
 REDMINE_API_KEY_ADMIN = os.getenv('REDMINE_API_KEY_ADMIN') or os.getenv('REDMINE_API_KEY')
 REDMINE_USER_ID = os.getenv('REDMINE_USER_ID')
-REDMINE_REVIEW_STATUS_IDS = [int(x) for x in os.getenv('REDMINE_REVIEW_STATUS_IDS', '14').split(',') if x.strip()]
+REDMINE_REVIEW_STATUS_IDS  = [int(x) for x in os.getenv('REDMINE_REVIEW_STATUS_IDS',  '14').split(',') if x.strip()]
+REDMINE_STAGE_STATUS_IDS   = [int(x) for x in os.getenv('REDMINE_STAGE_STATUS_IDS',   '19').split(',') if x.strip()]
+REDMINE_PROD_STATUS_IDS    = [int(x) for x in os.getenv('REDMINE_PROD_STATUS_IDS',    '12').split(',') if x.strip()]
+REDMINE_CLOSED_STATUS_IDS  = [int(x) for x in os.getenv('REDMINE_CLOSED_STATUS_IDS', '13,5').split(',') if x.strip()]
 
 GITLAB_URL = os.getenv('GITLAB_URL', '').rstrip('/')
 GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')
