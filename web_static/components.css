@@ -305,9 +305,33 @@
     text-align: right;
 }
 .issue-spent.spent-today { color: var(--tint-red-text); }
-.issue-spent-loading { font-size: 0; width: 14px; height: 14px; display: inline-block; vertical-align: middle; border: 1.5px solid var(--border); border-top-color: var(--muted); border-radius: 50%; animation: spin 0.7s linear infinite; }
+.issue-spent-loading {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 14px;
+    min-height: 14px;
+    color: transparent;
+    pointer-events: none;
+}
+.issue-spent-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--muted);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: issue-spin 0.7s linear infinite;
+}
+@keyframes issue-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
 .timelog-loading { color: var(--muted); font-size: var(--fs-xs); }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .issue-due {
     font-size: var(--fs-xs);
