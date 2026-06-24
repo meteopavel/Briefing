@@ -16,7 +16,7 @@
             {% endif %}
         </div>
         <div class="issue-header-right">
-            <span class="issue-spent issue-spent-loading" data-issue-id="{{ issue.id }}">···</span>
+            <span class="issue-spent issue-spent-loading" data-issue-id="{{ issue.id }}"></span>
             {% if issue._workdays is not none %}
                 {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
                 {% elif issue._workdays == 0 %}<span class="issue-due due-soon">сегодня</span>

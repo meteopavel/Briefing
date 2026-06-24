@@ -305,8 +305,9 @@
     text-align: right;
 }
 .issue-spent.spent-today { color: var(--tint-red-text); }
-.issue-spent-loading { color: var(--muted); opacity: 0.4; letter-spacing: 0.1em; }
+.issue-spent-loading { font-size: 0; width: 14px; height: 14px; display: inline-block; vertical-align: middle; border: 1.5px solid var(--border); border-top-color: var(--muted); border-radius: 50%; animation: spin 0.7s linear infinite; }
 .timelog-loading { color: var(--muted); font-size: var(--fs-xs); }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .issue-due {
     font-size: var(--fs-xs);
