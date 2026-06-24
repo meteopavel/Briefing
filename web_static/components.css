@@ -196,12 +196,12 @@
     grid-template-columns: 1fr auto auto;
     align-items: center;
     gap: 0 8px;
-    padding: 4px 14px;
+    padding: 2px 14px;
 }
 
 .issue-header .issue-meta      { grid-column: 1; grid-row: 1; align-self: center; }
-.issue-due-cell                { grid-column: 2; grid-row: 1; align-self: center; justify-self: end; white-space: nowrap; }
-.issue-toggle-btn              { grid-column: 3; grid-row: 1; align-self: center; justify-self: center; background: none; border: none; padding: 8px; cursor: pointer; line-height: 1; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background var(--transition); }
+.issue-due-cell                { grid-column: 2; grid-row: 1; align-self: center; justify-self: end; white-space: nowrap; display: flex; align-items: center; }
+.issue-toggle-btn              { grid-column: 3; grid-row: 1; align-self: center; justify-self: center; background: none; border: none; padding: 4px; cursor: pointer; line-height: 1; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background var(--transition); }
 .issue-toggle-btn:hover        { background: var(--bg-hover, rgba(0,0,0,0.06)); }
 
 /* Meta badges row */
