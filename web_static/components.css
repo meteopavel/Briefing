@@ -232,7 +232,9 @@
     font-size: var(--fs-xs);
     color: var(--muted);
     margin-right: 2px;
+    text-decoration: none;
 }
+.issue-id:hover { text-decoration: underline; }
 
 .issue-badge {
     display: inline-flex;
