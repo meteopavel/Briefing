@@ -238,7 +238,16 @@ function convertToPng(blob) {
     });
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgModal(); });
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeImgModal();
+        const open = document.querySelector('.issue-card.issue-open');
+        if (open) {
+            open.classList.remove('issue-open');
+            const b = open.querySelector('.issue-body'); b.style.maxHeight = null; b.style.overflow = '';
+        }
+    }
+});
 
 function escapeHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
