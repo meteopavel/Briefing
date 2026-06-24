@@ -292,6 +292,7 @@
     min-width: 44px;
     text-align: right;
 }
+.issue-spent.spent-today { color: var(--tint-red-text); }
 
 .issue-due {
     font-size: var(--fs-xs);

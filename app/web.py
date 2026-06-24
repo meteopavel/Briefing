@@ -125,7 +125,9 @@ def _enrich(issue: dict, spent_map: dict | None = None) -> dict:
     issue['_label']      = _detect_label(issue.get('subject', ''))
     issue['_workdays']   = _calc_workdays(issue.get('due_date'))
     if spent_map is not None:
-        issue['_spent_hours'] = spent_map.get(issue.get('id'), 0.0)
+        rec = spent_map.get(issue.get('id'), {})
+        issue['_spent_hours'] = rec.get('hours', 0.0)
+        issue['_spent_today'] = rec.get('today', False)
     return issue
 
 
