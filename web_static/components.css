@@ -297,6 +297,27 @@
 .issue-card.label-ai .issue-id,
 .issue-card.label-ai .issue-subject { color: #a5f3fc; }
 
+.issue-mrs { display: flex; gap: 4px; align-items: center; }
+
+.mr-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: var(--radius-pill);
+    border: 1px solid currentColor;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1;
+    transition: opacity var(--transition);
+}
+.mr-badge:hover { opacity: 0.7; text-decoration: none; }
+.mr-badge-loading { color: var(--muted); border-color: var(--border); pointer-events: none; }
+.mr-badge-open    { color: var(--tint-green-text); border-color: var(--tint-green-border); background: var(--tint-green-bg); }
+.mr-badge-conflict { color: var(--tint-red-text); border-color: var(--tint-red-border); background: var(--tint-red-bg); }
+
 .issue-spent {
     font-size: var(--fs-xs);
     font-weight: 500;

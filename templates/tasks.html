@@ -16,6 +16,11 @@
             {% endif %}
         </div>
         <div class="issue-header-right">
+            {% if issue._mrs %}
+            <div class="issue-mrs">
+                {% for mr in issue._mrs %}<a class="mr-badge mr-badge-loading" data-mr-iid="{{ mr.mr_iid }}" data-mr-type="{{ mr.mr_type }}" href="{{ mr.url }}" target="_blank" title="MR #{{ mr.mr_iid }} → {{ mr.mr_type }}">{{ 'S' if mr.mr_type == 'stage' else 'M' if mr.mr_type == 'master' else '?' }}</a>{% endfor %}
+            </div>
+            {% endif %}
             <span class="issue-spent issue-spent-loading" data-issue-id="{{ issue.id }}"></span>
             {% if issue._workdays is not none %}
                 {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
@@ -314,6 +319,32 @@ function escapeHtml(s) {
             });
         })
         .catch(() => {});
+})();
+
+// Асинхронная загрузка статусов MR
+(function() {
+    const badges = document.querySelectorAll('.mr-badge[data-mr-iid]');
+    if (!badges.length) return;
+    const iids = [...new Set([...badges].map(el => el.dataset.mrIid))];
+    fetch('/api/mrs?iids=' + iids.join(','))
+        .then(r => r.json())
+        .then(data => {
+            badges.forEach(el => {
+                const mr = data[el.dataset.mrIid];
+                if (!mr || mr.state !== 'opened') { el.remove(); return; }
+                el.classList.remove('mr-badge-loading');
+                el.classList.add(mr.has_conflicts ? 'mr-badge-conflict' : 'mr-badge-open');
+            });
+            document.querySelectorAll('.issue-mrs').forEach(div => {
+                if (!div.querySelector('.mr-badge')) div.remove();
+            });
+        })
+        .catch(() => {
+            document.querySelectorAll('.mr-badge-loading').forEach(el => el.remove());
+            document.querySelectorAll('.issue-mrs').forEach(div => {
+                if (!div.querySelector('.mr-badge')) div.remove();
+            });
+        });
 })();
 
 // Цвет дедлайна
