@@ -917,3 +917,20 @@ blockquote.redmine-quote {
 .entry-major { border-color: var(--tint-blue-border);  background: var(--tint-blue-bg);  color: var(--tint-blue-text); }
 .entry-mid   { border-color: var(--tint-green-border); background: var(--tint-green-bg); color: var(--tint-green-text); }
 .entry-minor { border-color: var(--border); background: transparent; color: var(--muted); }
+
+.closed-hidden { display: none; }
+
+.closed-show-more {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    transition: color var(--transition), border-color var(--transition);
+}
+.closed-show-more:hover { color: var(--text); border-color: var(--text-secondary); }
