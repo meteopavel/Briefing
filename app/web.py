@@ -4,6 +4,7 @@ from pathlib import Path
 
 import hashlib
 import re
+from datetime import date, timedelta
 
 import requests as req_lib
 import textile
@@ -88,6 +89,66 @@ def _render(text: str | None) -> str:
 
 
 
+_GROUP_DEFS = [
+    ('в_работе',      'В работе',      lambda s: 'работ' in s),
+    ('на_ревью',      'На ревью',       lambda s: 'ревью' in s or 'review' in s),
+    ('заблокирована', 'Заблокирована',  lambda s: 'заблок' in s or 'block' in s),
+]
+
+
+def _calc_workdays(due_str: str | None) -> int | None:
+    if not due_str:
+        return None
+    try:
+        due = date.fromisoformat(due_str)
+    except Exception:
+        return None
+    today = date.today()
+    if due >= today:
+        count, d = 0, today
+        while d <= due:
+            if d.weekday() < 5:
+                count += 1
+            d += timedelta(days=1)
+        return count
+    else:
+        count, d = 0, due + timedelta(days=1)
+        while d <= today:
+            if d.weekday() < 5:
+                count += 1
+            d += timedelta(days=1)
+        return -count
+
+
+def _enrich(issue: dict) -> dict:
+    issue['_desc_html'] = issue.get('_desc_html', '')
+    issue['_label']      = _detect_label(issue.get('subject', ''))
+    issue['_workdays']   = _calc_workdays(issue.get('due_date'))
+    return issue
+
+
+def _group_issues(issues: list) -> list:
+    buckets = {key: [] for key, _, _ in _GROUP_DEFS}
+    buckets['прочее'] = []
+    for issue in issues:
+        status = (issue.get('status') or {}).get('name', '').lower()
+        placed = False
+        for key, _, check in _GROUP_DEFS:
+            if check(status):
+                buckets[key].append(issue)
+                placed = True
+                break
+        if not placed:
+            buckets['прочее'].append(issue)
+    result = []
+    for key, title, _ in _GROUP_DEFS:
+        if buckets[key]:
+            result.append({'key': key, 'title': title, 'issues': buckets[key]})
+    if buckets['прочее']:
+        result.append({'key': 'прочее', 'title': 'Прочее', 'issues': buckets['прочее']})
+    return result
+
+
 _LABEL_Q_RE  = re.compile(r'\[q\d*\]', re.IGNORECASE)
 _LABEL_AI_RE = re.compile(r'\[ai\]',    re.IGNORECASE)
 
@@ -125,16 +186,17 @@ def index(request: Request):
         issues = RedmineClient.fetch_my_issues()
         for issue in issues:
             issue['_desc_html'] = _render(issue.get('description'))
-            issue['_label'] = _detect_label(issue.get('subject', ''))
+            _enrich(issue)
         issues.sort(key=_issue_sort_key)
+        groups = _group_issues(issues)
         error = None
     except Exception as e:
-        issues = []
+        issues = []; groups = []
         error = str(e)
     return templates.TemplateResponse(
         request=request,
         name='tasks.html',
-        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues)},
+        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues)},
     )
 
 
@@ -149,16 +211,17 @@ def issue_by_id(request: Request, issue_id: int):
         r.raise_for_status()
         issue = r.json()['issue']
         issue['_desc_html'] = _render(issue.get('description'))
-        issue['_label'] = _detect_label(issue.get('subject', ''))
+        _enrich(issue)
         issues = [issue]
+        groups = None
         error = None
     except Exception as e:
-        issues = []
+        issues = []; groups = None
         error = str(e)
     return templates.TemplateResponse(
         request=request,
         name='tasks.html',
-        context={'title': f'#{issue_id}', 'active_tab': 'tasks', 'issues': issues, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': None},
+        context={'title': f'#{issue_id}', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': None},
     )
 
 

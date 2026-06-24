@@ -131,6 +131,43 @@
 .text-sm    { font-size: var(--fs-sm); }
 .text-xs    { font-size: var(--fs-xs); }
 
+/* Issue groups */
+.issue-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.issue-group:last-child { margin-bottom: 0; }
+
+.issue-group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px 6px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2px;
+}
+
+.issue-group-title {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+
+.issue-group-count {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--bg-row);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 1px 7px;
+}
+
 /* Issue list */
 .issue-list {
     display: flex;
