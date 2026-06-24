@@ -14,7 +14,7 @@ import time
 
 import requests
 
-from app.config import REDMINE_API_KEY, REDMINE_USER_ID, REDMINE_URL
+from app.config import REDMINE_API_KEY, REDMINE_REVIEW_STATUS_IDS, REDMINE_USER_ID, REDMINE_URL
 
 
 _spent_cache: dict = {}
@@ -114,6 +114,36 @@ class RedmineClient:
         )
         response.raise_for_status()
         return response.json().get('issues', [])
+
+    @staticmethod
+    def fetch_on_review_issues() -> list[dict[str, Any]]:
+        """Задачи на ревью, над которыми работал текущий пользователь (есть трудозатраты)."""
+        candidates: list[dict] = []
+        for status_id in REDMINE_REVIEW_STATUS_IDS:
+            response = requests.get(
+                f'{REDMINE_URL}/issues.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                params={'status_id': status_id, 'limit': 100},
+                timeout=30,
+            )
+            response.raise_for_status()
+            candidates.extend(response.json().get('issues', []))
+        if not candidates:
+            return []
+        # time_entries API не поддерживает список issue_id — берём все записи пользователя одним запросом
+        te_response = requests.get(
+            f'{REDMINE_URL}/time_entries.json',
+            headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+            params={'user_id': REDMINE_USER_ID, 'limit': 1000},
+            timeout=30,
+        )
+        te_response.raise_for_status()
+        worked_ids = {e['issue']['id'] for e in te_response.json().get('time_entries', []) if e.get('issue')}
+        return [
+            i for i in candidates
+            if i['id'] in worked_ids
+            and str(i.get('assigned_to', {}).get('id', '')) != str(REDMINE_USER_ID)
+        ]
 
     @staticmethod
     def _fetch_and_cache() -> None:
