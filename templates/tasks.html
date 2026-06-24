@@ -83,6 +83,17 @@
     <div class="empty-state-text">Нет активных задач</div>
 </div>
 {% elif groups %}
+{% if review_issues %}
+<div class="issue-group">
+    <div class="issue-group-header">
+        <span class="issue-group-title">На ревью</span>
+        <span class="issue-group-count">{{ review_issues | length }}</span>
+    </div>
+    <div class="issue-list">
+        {% for issue in review_issues %}{{ render_issue(issue) }}{% endfor %}
+    </div>
+</div>
+{% endif %}
 {% for group in groups %}
 <div class="issue-group">
     <div class="issue-group-header">
