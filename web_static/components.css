@@ -261,6 +261,10 @@
     font-size: var(--fs-sm);
     color: var(--text);
     margin-right: 4px;
+    max-width: 600px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Priority colors for ID and subject */

@@ -7,7 +7,7 @@
         <div class="issue-meta">
             <div class="issue-meta-top">
                 <a class="issue-id" href="{{ redmine_url }}/issues/{{ issue.id }}" target="_blank">#{{ issue.id }}</a>
-                <span class="issue-subject">{{ issue.subject }}</span>
+                <span class="issue-subject" title="{{ issue.subject }}">{{ issue.subject }}</span>
             </div>
             {% if show_status %}
             <div class="issue-meta-bottom">
