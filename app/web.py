@@ -149,7 +149,7 @@ def _group_issues(issues: list) -> list:
     return result
 
 
-_LABEL_Q_RE  = re.compile(r'\[q\d*\]', re.IGNORECASE)
+_LABEL_Q_RE  = re.compile(r'\[Q', re.IGNORECASE)
 _LABEL_AI_RE = re.compile(r'\[ai\]',    re.IGNORECASE)
 
 

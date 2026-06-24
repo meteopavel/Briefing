@@ -560,7 +560,7 @@ FastAPI web application: маршруты Briefing.
 - `_NOTEXTILE_RE = re.compile('<notextile>(.*?)</notextile>', re.DOTALL)`
 - `_QUOTE_BLOCK_RE = re.compile('((?:^> ?.*$\\n?)+)', re.MULTILINE)`
 - `_GROUP_DEFS = [('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s …`
-- `_LABEL_Q_RE = re.compile('\\[q\\d*\\]', re.IGNORECASE)`
+- `_LABEL_Q_RE = re.compile('\\[Q', re.IGNORECASE)`
 - `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`
 - `_ATTR_LABELS: dict[str, str] = {'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Г…`
 
