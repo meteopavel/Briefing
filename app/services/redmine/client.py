@@ -172,18 +172,34 @@ class RedmineClient:
 
     @staticmethod
     def fetch_daily_summary(days: int = 3) -> list[dict]:
-        """Возвращает список {date, total, entries} за последние N дней (включая дни без записей)."""
+        """Возвращает список {date, total, entries} за последние N дней — быстрый прямой запрос."""
         from datetime import date, timedelta
-        try:
-            RedmineClient._ensure_cache()
-            by_day = _spent_cache.get('by_day', {})
-        except Exception:
-            by_day = {}
         today = date.today()
+        from_date = (today - timedelta(days=days - 1)).isoformat()
+        by_day: dict[str, dict] = {}
+        try:
+            response = requests.get(
+                f'{REDMINE_URL}/time_entries.json',
+                headers={'X-Redmine-API-Key': REDMINE_API_KEY},
+                params={'user_id': REDMINE_USER_ID, 'from': from_date, 'limit': 100},
+                timeout=10,
+            )
+            response.raise_for_status()
+            for entry in response.json().get('time_entries', []):
+                spent_on = entry.get('spent_on', '')
+                issue = entry.get('issue', {})
+                hours = entry.get('hours', 0.0)
+                if spent_on:
+                    day = by_day.setdefault(spent_on, {'total': 0.0, 'entries': []})
+                    day['total'] += hours
+                    if issue.get('id'):
+                        day['entries'].append({'issue_id': issue['id'], 'hours': hours})
+        except Exception:
+            pass
         result = []
         for i in range(days):
-            d = today - timedelta(days=i)
-            ds = d.isoformat()
+            ds = (today - timedelta(days=i)).isoformat()
             day_data = by_day.get(ds, {'total': 0.0, 'entries': []})
-            result.append({'date': ds, 'total': day_data['total'], 'entries': day_data['entries']})
+            result.append({'date': ds, 'total': round(day_data['total'], 2),
+                           'entries': sorted(day_data['entries'], key=lambda e: e['hours'], reverse=True)})
         return result

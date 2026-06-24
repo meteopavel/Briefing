@@ -99,10 +99,22 @@
 </div>
 {% endif %}
 
-<div class="timelog-section" id="timelog-section">
+{% if daily_summary %}
+<div class="timelog-section">
     <div class="timelog-header">Трудозатраты · 3 дня</div>
-    <div id="timelog-rows"><span class="timelog-loading">Загрузка…</span></div>
+    {% for day in daily_summary %}
+    <div class="timelog-row">
+        <span class="timelog-date">{{ day.date }}</span>
+        <span class="timelog-total {% if day.total == 0 %}timelog-zero{% endif %}">{{ "%.2f"|format(day.total) }} ч</span>
+        <span class="timelog-entries">
+            {% for e in day.entries %}
+            <a class="timelog-chip" href="{{ redmine_url }}/issues/{{ e.issue_id }}" target="_blank">#{{ e.issue_id }} {{ "%.2f"|format(e.hours) }} ч</a>
+            {% endfor %}
+        </span>
+    </div>
+    {% endfor %}
 </div>
+{% endif %}
 
 <script>
 function toggleIssue(header) {
@@ -300,23 +312,6 @@ function escapeHtml(s) {
                     el.textContent = '';
                 }
             });
-            // Секция трудозатрат
-            if (data.daily && data.daily.length) {
-                const rows = document.getElementById('timelog-rows');
-                rows.innerHTML = data.daily.map(day => {
-                    const entries = (day.entries || [])
-                        .sort((a, b) => b.hours - a.hours)
-                        .map(e => `<a class="timelog-chip" href="${REDMINE}/issues/${e.issue_id}" target="_blank">#${e.issue_id} ${e.hours.toFixed(2)} ч</a>`)
-                        .join('');
-                    const zeroClass = day.total === 0 ? ' timelog-zero' : '';
-                    return `<div class="timelog-row">
-                        <span class="timelog-date">${day.date}</span>
-                        <span class="timelog-total${zeroClass}">${day.total.toFixed(2)} ч</span>
-                        <span class="timelog-entries">${entries}</span>
-                    </div>`;
-                }).join('');
-                document.getElementById('timelog-section').style.display = '';
-            }
         })
         .catch(() => {});
 })();

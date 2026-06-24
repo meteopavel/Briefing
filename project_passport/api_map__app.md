@@ -263,7 +263,7 @@ HTTP-клиент для получения данных из Redmine API.
   - `fetch_my_spent_hours() -> dict[int, dict]`
     Возвращает {issue_id: {hours: float, today: bool}}.
   - `fetch_daily_summary(days: int = 3) -> list[dict]`
-    Возвращает список {date, total, entries} за последние N дней (включая дни без записей).
+    Возвращает список {date, total, entries} за последние N дней — быстрый прямой запрос.
 
 ---
 
