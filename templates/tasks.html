@@ -15,16 +15,16 @@
             </div>
             {% endif %}
         </div>
-        {% if issue._workdays is not none %}
-        <div class="issue-due-cell">
-            {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
-            {% elif issue._workdays == 0 %}<span class="issue-due due-soon">сегодня</span>
-            {% elif issue._workdays <= 3 %}<span class="issue-due due-soon">{{ issue._workdays }} р.д.</span>
-            {% else %}<span class="issue-due due-ok">{{ issue._workdays }} р.д.</span>
+        <div class="issue-header-right">
+            {% if issue._workdays is not none %}
+                {% if issue._workdays < 0 %}<span class="issue-due due-overdue">−{{ -issue._workdays }} р.д.</span>
+                {% elif issue._workdays == 0 %}<span class="issue-due due-soon">сегодня</span>
+                {% elif issue._workdays <= 3 %}<span class="issue-due due-soon">{{ issue._workdays }} р.д.</span>
+                {% else %}<span class="issue-due due-ok">{{ issue._workdays }} р.д.</span>
+                {% endif %}
             {% endif %}
+            <button class="issue-toggle-btn" onclick="toggleIssue(this.closest('.issue-header'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         </div>
-        {% endif %}
-        <button class="issue-toggle-btn" onclick="toggleIssue(this.closest('.issue-header'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         <button class="info-panel-toggle" onclick="toggleInfoPanel(this.closest('.issue-header'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
         <div class="issue-info-panel" onclick="event.stopPropagation()">
             {% if issue.get('done_ratio', 0) > 0 %}
