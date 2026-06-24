@@ -298,6 +298,7 @@
     padding: 14px 14px 14px;
 }
 
+.issue-card.issue-open .issue-header { padding-bottom: 0; }
 .issue-card.issue-open .issue-header {
     position: sticky;
     top: 0;
