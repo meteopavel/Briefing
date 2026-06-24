@@ -9,8 +9,8 @@
 - классов: 2
 - dataclass: 1
 - функций: 85
-- методов: 10
-- констант: 42
+- методов: 13
+- констант: 44
 
 ---
 
@@ -89,6 +89,7 @@ CLI-точка входа для генерации документов и эк
 - `GITLAB_URL = os.getenv('GITLAB_URL', '').rstrip('/')`
 - `GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')`
 - `GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')`
+- `GITLAB_AUTHOR_ID = int(os.getenv('GITLAB_AUTHOR_ID', '68'))`
 - `DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')`
 - `USER_MAP = load_int_key_dict_env('USER_MAP', {})`
 - `ISSUE_STATUS_MAP = load_int_key_dict_env('ISSUE_STATUS_MAP', {})`
@@ -235,14 +236,21 @@ README с дальнейшими шагами и итогового prompt'а д
 
 Константы:
 - `_MR_CACHE_TTL = 300`
+- `_BRANCH_SEP_RE = re.compile('[-/._]')`
 
 Классы:
 
 - `GitLabClient`
   Нет докстринга.
   Методы:
-  - `fetch_mr_status(mr_iid: int) -> dict`
-    Возвращает {state, has_conflicts} для MR. Кэширует на 5 минут.
+  - `_fetch_all_mrs() -> list[dict]`
+    Нет докстринга.
+  - `_ensure_cache() -> None`
+    Нет докстринга.
+  - `get_mrs_for_issue(issue_id: int) -> list[dict]`
+    Возвращает список MR, связанных с задачей, по номеру в имени ветки.
+  - `invalidate_cache() -> None`
+    Нет докстринга.
 
 ---
 
@@ -630,7 +638,7 @@ FastAPI web application: маршруты Briefing.
 - `api_spent()`
   Нет докстринга.
 
-- `api_mrs(iids: str = '')`
+- `api_mrs(issue_ids: str = '')`
   Нет докстринга.
 
 - `issue_by_id(request: Request, issue_id: int)`
