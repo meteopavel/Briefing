@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T05:20:42.364310+00:00",
+  "generated_at": "2026-06-24T05:23:34.636768+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 22,
@@ -17,7 +17,7 @@
     "modules": 17,
     "classes": 2,
     "dataclasses": 1,
-    "functions": 82,
+    "functions": 83,
     "methods": 9,
     "constants": 37
   },
@@ -1324,7 +1324,19 @@
             "app.get('/')"
           ],
           "lineno": 199,
-          "end_lineno": 217
+          "end_lineno": 215
+        },
+        {
+          "name": "api_spent",
+          "signature": "api_spent()",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/api/spent')"
+          ],
+          "lineno": 219,
+          "end_lineno": 230
         },
         {
           "name": "issue_by_id",
@@ -1335,8 +1347,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 221,
-          "end_lineno": 242
+          "lineno": 234,
+          "end_lineno": 255
         },
         {
           "name": "issue_journals",
@@ -1347,8 +1359,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 246,
-          "end_lineno": 275
+          "lineno": 259,
+          "end_lineno": 288
         },
         {
           "name": "attachment_thumbnail",
@@ -1359,8 +1371,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 279,
-          "end_lineno": 291
+          "lineno": 292,
+          "end_lineno": 304
         },
         {
           "name": "attachment_download",
@@ -1371,8 +1383,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 295,
-          "end_lineno": 309
+          "lineno": 308,
+          "end_lineno": 322
         },
         {
           "name": "_get_redmine_meta",
@@ -1381,8 +1393,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 331,
-          "end_lineno": 354
+          "lineno": 344,
+          "end_lineno": 367
         },
         {
           "name": "_resolve_attr",
@@ -1391,8 +1403,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 357,
-          "end_lineno": 382
+          "lineno": 370,
+          "end_lineno": 395
         },
         {
           "name": "_build_attr_changes",
@@ -1401,8 +1413,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 385,
-          "end_lineno": 395
+          "lineno": 398,
+          "end_lineno": 408
         },
         {
           "name": "avatar",
@@ -1413,8 +1425,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 399,
-          "end_lineno": 419
+          "lineno": 412,
+          "end_lineno": 432
         },
         {
           "name": "health",
@@ -1425,8 +1437,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 423,
-          "end_lineno": 424
+          "lineno": 436,
+          "end_lineno": 437
         }
       ],
       "constants": [
@@ -1512,13 +1524,13 @@
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 315
+          "lineno": 328
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 18,
+        "functions": 19,
         "methods": 0,
         "constants": 14
       }

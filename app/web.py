@@ -199,22 +199,35 @@ def _issue_sort_key(issue: dict) -> tuple:
 def index(request: Request):
     try:
         issues = RedmineClient.fetch_my_issues()
-        spent_map = RedmineClient.fetch_my_spent_hours()
-        daily_summary = RedmineClient.fetch_daily_summary(days=3)
         for issue in issues:
             issue['_desc_html'] = _render(issue.get('description'))
-            _enrich(issue, spent_map)
+            _enrich(issue)
         issues.sort(key=_issue_sort_key)
         groups = _group_issues(issues)
         error = None
     except Exception as e:
-        issues = []; groups = []; daily_summary = []
+        issues = []; groups = []
         error = str(e)
     return templates.TemplateResponse(
         request=request,
         name='tasks.html',
-        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues), 'daily_summary': daily_summary},
+        context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues)},
     )
+
+
+@app.get('/api/spent')
+def api_spent():
+    try:
+        spent_map = RedmineClient.fetch_my_spent_hours()
+        daily = RedmineClient.fetch_daily_summary(days=3)
+        by_issue = {
+            str(iid): {'hours': round(rec['hours'], 2), 'today': rec['today']}
+            for iid, rec in spent_map.items()
+            if rec['hours'] > 0
+        }
+        return {'by_issue': by_issue, 'daily': daily}
+    except Exception as e:
+        return {'error': str(e), 'by_issue': {}, 'daily': []}
 
 
 @app.get('/issue/{issue_id}')
