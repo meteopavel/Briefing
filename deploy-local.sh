@@ -58,17 +58,9 @@ update_project_passport() {
     log "✅ Паспорт проекта обновлён."
 }
 
-rsync_via_tunnel() {
-    local user="$1"; local host="$2"; local src="$3"; local dest="$4"
-    local ctl="/tmp/ssh_ctl_${user}_${host}"
-    ssh -i ~/.ssh/timeweb_shared -o StrictHostKeyChecking=no \
-        -o ControlMaster=yes -o ControlPath="$ctl" -o ControlPersist=30 \
-        -fN "${user}@${host}"
-    rsync -avz --progress \
-        --rsh="ssh -i ~/.ssh/timeweb_shared -o StrictHostKeyChecking=no -o ControlMaster=no -o ControlPath=$ctl" \
-        "$src" "${user}@${host}:${dest}"
-    ssh -o ControlPath="$ctl" -O exit "${user}@${host}" 2>/dev/null || true
-}
+# Общие функции (run_with_heartbeat, timeout_run, rsync_via_tunnel) —
+# используются во всех проектах, см. сам файл.
+source "$(dirname "${PROJECT_ROOT}")/meteopavel/tools/deploy_helpers.sh"
 
 log "🚀 Briefing deploy"
 log "📁 Project root: $PROJECT_ROOT"
@@ -140,7 +132,8 @@ if [[ "$BACKUP_OK" -eq 1 ]]; then
         7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" \
             ".env" "CLAUDE.md" ".local_secure/" > /dev/null 2>&1 || true
     )
-    rsync_via_tunnel "${SECURE_RSYNC_USER}" "${SECURE_RSYNC_HOST}" \
+    run_with_heartbeat "отправка backup" \
+        rsync_via_tunnel "${SECURE_RSYNC_USER}" "${SECURE_RSYNC_HOST}" \
         "${ARCHIVE_PATH}" "${SECURE_RSYNC_PATH}"
     log "✅ Архив отправлен на backup-сервер."
 fi
