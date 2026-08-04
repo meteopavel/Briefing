@@ -75,6 +75,14 @@ GITLAB_AUTHOR_ID = int(os.getenv('GITLAB_AUTHOR_ID', '68'))
 
 DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')
 
+MYSQL_HOST = os.getenv('MYSQL_HOST', '127.0.0.1')
+MYSQL_PORT = int(os.getenv('MYSQL_PORT', '3306'))
+MYSQL_USER = os.getenv('MYSQL_USER', '')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '')
+MYSQL_DATABASE = os.getenv('MYSQL_DATABASE', 'briefing')
+
+MCP_TOKEN = os.getenv('MCP_TOKEN', '')
+
 USER_MAP = load_int_key_dict_env('USER_MAP', {})
 ISSUE_STATUS_MAP = load_int_key_dict_env('ISSUE_STATUS_MAP', {})
 ISSUE_PRIORITY_MAP = load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})

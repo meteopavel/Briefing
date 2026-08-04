@@ -1,16 +1,16 @@
 # API map: app
 
-Просканировано Python-файлов: 24
-Включено в карту: 18
-Пропущено без значимой API-информации: 6
+Просканировано Python-файлов: 29
+Включено в карту: 22
+Пропущено без значимой API-информации: 7
 
 Сводная статистика:
-- модулей: 18
-- классов: 2
+- модулей: 22
+- классов: 3
 - dataclass: 1
-- функций: 85
-- методов: 14
-- констант: 48
+- функций: 114
+- методов: 16
+- констант: 68
 
 ---
 
@@ -95,6 +95,12 @@ CLI-точка входа для генерации документов и эк
 - `GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')`
 - `GITLAB_AUTHOR_ID = int(os.getenv('GITLAB_AUTHOR_ID', '68'))`
 - `DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')`
+- `MYSQL_HOST = os.getenv('MYSQL_HOST', '127.0.0.1')`
+- `MYSQL_PORT = int(os.getenv('MYSQL_PORT', '3306'))`
+- `MYSQL_USER = os.getenv('MYSQL_USER', '')`
+- `MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '')`
+- `MYSQL_DATABASE = os.getenv('MYSQL_DATABASE', 'briefing')`
+- `MCP_TOKEN = os.getenv('MCP_TOKEN', '')`
 - `USER_MAP = load_int_key_dict_env('USER_MAP', {})`
 - `ISSUE_STATUS_MAP = load_int_key_dict_env('ISSUE_STATUS_MAP', {})`
 - `ISSUE_PRIORITY_MAP = load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})`
@@ -116,6 +122,48 @@ CLI-точка входа для генерации документов и эк
 
 - `load_set_dict_env(name: str, default: dict[Any, Any]) -> dict[Any, set[Any]]`
   Загружает JSON-словарь из переменной окружения и приводит его значения к set.
+
+---
+
+# app/mcp_server.py
+
+Модуль:
+MCP-сервер Briefing: тулы над тудушками проектов (та же БД и тот же
+`repository.py`, что у веб-вкладки «Проекты»). Подключается по HTTP —
+из Claude Code и из zcode — вместо чтения/записи docs/TODO.md.
+
+Функции:
+
+- `_project_or_raise(project_slug: str) -> dict`
+  Нет докстринга.
+
+- `_serialize_todo(todo: dict) -> dict`
+  Нет докстринга.
+
+- `list_projects() -> list[dict]`
+  Список проектов, заведённых в Briefing (slug, title, contour).
+
+- `list_todos(project_slug: str) -> list[dict]`
+  Все задачи проекта с подпунктами (без группировки/сортировки).
+
+- `create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int`
+  Создаёт задачу со следующим свободным номером в указанной секции.
+  section: bug|feat|refactor|q. priority: high|medium|low.
+  subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
+  Возвращает id созданной задачи.
+
+- `update_todo_status(todo_id: int, status: str, closed_note: str | None = None) -> None`
+  Меняет статус задачи. status: open|in_progress|done|wontdo.
+  При переходе в done/wontdo closed_note обязателен (что сделано / что решили).
+
+- `update_todo_priority(todo_id: int, priority: str) -> None`
+  Меняет приоритет задачи. priority: high|medium|low.
+
+- `add_todo_subitem(todo_id: int, kind: str, text: str) -> None`
+  Добавляет подпункт к задаче. kind: requirement|context.
+
+- `create_asgi_app()`
+  Нет докстринга.
 
 ---
 
@@ -255,6 +303,95 @@ README с дальнейшими шагами и итогового prompt'а д
     Возвращает список MR, связанных с задачей, по номеру в имени ветки.
   - `invalidate_cache() -> None`
     Нет докстринга.
+
+---
+
+# app/services/projects/db.py
+
+Модуль:
+Подключение к MySQL для вкладки «Проекты».
+Без ORM — обычный курсор, в стиле остальных сервисных модулей проекта.
+
+Функции:
+
+- `get_connection()`
+  Отдаёт открытое соединение с БД briefing (autocommit включён).
+  Закрывает соединение при выходе из контекста в любом случае.
+
+---
+
+# app/services/projects/markdown_import.py
+
+Модуль:
+Разовый парсер формата тудушки скилла `todo` (docs/TODO.md) → структурированные
+задачи для импорта в MySQL. Формат описан в ~/.agents/skills/todo/SKILL.md.
+
+Константы:
+- `STATUS_MAP = {'📋': 'open', '🚧': 'in_progress', '✅': 'done', '❌': 'wontdo'}`
+- `PRIORITY_MAP = {'🔴': 'high', '🟡': 'medium', '⚪': 'low'}`
+- `SECTION_HEADER_MAP = {'Баги': 'bug', 'Идеи / Фичи': 'feat', 'Рефакторинг / Техдолг': 'refactor', 'Вопросы / Исследовать'…`
+- `_SECTION_RE = re.compile('^## (.+)$')`
+- `_TODO_RE = re.compile('^- ([📋🚧✅❌]) ([🔴🟡⚪]) (bug|feat|refactor|q)\\.(\\d+) (.*)$')`
+- `_SUBITEM_RE = re.compile('^  - (.*)$')`
+- `_NOTE_LINE_RE = re.compile('^  — (.*)$')`
+- `_INLINE_NOTE_RE = re.compile('\\s—\\s((?:fixed|done|решили):.*)$')`
+
+Функции:
+
+- `_classify_subitem(text: str) -> str`
+  Нет докстринга.
+
+- `parse(markdown: str) -> list[dict]`
+  Возвращает список задач в порядке появления в файле, каждая:
+  {section, number, status, priority, title, closed_note, subitems: [{kind, text}]}.
+
+---
+
+# app/services/projects/repository.py
+
+Модуль:
+CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,
+подпункты). Формат данных — тот же, что использует скилл `todo` (zcode).
+
+Константы:
+- `SECTIONS = ['bug', 'feat', 'refactor', 'q']`
+- `SECTION_TITLES = {'bug': 'Баги', 'feat': 'Идеи / Фичи', 'refactor': 'Рефакторинг / Техдолг', 'q': 'Вопросы / Исследо…`
+- `STATUSES = ['open', 'in_progress', 'done', 'wontdo']`
+- `PRIORITIES = ['high', 'medium', 'low']`
+
+Функции:
+
+- `list_projects() -> list[dict]`
+  Нет докстринга.
+
+- `get_project_by_slug(slug: str) -> dict | None`
+  Нет докстринга.
+
+- `get_todos(project_id: int) -> list[dict]`
+  Возвращает все задачи проекта с подпунктами, без группировки/сортировки
+  (этим занимается вызывающий код — см. `app/web.py:_group_todos`).
+
+- `_next_number(cursor, project_id: int, section: str) -> int`
+  Нет докстринга.
+
+- `import_todo(project_id: int, section: str, number: int, status: str, priority: str, title: str, closed_note: str | None, subitems: list[dict]) -> int`
+  Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,
+  где нумерация уже существует и должна сохраниться 1:1). В отличие от
+  `create_todo`, номер не назначается автоматически.
+
+- `create_todo(project_id: int, section: str, priority: str, title: str, subitems: list[dict]) -> int`
+  Создаёт задачу со следующим свободным номером в секции.
+  `subitems` — список {'kind': 'requirement'|'context', 'text': str}.
+
+- `update_status(todo_id: int, status: str, closed_note: str | None = None) -> None`
+  Меняет статус. При переходе в done/wontdo заметка обязательна —
+  вызывающий код (роут) должен это проверить до вызова.
+
+- `update_priority(todo_id: int, priority: str) -> None`
+  Нет докстринга.
+
+- `add_subitem(todo_id: int, kind: str, text: str) -> None`
+  Нет докстринга.
 
 ---
 
@@ -604,12 +741,27 @@ FastAPI web application: маршруты Briefing.
 - `_QUOTE_BLOCK_RE = re.compile('((?:^> ?.*$\\n?)+)', re.MULTILINE)`
 - `_GROUP_DEFS = [('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s …`
 - `_MR_URL_RE = re.compile('(https?://\\S+/merge_requests/(\\d+))\\s*[-–]?\\s*(stage|master)?', re.IGNORECASE)`
+- `_TODO_PRIORITY_ORDER = {'high': 0, 'medium': 1, 'low': 2}`
+- `_TODO_STATUS_ORDER = {'in_progress': 0, 'open': 1}`
 - `_LABEL_Q_RE = re.compile('\\[Q', re.IGNORECASE)`
 - `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`
 - `_PRIORITY_ORDER = {'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, '…`
 - `_ATTR_LABELS: dict[str, str] = {'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Г…`
 
+Классы:
+
+- `_BearerAuthASGIApp`
+  Оборачивает ASGI-приложение проверкой заголовка Authorization: Bearer <token>.
+  Методы:
+  - `__init__(self, inner_app, token: str)`
+    Нет докстринга.
+  - `__call__(self, scope, receive, send)`
+    Нет докстринга.
+
 Функции:
+
+- `_lifespan(_: FastAPI)`
+  Нет докстринга.
 
 - `_fix_spans(html: str) -> str`
   Нет докстринга.
@@ -631,6 +783,11 @@ FastAPI web application: маршруты Briefing.
 
 - `_group_issues(issues: list) -> list`
   Нет докстринга.
+
+- `_group_todos(todos: list) -> list`
+  Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все
+  четыре) и делит каждую на открытые/закрытые. Открытые сортируются по
+  приоритету, внутри приоритета — 🚧 выше 📋 (как в скилле `todo`).
 
 - `_detect_label(subject: str) -> str`
   Нет докстринга.
@@ -669,6 +826,24 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `avatar(user_id: int)`
+  Нет докстринга.
+
+- `projects_index(request: Request)`
+  Нет докстринга.
+
+- `project_detail(request: Request, slug: str)`
+  Нет докстринга.
+
+- `create_project_todo(slug: str, request: Request)`
+  Нет докстринга.
+
+- `update_todo_status(slug: str, todo_id: int, request: Request)`
+  Нет докстринга.
+
+- `update_todo_priority(slug: str, todo_id: int, request: Request)`
+  Нет докстринга.
+
+- `add_todo_subitem(slug: str, todo_id: int, request: Request)`
   Нет докстринга.
 
 - `health()`
