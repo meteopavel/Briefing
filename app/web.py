@@ -24,6 +24,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = PROJECT_ROOT / 'web_static'
 TEMPLATES_DIR = PROJECT_ROOT / 'templates'
 
+# streamable_http_app() создаёт session_manager лениво — вызываем его здесь,
+# всегда, независимо от того, задан ли MCP_TOKEN, иначе обращение к
+# session_manager в lifespan (ниже) падает с RuntimeError при старте.
+_mcp_asgi_app = create_mcp_asgi_app()
+
 
 @asynccontextmanager
 async def _lifespan(_: FastAPI):
@@ -61,7 +66,7 @@ class _BearerAuthASGIApp:
 
 
 if MCP_TOKEN:
-    app.mount('/mcp', _BearerAuthASGIApp(create_mcp_asgi_app(), MCP_TOKEN))
+    app.mount('/mcp', _BearerAuthASGIApp(_mcp_asgi_app, MCP_TOKEN))
 else:
     print('[mcp] MCP_TOKEN не задан в .env — эндпоинт /mcp не подключён')
 

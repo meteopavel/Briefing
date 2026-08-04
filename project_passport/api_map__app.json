@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-04T13:55:51.112673+00:00",
+  "generated_at": "2026-08-04T13:58:33.821834+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 29,
@@ -1801,8 +1801,8 @@
               "summary": null,
               "kind": "method",
               "decorators": [],
-              "lineno": 48,
-              "end_lineno": 50
+              "lineno": 53,
+              "end_lineno": 55
             },
             {
               "name": "__call__",
@@ -1811,12 +1811,12 @@
               "summary": null,
               "kind": "async_method",
               "decorators": [],
-              "lineno": 52,
-              "end_lineno": 60
+              "lineno": 57,
+              "end_lineno": 65
             }
           ],
-          "lineno": 45,
-          "end_lineno": 60
+          "lineno": 50,
+          "end_lineno": 65
         }
       ],
       "functions": [
@@ -1829,8 +1829,8 @@
           "decorators": [
             "asynccontextmanager"
           ],
-          "lineno": 29,
-          "end_lineno": 35
+          "lineno": 34,
+          "end_lineno": 40
         },
         {
           "name": "_fix_spans",
@@ -1839,8 +1839,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 84,
-          "end_lineno": 85
+          "lineno": 89,
+          "end_lineno": 90
         },
         {
           "name": "_escape_template_vars",
@@ -1849,8 +1849,8 @@
           "summary": "Экранирует <placeholder> которые не являются HTML-тегами.",
           "kind": "function",
           "decorators": [],
-          "lineno": 88,
-          "end_lineno": 96
+          "lineno": 93,
+          "end_lineno": 101
         },
         {
           "name": "_render",
@@ -1859,8 +1859,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 99,
-          "end_lineno": 128
+          "lineno": 104,
+          "end_lineno": 133
         },
         {
           "name": "_calc_workdays",
@@ -1869,8 +1869,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 139,
-          "end_lineno": 160
+          "lineno": 144,
+          "end_lineno": 165
         },
         {
           "name": "_parse_mrs",
@@ -1879,8 +1879,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 169,
-          "end_lineno": 179
+          "lineno": 174,
+          "end_lineno": 184
         },
         {
           "name": "_enrich",
@@ -1889,8 +1889,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 182,
-          "end_lineno": 191
+          "lineno": 187,
+          "end_lineno": 196
         },
         {
           "name": "_group_issues",
@@ -1899,8 +1899,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 194,
-          "end_lineno": 213
+          "lineno": 199,
+          "end_lineno": 218
         },
         {
           "name": "_group_todos",
@@ -1909,8 +1909,8 @@
           "summary": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все",
           "kind": "function",
           "decorators": [],
-          "lineno": 220,
-          "end_lineno": 236
+          "lineno": 225,
+          "end_lineno": 241
         },
         {
           "name": "_detect_label",
@@ -1919,8 +1919,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 243,
-          "end_lineno": 248
+          "lineno": 248,
+          "end_lineno": 253
         },
         {
           "name": "_issue_sort_key",
@@ -1929,8 +1929,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 260,
-          "end_lineno": 278
+          "lineno": 265,
+          "end_lineno": 283
         },
         {
           "name": "index",
@@ -1941,8 +1941,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 282,
-          "end_lineno": 307
+          "lineno": 287,
+          "end_lineno": 312
         },
         {
           "name": "api_spent",
@@ -1953,8 +1953,8 @@
           "decorators": [
             "app.get('/api/spent')"
           ],
-          "lineno": 311,
-          "end_lineno": 321
+          "lineno": 316,
+          "end_lineno": 326
         },
         {
           "name": "api_mrs",
@@ -1965,8 +1965,8 @@
           "decorators": [
             "app.get('/api/mrs')"
           ],
-          "lineno": 325,
-          "end_lineno": 337
+          "lineno": 330,
+          "end_lineno": 342
         },
         {
           "name": "issue_by_id",
@@ -1977,8 +1977,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 341,
-          "end_lineno": 362
+          "lineno": 346,
+          "end_lineno": 367
         },
         {
           "name": "issue_journals",
@@ -1989,8 +1989,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 366,
-          "end_lineno": 395
+          "lineno": 371,
+          "end_lineno": 400
         },
         {
           "name": "attachment_thumbnail",
@@ -2001,8 +2001,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 399,
-          "end_lineno": 411
+          "lineno": 404,
+          "end_lineno": 416
         },
         {
           "name": "attachment_download",
@@ -2013,8 +2013,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 415,
-          "end_lineno": 429
+          "lineno": 420,
+          "end_lineno": 434
         },
         {
           "name": "_get_redmine_meta",
@@ -2023,8 +2023,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 451,
-          "end_lineno": 474
+          "lineno": 456,
+          "end_lineno": 479
         },
         {
           "name": "_resolve_attr",
@@ -2033,8 +2033,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 477,
-          "end_lineno": 502
+          "lineno": 482,
+          "end_lineno": 507
         },
         {
           "name": "_build_attr_changes",
@@ -2043,8 +2043,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 505,
-          "end_lineno": 515
+          "lineno": 510,
+          "end_lineno": 520
         },
         {
           "name": "avatar",
@@ -2055,8 +2055,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 519,
-          "end_lineno": 539
+          "lineno": 524,
+          "end_lineno": 544
         },
         {
           "name": "projects_index",
@@ -2067,8 +2067,8 @@
           "decorators": [
             "app.get('/projects')"
           ],
-          "lineno": 543,
-          "end_lineno": 554
+          "lineno": 548,
+          "end_lineno": 559
         },
         {
           "name": "project_detail",
@@ -2079,8 +2079,8 @@
           "decorators": [
             "app.get('/projects/{slug}')"
           ],
-          "lineno": 558,
-          "end_lineno": 580
+          "lineno": 563,
+          "end_lineno": 585
         },
         {
           "name": "create_project_todo",
@@ -2091,8 +2091,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos')"
           ],
-          "lineno": 584,
-          "end_lineno": 600
+          "lineno": 589,
+          "end_lineno": 605
         },
         {
           "name": "update_todo_status",
@@ -2103,8 +2103,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/status')"
           ],
-          "lineno": 604,
-          "end_lineno": 613
+          "lineno": 609,
+          "end_lineno": 618
         },
         {
           "name": "update_todo_priority",
@@ -2115,8 +2115,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
           ],
-          "lineno": 617,
-          "end_lineno": 623
+          "lineno": 622,
+          "end_lineno": 628
         },
         {
           "name": "add_todo_subitem",
@@ -2127,8 +2127,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
           ],
-          "lineno": 627,
-          "end_lineno": 636
+          "lineno": 632,
+          "end_lineno": 641
         },
         {
           "name": "health",
@@ -2139,8 +2139,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 640,
-          "end_lineno": 641
+          "lineno": 645,
+          "end_lineno": 646
         }
       ],
       "constants": [
@@ -2166,85 +2166,85 @@
           "name": "_SPAN_RE",
           "annotation": null,
           "value_repr": "re.compile('%\\\\{([^}]+)\\\\}([^%]*)%')",
-          "lineno": 69
+          "lineno": 74
         },
         {
           "name": "_EMAIL_RE",
           "annotation": null,
           "value_repr": "re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\\\.[a-zA-Z0-9._-]+_?')",
-          "lineno": 71
+          "lineno": 76
         },
         {
           "name": "_REAL_TAGS",
           "annotation": null,
           "value_repr": "{'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre', 'span', 'div', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'del', 'ins', 'sub', 'sup', 'tt'}",
-          "lineno": 73
+          "lineno": 78
         },
         {
           "name": "_ANGLE_RE",
           "annotation": null,
           "value_repr": "re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')",
-          "lineno": 79
+          "lineno": 84
         },
         {
           "name": "_NOTEXTILE_RE",
           "annotation": null,
           "value_repr": "re.compile('<notextile>(.*?)</notextile>', re.DOTALL)",
-          "lineno": 80
+          "lineno": 85
         },
         {
           "name": "_QUOTE_BLOCK_RE",
           "annotation": null,
           "value_repr": "re.compile('((?:^> ?.*$\\\\n?)+)', re.MULTILINE)",
-          "lineno": 81
+          "lineno": 86
         },
         {
           "name": "_GROUP_DEFS",
           "annotation": null,
           "value_repr": "[('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s or 'review' in s), ('заблокирована', 'Заблокирована', lambda s: 'заблок' in s or 'block' in s)]",
-          "lineno": 132
+          "lineno": 137
         },
         {
           "name": "_MR_URL_RE",
           "annotation": null,
           "value_repr": "re.compile('(https?://\\\\S+/merge_requests/(\\\\d+))\\\\s*[-–]?\\\\s*(stage|master)?', re.IGNORECASE)",
-          "lineno": 163
+          "lineno": 168
         },
         {
           "name": "_TODO_PRIORITY_ORDER",
           "annotation": null,
           "value_repr": "{'high': 0, 'medium': 1, 'low': 2}",
-          "lineno": 216
+          "lineno": 221
         },
         {
           "name": "_TODO_STATUS_ORDER",
           "annotation": null,
           "value_repr": "{'in_progress': 0, 'open': 1}",
-          "lineno": 217
+          "lineno": 222
         },
         {
           "name": "_LABEL_Q_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[Q', re.IGNORECASE)",
-          "lineno": 239
+          "lineno": 244
         },
         {
           "name": "_LABEL_AI_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[ai\\\\]', re.IGNORECASE)",
-          "lineno": 240
+          "lineno": 245
         },
         {
           "name": "_PRIORITY_ORDER",
           "annotation": null,
           "value_repr": "{'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, 'низкий': 4, 'low': 4}",
-          "lineno": 251
+          "lineno": 256
         },
         {
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 435
+          "lineno": 440
         }
       ],
       "stats": {
