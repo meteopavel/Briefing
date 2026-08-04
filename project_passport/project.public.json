@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-04T11:11:28.547586+00:00",
+  "generated_at": "2026-08-04T13:55:51.187263+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -55,13 +55,13 @@
     "timelog_export"
   ],
   "tech_profile": {
-    "python_files": 18,
-    "scanned_python_files": 24,
-    "classes": 3,
+    "python_files": 22,
+    "scanned_python_files": 29,
+    "classes": 4,
     "dataclasses": 1,
-    "functions": 85,
-    "methods": 14,
-    "constants": 48,
+    "functions": 114,
+    "methods": 16,
+    "constants": 68,
     "has_cli": true,
     "has_redmine_integration": true,
     "has_document_generation": true,
@@ -73,10 +73,12 @@
     "layers": [
       "cli",
       "config",
+      "app/mcp_server",
       "services/acts_data",
       "services/chronicle",
       "services/documents",
       "services/gitlab",
+      "services/projects",
       "services/redmine",
       "utils",
       "app/web"
@@ -86,11 +88,11 @@
         "path": "app/web.py",
         "summary": "FastAPI web application: маршруты Briefing.",
         "stats": {
-          "classes": 0,
+          "classes": 1,
           "dataclasses": 0,
-          "functions": 21,
-          "methods": 0,
-          "constants": 15
+          "functions": 29,
+          "methods": 2,
+          "constants": 17
         }
       },
       {
@@ -101,7 +103,7 @@
           "dataclasses": 0,
           "functions": 3,
           "methods": 0,
-          "constants": 29
+          "constants": 35
         }
       },
       {
@@ -113,6 +115,17 @@
           "functions": 0,
           "methods": 10,
           "constants": 1
+        }
+      },
+      {
+        "path": "app/services/projects/repository.py",
+        "summary": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,",
+        "stats": {
+          "classes": 0,
+          "dataclasses": 0,
+          "functions": 9,
+          "methods": 0,
+          "constants": 4
         }
       },
       {
@@ -136,17 +149,6 @@
           "methods": 0,
           "constants": 0
         }
-      },
-      {
-        "path": "app/cli.py",
-        "summary": "CLI-точка входа для генерации документов и экспорта данных из Redmine.",
-        "stats": {
-          "classes": 1,
-          "dataclasses": 1,
-          "functions": 8,
-          "methods": 0,
-          "constants": 0
-        }
       }
     ]
   },
@@ -158,7 +160,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-08-04T11:11:28.466616+00:00",
+    "api_map_generated_at": "2026-08-04T13:55:51.112673+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"

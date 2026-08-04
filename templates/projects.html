@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set status_emoji = {'open': '📋', 'in_progress': '🚧', 'done': '✅', 'wontdo': '❌'} %}
+{% set priority_emoji = {'high': '🔴', 'medium': '🟡', 'low': '⚪'} %}
+
+{% macro render_todo(todo) %}
+<div class="todo-item todo-priority-{{ todo.priority }}" data-id="{{ todo.id }}">
+    <div class="todo-item-header">
+        <span class="todo-item-id">{{ todo.section }}.{{ todo.number }}</span>
+        <span class="todo-item-title">{{ todo.title }}</span>
+        <span class="todo-item-controls">
+            <select class="select-control select-control-sm" onchange="changeTodoStatus({{ todo.id }}, this)">
+                {% for key in ['open', 'in_progress', 'done', 'wontdo'] %}
+                <option value="{{ key }}" {% if todo.status == key %}selected{% endif %}>{{ status_emoji[key] }}</option>
+                {% endfor %}
+            </select>
+            <select class="select-control select-control-sm" onchange="changeTodoPriority({{ todo.id }}, this.value)">
+                {% for key in ['high', 'medium', 'low'] %}
+                <option value="{{ key }}" {% if todo.priority == key %}selected{% endif %}>{{ priority_emoji[key] }}</option>
+                {% endfor %}
+            </select>
+        </span>
+    </div>
+    {% if todo.subitems %}
+    <ul class="todo-subitems">
+        {% for sub in todo.subitems %}
+        <li class="todo-subitem todo-subitem-{{ sub.kind }}">{{ sub.text }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if todo.closed_note %}
+    <div class="todo-closed-note">— {{ todo.closed_note }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+<div class="section">
+    <div class="section-header">
+        <div>
+            <h2>Проекты</h2>
+            <p>Тудушки проектов — статусы и приоритеты вживую</p>
+        </div>
+        <select class="select-control" onchange="if (this.value) window.location = '/projects/' + this.value">
+            <option value="">Выбери проект…</option>
+            {% for p in projects %}
+            <option value="{{ p.slug }}" {% if selected and selected.slug == p.slug %}selected{% endif %}>{{ p.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if error %}
+    <div class="empty-state">
+        <div class="empty-state-icon">⚠️</div>
+        <div class="empty-state-text">Ошибка</div>
+        <div class="empty-state-hint">{{ error }}</div>
+    </div>
+    {% elif not selected %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🗂️</div>
+        <div class="empty-state-text">Выбери проект</div>
+        <div class="empty-state-hint">Тудушка появится здесь — секции, статусы, приоритеты</div>
+    </div>
+    {% else %}
+    {% for group in groups %}
+    <div class="todo-group">
+        <div class="issue-group-header">
+            <span class="issue-group-title">{{ group.title }}</span>
+            <span class="issue-group-count">{{ group.open | length }}</span>
+        </div>
+
+        <div class="todo-list">
+            {% for todo in group.open %}{{ render_todo(todo) }}{% endfor %}
+            {% if not group.open and not group.closed %}
+            <div class="text-muted text-sm todo-empty-hint">Пока пусто</div>
+            {% endif %}
+        </div>
+
+        {% if group.closed %}
+        <div class="todo-list">
+            {% for todo in group.closed %}
+            <div class="closed-hidden">{{ render_todo(todo) }}</div>
+            {% endfor %}
+        </div>
+        <button class="closed-show-more" onclick="toggleClosedTodos(this)">
+            Показать закрытые · {{ group.closed | length }}
+        </button>
+        {% endif %}
+
+        <form class="todo-add-form" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
+            <input type="text" name="title" class="todo-add-input" placeholder="Новая задача…" required>
+            <select name="priority" class="select-control select-control-sm">
+                <option value="high">🔴 высокий</option>
+                <option value="medium" selected>🟡 средний</option>
+                <option value="low">⚪ низкий</option>
+            </select>
+            <button type="submit" class="btn">Добавить</button>
+        </form>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% if selected %}
+<script>
+const CURRENT_PROJECT_SLUG = {{ selected.slug | tojson }};
+
+function toggleClosedTodos(btn) {
+    const group = btn.closest('.todo-group');
+    group.querySelectorAll('.closed-hidden').forEach(el => el.classList.remove('closed-hidden'));
+    btn.remove();
+}
+
+function apiPost(path, payload) {
+    return fetch(path, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+    }).then(r => {
+        if (!r.ok) return r.json().then(e => { throw new Error(e.detail || 'Ошибка'); });
+        return r.json();
+    });
+}
+
+function changeTodoStatus(todoId, selectEl) {
+    const status = selectEl.value;
+    let closedNote = null;
+    if (status === 'done' || status === 'wontdo') {
+        closedNote = prompt('Заметка о закрытии — что сделано / что решили:');
+        if (!closedNote) { location.reload(); return; }
+    }
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/status`, {status, closed_note: closedNote})
+        .then(() => location.reload())
+        .catch(e => { alert(e.message); location.reload(); });
+}
+
+function changeTodoPriority(todoId, priority) {
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/priority`, {priority})
+        .then(() => location.reload())
+        .catch(e => { alert(e.message); location.reload(); });
+}
+
+function submitNewTodo(event) {
+    event.preventDefault();
+    const form = event.target;
+    const title = form.title.value.trim();
+    const priority = form.priority.value;
+    const section = form.dataset.section;
+    if (!title) return false;
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos`, {section, priority, title, subitems: []})
+        .then(() => location.reload())
+        .catch(e => alert(e.message));
+    return false;
+}
+</script>
+{% endif %}
+{% endblock %}

@@ -1,26 +1,27 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-04T11:11:28.466616+00:00",
+  "generated_at": "2026-08-04T13:55:51.112673+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
-  "scanned_python_files": 24,
-  "files_count": 18,
-  "skipped_files_count": 6,
+  "scanned_python_files": 29,
+  "files_count": 22,
+  "skipped_files_count": 7,
   "skipped_files": [
     "app/__init__.py",
     "app/services/__init__.py",
     "app/services/chronicle/__init__.py",
     "app/services/gitlab/__init__.py",
+    "app/services/projects/__init__.py",
     "app/services/redmine/__init__.py",
     "app/utils/__init__.py"
   ],
   "stats": {
-    "modules": 18,
-    "classes": 3,
+    "modules": 22,
+    "classes": 4,
     "dataclasses": 1,
-    "functions": 85,
-    "methods": 14,
-    "constants": 48
+    "functions": 114,
+    "methods": 16,
+    "constants": 68
   },
   "modules": [
     {
@@ -331,52 +332,88 @@
           "lineno": 76
         },
         {
+          "name": "MYSQL_HOST",
+          "annotation": null,
+          "value_repr": "os.getenv('MYSQL_HOST', '127.0.0.1')",
+          "lineno": 78
+        },
+        {
+          "name": "MYSQL_PORT",
+          "annotation": null,
+          "value_repr": "int(os.getenv('MYSQL_PORT', '3306'))",
+          "lineno": 79
+        },
+        {
+          "name": "MYSQL_USER",
+          "annotation": null,
+          "value_repr": "os.getenv('MYSQL_USER', '')",
+          "lineno": 80
+        },
+        {
+          "name": "MYSQL_PASSWORD",
+          "annotation": null,
+          "value_repr": "os.getenv('MYSQL_PASSWORD', '')",
+          "lineno": 81
+        },
+        {
+          "name": "MYSQL_DATABASE",
+          "annotation": null,
+          "value_repr": "os.getenv('MYSQL_DATABASE', 'briefing')",
+          "lineno": 82
+        },
+        {
+          "name": "MCP_TOKEN",
+          "annotation": null,
+          "value_repr": "os.getenv('MCP_TOKEN', '')",
+          "lineno": 84
+        },
+        {
           "name": "USER_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('USER_MAP', {})",
-          "lineno": 78
+          "lineno": 86
         },
         {
           "name": "ISSUE_STATUS_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_STATUS_MAP', {})",
-          "lineno": 79
+          "lineno": 87
         },
         {
           "name": "ISSUE_PRIORITY_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})",
-          "lineno": 80
+          "lineno": 88
         },
         {
           "name": "CUSTOM_FIELD_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('CUSTOM_FIELD_MAP', {})",
-          "lineno": 81
+          "lineno": 89
         },
         {
           "name": "CUSTOM_FIELDS_HIDE_IF_NEGATIVE",
           "annotation": null,
           "value_repr": "load_set_dict_env('CUSTOM_FIELDS_HIDE_IF_NEGATIVE', {})",
-          "lineno": 82
+          "lineno": 90
         },
         {
           "name": "USER_REFERENCE_CUSTOM_FIELD_IDS",
           "annotation": null,
           "value_repr": "{16, 17, 18, 19}",
-          "lineno": 83
+          "lineno": 91
         },
         {
           "name": "MONTH_NAMES",
           "annotation": null,
           "value_repr": "{'01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля', '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа', '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'}",
-          "lineno": 85
+          "lineno": 93
         },
         {
           "name": "REPORT_TABLE_COLUMN_WIDTHS_INCH",
           "annotation": null,
           "value_repr": "[0.4, 1.6, 2.9, 1.3]",
-          "lineno": 89
+          "lineno": 97
         }
       ],
       "stats": {
@@ -384,7 +421,125 @@
         "dataclasses": 0,
         "functions": 3,
         "methods": 0,
-        "constants": 29
+        "constants": 35
+      }
+    },
+    {
+      "path": "app/mcp_server.py",
+      "module_docstring": "MCP-сервер Briefing: тулы над тудушками проектов (та же БД и тот же\n`repository.py`, что у веб-вкладки «Проекты»). Подключается по HTTP —\nиз Claude Code и из zcode — вместо чтения/записи docs/TODO.md.",
+      "module_summary": "MCP-сервер Briefing: тулы над тудушками проектов (та же БД и тот же",
+      "classes": [],
+      "functions": [
+        {
+          "name": "_project_or_raise",
+          "signature": "_project_or_raise(project_slug: str) -> dict",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 18,
+          "end_lineno": 22
+        },
+        {
+          "name": "_serialize_todo",
+          "signature": "_serialize_todo(todo: dict) -> dict",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 25,
+          "end_lineno": 30
+        },
+        {
+          "name": "list_projects",
+          "signature": "list_projects() -> list[dict]",
+          "docstring": "Список проектов, заведённых в Briefing (slug, title, contour).",
+          "summary": "Список проектов, заведённых в Briefing (slug, title, contour).",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 34,
+          "end_lineno": 36
+        },
+        {
+          "name": "list_todos",
+          "signature": "list_todos(project_slug: str) -> list[dict]",
+          "docstring": "Все задачи проекта с подпунктами (без группировки/сортировки).",
+          "summary": "Все задачи проекта с подпунктами (без группировки/сортировки).",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 40,
+          "end_lineno": 43
+        },
+        {
+          "name": "create_todo",
+          "signature": "create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int",
+          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|refactor|q. priority: high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nВозвращает id созданной задачи.",
+          "summary": "Создаёт задачу со следующим свободным номером в указанной секции.",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 47,
+          "end_lineno": 61
+        },
+        {
+          "name": "update_todo_status",
+          "signature": "update_todo_status(todo_id: int, status: str, closed_note: str | None = None) -> None",
+          "docstring": "Меняет статус задачи. status: open|in_progress|done|wontdo.\nПри переходе в done/wontdo closed_note обязателен (что сделано / что решили).",
+          "summary": "Меняет статус задачи. status: open|in_progress|done|wontdo.",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 65,
+          "end_lineno": 74
+        },
+        {
+          "name": "update_todo_priority",
+          "signature": "update_todo_priority(todo_id: int, priority: str) -> None",
+          "docstring": "Меняет приоритет задачи. priority: high|medium|low.",
+          "summary": "Меняет приоритет задачи. priority: high|medium|low.",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 78,
+          "end_lineno": 82
+        },
+        {
+          "name": "add_todo_subitem",
+          "signature": "add_todo_subitem(todo_id: int, kind: str, text: str) -> None",
+          "docstring": "Добавляет подпункт к задаче. kind: requirement|context.",
+          "summary": "Добавляет подпункт к задаче. kind: requirement|context.",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 86,
+          "end_lineno": 92
+        },
+        {
+          "name": "create_asgi_app",
+          "signature": "create_asgi_app()",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 95,
+          "end_lineno": 96
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 9,
+        "methods": 0,
+        "constants": 0
       }
     },
     {
@@ -673,6 +828,250 @@
         "functions": 0,
         "methods": 4,
         "constants": 2
+      }
+    },
+    {
+      "path": "app/services/projects/db.py",
+      "module_docstring": "Подключение к MySQL для вкладки «Проекты».\nБез ORM — обычный курсор, в стиле остальных сервисных модулей проекта.",
+      "module_summary": "Подключение к MySQL для вкладки «Проекты».",
+      "classes": [],
+      "functions": [
+        {
+          "name": "get_connection",
+          "signature": "get_connection()",
+          "docstring": "Отдаёт открытое соединение с БД briefing (autocommit включён).\nЗакрывает соединение при выходе из контекста в любом случае.",
+          "summary": "Отдаёт открытое соединение с БД briefing (autocommit включён).",
+          "kind": "function",
+          "decorators": [
+            "contextmanager"
+          ],
+          "lineno": 15,
+          "end_lineno": 33
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 1,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/projects/markdown_import.py",
+      "module_docstring": "Разовый парсер формата тудушки скилла `todo` (docs/TODO.md) → структурированные\nзадачи для импорта в MySQL. Формат описан в ~/.agents/skills/todo/SKILL.md.",
+      "module_summary": "Разовый парсер формата тудушки скилла `todo` (docs/TODO.md) → структурированные",
+      "classes": [],
+      "functions": [
+        {
+          "name": "_classify_subitem",
+          "signature": "_classify_subitem(text: str) -> str",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 24,
+          "end_lineno": 25
+        },
+        {
+          "name": "parse",
+          "signature": "parse(markdown: str) -> list[dict]",
+          "docstring": "Возвращает список задач в порядке появления в файле, каждая:\n{section, number, status, priority, title, closed_note, subitems: [{kind, text}]}.",
+          "summary": "Возвращает список задач в порядке появления в файле, каждая:",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 28,
+          "end_lineno": 94
+        }
+      ],
+      "constants": [
+        {
+          "name": "STATUS_MAP",
+          "annotation": null,
+          "value_repr": "{'📋': 'open', '🚧': 'in_progress', '✅': 'done', '❌': 'wontdo'}",
+          "lineno": 8
+        },
+        {
+          "name": "PRIORITY_MAP",
+          "annotation": null,
+          "value_repr": "{'🔴': 'high', '🟡': 'medium', '⚪': 'low'}",
+          "lineno": 9
+        },
+        {
+          "name": "SECTION_HEADER_MAP",
+          "annotation": null,
+          "value_repr": "{'Баги': 'bug', 'Идеи / Фичи': 'feat', 'Рефакторинг / Техдолг': 'refactor', 'Вопросы / Исследовать': 'q'}",
+          "lineno": 10
+        },
+        {
+          "name": "_SECTION_RE",
+          "annotation": null,
+          "value_repr": "re.compile('^## (.+)$')",
+          "lineno": 17
+        },
+        {
+          "name": "_TODO_RE",
+          "annotation": null,
+          "value_repr": "re.compile('^- ([📋🚧✅❌]) ([🔴🟡⚪]) (bug|feat|refactor|q)\\\\.(\\\\d+) (.*)$')",
+          "lineno": 18
+        },
+        {
+          "name": "_SUBITEM_RE",
+          "annotation": null,
+          "value_repr": "re.compile('^  - (.*)$')",
+          "lineno": 19
+        },
+        {
+          "name": "_NOTE_LINE_RE",
+          "annotation": null,
+          "value_repr": "re.compile('^  — (.*)$')",
+          "lineno": 20
+        },
+        {
+          "name": "_INLINE_NOTE_RE",
+          "annotation": null,
+          "value_repr": "re.compile('\\\\s—\\\\s((?:fixed|done|решили):.*)$')",
+          "lineno": 21
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 2,
+        "methods": 0,
+        "constants": 8
+      }
+    },
+    {
+      "path": "app/services/projects/repository.py",
+      "module_docstring": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,\nподпункты). Формат данных — тот же, что использует скилл `todo` (zcode).",
+      "module_summary": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,",
+      "classes": [],
+      "functions": [
+        {
+          "name": "list_projects",
+          "signature": "list_projects() -> list[dict]",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 19,
+          "end_lineno": 23
+        },
+        {
+          "name": "get_project_by_slug",
+          "signature": "get_project_by_slug(slug: str) -> dict | None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 26,
+          "end_lineno": 30
+        },
+        {
+          "name": "get_todos",
+          "signature": "get_todos(project_id: int) -> list[dict]",
+          "docstring": "Возвращает все задачи проекта с подпунктами, без группировки/сортировки\n(этим занимается вызывающий код — см. `app/web.py:_group_todos`).",
+          "summary": "Возвращает все задачи проекта с подпунктами, без группировки/сортировки",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 33,
+          "end_lineno": 59
+        },
+        {
+          "name": "_next_number",
+          "signature": "_next_number(cursor, project_id: int, section: str) -> int",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 62,
+          "end_lineno": 67
+        },
+        {
+          "name": "import_todo",
+          "signature": "import_todo(project_id: int, section: str, number: int, status: str, priority: str, title: str, closed_note: str | None, subitems: list[dict]) -> int",
+          "docstring": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,\nгде нумерация уже существует и должна сохраниться 1:1). В отличие от\n`create_todo`, номер не назначается автоматически.",
+          "summary": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 70,
+          "end_lineno": 98
+        },
+        {
+          "name": "create_todo",
+          "signature": "create_todo(project_id: int, section: str, priority: str, title: str, subitems: list[dict]) -> int",
+          "docstring": "Создаёт задачу со следующим свободным номером в секции.\n`subitems` — список {'kind': 'requirement'|'context', 'text': str}.",
+          "summary": "Создаёт задачу со следующим свободным номером в секции.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 101,
+          "end_lineno": 120
+        },
+        {
+          "name": "update_status",
+          "signature": "update_status(todo_id: int, status: str, closed_note: str | None = None) -> None",
+          "docstring": "Меняет статус. При переходе в done/wontdo заметка обязательна —\nвызывающий код (роут) должен это проверить до вызова.",
+          "summary": "Меняет статус. При переходе в done/wontdo заметка обязательна —",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 123,
+          "end_lineno": 133
+        },
+        {
+          "name": "update_priority",
+          "signature": "update_priority(todo_id: int, priority: str) -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 136,
+          "end_lineno": 139
+        },
+        {
+          "name": "add_subitem",
+          "signature": "add_subitem(todo_id: int, kind: str, text: str) -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 142,
+          "end_lineno": 153
+        }
+      ],
+      "constants": [
+        {
+          "name": "SECTIONS",
+          "annotation": null,
+          "value_repr": "['bug', 'feat', 'refactor', 'q']",
+          "lineno": 8
+        },
+        {
+          "name": "SECTION_TITLES",
+          "annotation": null,
+          "value_repr": "{'bug': 'Баги', 'feat': 'Идеи / Фичи', 'refactor': 'Рефакторинг / Техдолг', 'q': 'Вопросы / Исследовать'}",
+          "lineno": 9
+        },
+        {
+          "name": "STATUSES",
+          "annotation": null,
+          "value_repr": "['open', 'in_progress', 'done', 'wontdo']",
+          "lineno": 15
+        },
+        {
+          "name": "PRIORITIES",
+          "annotation": null,
+          "value_repr": "['high', 'medium', 'low']",
+          "lineno": 16
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 9,
+        "methods": 0,
+        "constants": 4
       }
     },
     {
@@ -1384,8 +1783,55 @@
       "path": "app/web.py",
       "module_docstring": "FastAPI web application: маршруты Briefing.",
       "module_summary": "FastAPI web application: маршруты Briefing.",
-      "classes": [],
+      "classes": [
+        {
+          "name": "_BearerAuthASGIApp",
+          "signature": "_BearerAuthASGIApp",
+          "docstring": "Оборачивает ASGI-приложение проверкой заголовка Authorization: Bearer <token>.",
+          "summary": "Оборачивает ASGI-приложение проверкой заголовка Authorization: Bearer <token>.",
+          "kind": "class",
+          "bases": [],
+          "decorators": [],
+          "fields": [],
+          "methods": [
+            {
+              "name": "__init__",
+              "signature": "__init__(self, inner_app, token: str)",
+              "docstring": null,
+              "summary": null,
+              "kind": "method",
+              "decorators": [],
+              "lineno": 48,
+              "end_lineno": 50
+            },
+            {
+              "name": "__call__",
+              "signature": "__call__(self, scope, receive, send)",
+              "docstring": null,
+              "summary": null,
+              "kind": "async_method",
+              "decorators": [],
+              "lineno": 52,
+              "end_lineno": 60
+            }
+          ],
+          "lineno": 45,
+          "end_lineno": 60
+        }
+      ],
       "functions": [
+        {
+          "name": "_lifespan",
+          "signature": "_lifespan(_: FastAPI)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "asynccontextmanager"
+          ],
+          "lineno": 29,
+          "end_lineno": 35
+        },
         {
           "name": "_fix_spans",
           "signature": "_fix_spans(html: str) -> str",
@@ -1393,8 +1839,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 45,
-          "end_lineno": 46
+          "lineno": 84,
+          "end_lineno": 85
         },
         {
           "name": "_escape_template_vars",
@@ -1403,8 +1849,8 @@
           "summary": "Экранирует <placeholder> которые не являются HTML-тегами.",
           "kind": "function",
           "decorators": [],
-          "lineno": 49,
-          "end_lineno": 57
+          "lineno": 88,
+          "end_lineno": 96
         },
         {
           "name": "_render",
@@ -1413,8 +1859,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 60,
-          "end_lineno": 89
+          "lineno": 99,
+          "end_lineno": 128
         },
         {
           "name": "_calc_workdays",
@@ -1423,8 +1869,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 100,
-          "end_lineno": 121
+          "lineno": 139,
+          "end_lineno": 160
         },
         {
           "name": "_parse_mrs",
@@ -1433,8 +1879,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 130,
-          "end_lineno": 140
+          "lineno": 169,
+          "end_lineno": 179
         },
         {
           "name": "_enrich",
@@ -1443,8 +1889,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 143,
-          "end_lineno": 152
+          "lineno": 182,
+          "end_lineno": 191
         },
         {
           "name": "_group_issues",
@@ -1453,8 +1899,18 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 155,
-          "end_lineno": 174
+          "lineno": 194,
+          "end_lineno": 213
+        },
+        {
+          "name": "_group_todos",
+          "signature": "_group_todos(todos: list) -> list",
+          "docstring": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все\nчетыре) и делит каждую на открытые/закрытые. Открытые сортируются по\nприоритету, внутри приоритета — 🚧 выше 📋 (как в скилле `todo`).",
+          "summary": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 220,
+          "end_lineno": 236
         },
         {
           "name": "_detect_label",
@@ -1463,8 +1919,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 181,
-          "end_lineno": 186
+          "lineno": 243,
+          "end_lineno": 248
         },
         {
           "name": "_issue_sort_key",
@@ -1473,8 +1929,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 198,
-          "end_lineno": 216
+          "lineno": 260,
+          "end_lineno": 278
         },
         {
           "name": "index",
@@ -1485,8 +1941,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 220,
-          "end_lineno": 245
+          "lineno": 282,
+          "end_lineno": 307
         },
         {
           "name": "api_spent",
@@ -1497,8 +1953,8 @@
           "decorators": [
             "app.get('/api/spent')"
           ],
-          "lineno": 249,
-          "end_lineno": 259
+          "lineno": 311,
+          "end_lineno": 321
         },
         {
           "name": "api_mrs",
@@ -1509,8 +1965,8 @@
           "decorators": [
             "app.get('/api/mrs')"
           ],
-          "lineno": 263,
-          "end_lineno": 275
+          "lineno": 325,
+          "end_lineno": 337
         },
         {
           "name": "issue_by_id",
@@ -1521,8 +1977,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 279,
-          "end_lineno": 300
+          "lineno": 341,
+          "end_lineno": 362
         },
         {
           "name": "issue_journals",
@@ -1533,8 +1989,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 304,
-          "end_lineno": 333
+          "lineno": 366,
+          "end_lineno": 395
         },
         {
           "name": "attachment_thumbnail",
@@ -1545,8 +2001,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 337,
-          "end_lineno": 349
+          "lineno": 399,
+          "end_lineno": 411
         },
         {
           "name": "attachment_download",
@@ -1557,8 +2013,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 353,
-          "end_lineno": 367
+          "lineno": 415,
+          "end_lineno": 429
         },
         {
           "name": "_get_redmine_meta",
@@ -1567,8 +2023,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 389,
-          "end_lineno": 412
+          "lineno": 451,
+          "end_lineno": 474
         },
         {
           "name": "_resolve_attr",
@@ -1577,8 +2033,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 415,
-          "end_lineno": 440
+          "lineno": 477,
+          "end_lineno": 502
         },
         {
           "name": "_build_attr_changes",
@@ -1587,8 +2043,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 443,
-          "end_lineno": 453
+          "lineno": 505,
+          "end_lineno": 515
         },
         {
           "name": "avatar",
@@ -1599,8 +2055,80 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 457,
-          "end_lineno": 477
+          "lineno": 519,
+          "end_lineno": 539
+        },
+        {
+          "name": "projects_index",
+          "signature": "projects_index(request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/projects')"
+          ],
+          "lineno": 543,
+          "end_lineno": 554
+        },
+        {
+          "name": "project_detail",
+          "signature": "project_detail(request: Request, slug: str)",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [
+            "app.get('/projects/{slug}')"
+          ],
+          "lineno": 558,
+          "end_lineno": 580
+        },
+        {
+          "name": "create_project_todo",
+          "signature": "create_project_todo(slug: str, request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos')"
+          ],
+          "lineno": 584,
+          "end_lineno": 600
+        },
+        {
+          "name": "update_todo_status",
+          "signature": "update_todo_status(slug: str, todo_id: int, request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos/{todo_id}/status')"
+          ],
+          "lineno": 604,
+          "end_lineno": 613
+        },
+        {
+          "name": "update_todo_priority",
+          "signature": "update_todo_priority(slug: str, todo_id: int, request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
+          ],
+          "lineno": 617,
+          "end_lineno": 623
+        },
+        {
+          "name": "add_todo_subitem",
+          "signature": "add_todo_subitem(slug: str, todo_id: int, request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
+          ],
+          "lineno": 627,
+          "end_lineno": 636
         },
         {
           "name": "health",
@@ -1611,8 +2139,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 481,
-          "end_lineno": 482
+          "lineno": 640,
+          "end_lineno": 641
         }
       ],
       "constants": [
@@ -1620,99 +2148,111 @@
           "name": "PROJECT_ROOT",
           "annotation": null,
           "value_repr": "Path(__file__).resolve().parent.parent",
-          "lineno": 19
+          "lineno": 23
         },
         {
           "name": "STATIC_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'web_static'",
-          "lineno": 20
+          "lineno": 24
         },
         {
           "name": "TEMPLATES_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'templates'",
-          "lineno": 21
+          "lineno": 25
         },
         {
           "name": "_SPAN_RE",
           "annotation": null,
           "value_repr": "re.compile('%\\\\{([^}]+)\\\\}([^%]*)%')",
-          "lineno": 30
+          "lineno": 69
         },
         {
           "name": "_EMAIL_RE",
           "annotation": null,
           "value_repr": "re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\\\.[a-zA-Z0-9._-]+_?')",
-          "lineno": 32
+          "lineno": 71
         },
         {
           "name": "_REAL_TAGS",
           "annotation": null,
           "value_repr": "{'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre', 'span', 'div', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'del', 'ins', 'sub', 'sup', 'tt'}",
-          "lineno": 34
+          "lineno": 73
         },
         {
           "name": "_ANGLE_RE",
           "annotation": null,
           "value_repr": "re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')",
-          "lineno": 40
+          "lineno": 79
         },
         {
           "name": "_NOTEXTILE_RE",
           "annotation": null,
           "value_repr": "re.compile('<notextile>(.*?)</notextile>', re.DOTALL)",
-          "lineno": 41
+          "lineno": 80
         },
         {
           "name": "_QUOTE_BLOCK_RE",
           "annotation": null,
           "value_repr": "re.compile('((?:^> ?.*$\\\\n?)+)', re.MULTILINE)",
-          "lineno": 42
+          "lineno": 81
         },
         {
           "name": "_GROUP_DEFS",
           "annotation": null,
           "value_repr": "[('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s or 'review' in s), ('заблокирована', 'Заблокирована', lambda s: 'заблок' in s or 'block' in s)]",
-          "lineno": 93
+          "lineno": 132
         },
         {
           "name": "_MR_URL_RE",
           "annotation": null,
           "value_repr": "re.compile('(https?://\\\\S+/merge_requests/(\\\\d+))\\\\s*[-–]?\\\\s*(stage|master)?', re.IGNORECASE)",
-          "lineno": 124
+          "lineno": 163
+        },
+        {
+          "name": "_TODO_PRIORITY_ORDER",
+          "annotation": null,
+          "value_repr": "{'high': 0, 'medium': 1, 'low': 2}",
+          "lineno": 216
+        },
+        {
+          "name": "_TODO_STATUS_ORDER",
+          "annotation": null,
+          "value_repr": "{'in_progress': 0, 'open': 1}",
+          "lineno": 217
         },
         {
           "name": "_LABEL_Q_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[Q', re.IGNORECASE)",
-          "lineno": 177
+          "lineno": 239
         },
         {
           "name": "_LABEL_AI_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[ai\\\\]', re.IGNORECASE)",
-          "lineno": 178
+          "lineno": 240
         },
         {
           "name": "_PRIORITY_ORDER",
           "annotation": null,
           "value_repr": "{'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, 'низкий': 4, 'low': 4}",
-          "lineno": 189
+          "lineno": 251
         },
         {
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 373
+          "lineno": 435
         }
       ],
       "stats": {
-        "classes": 0,
+        "classes": 1,
         "dataclasses": 0,
-        "functions": 21,
-        "methods": 0,
-        "constants": 15
+        "functions": 29,
+        "methods": 2,
+        "constants": 17
       }
     }
   ]

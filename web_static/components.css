@@ -1019,4 +1019,137 @@ blockquote.redmine-quote {
     .img-modal-actions {
         opacity: 1;
     }
+
+    .todo-item-header {
+        flex-wrap: wrap;
+    }
+
+    .todo-add-form {
+        flex-wrap: wrap;
+    }
+}
+
+/* Проекты: селект + карточки тудушки */
+.select-control {
+    padding: 8px 12px;
+    min-height: var(--tap);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+}
+
+.select-control-sm {
+    min-height: 30px;
+    padding: 3px 6px;
+    font-size: var(--fs-xs);
+}
+
+.todo-group {
+    margin-bottom: 24px;
+}
+
+.todo-group:last-child { margin-bottom: 0; }
+
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.todo-empty-hint {
+    padding: 8px 2px;
+}
+
+.todo-item {
+    background: var(--panel);
+    border-top: 1px solid var(--bezel-hi);
+    border-right: 1px solid var(--bezel-lo);
+    border-bottom: 1px solid var(--bezel-lo);
+    border-left: 3px solid var(--border);
+    border-radius: var(--radius-row);
+    padding: 10px 14px;
+}
+
+.todo-priority-high   { border-left-color: var(--red);    box-shadow: inset 6px 0 12px -8px var(--red); }
+.todo-priority-medium { border-left-color: var(--amber); }
+.todo-priority-low    { border-left-color: var(--muted); }
+
+.todo-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.todo-item-id {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+.todo-item-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+}
+
+.todo-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.todo-subitems {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.todo-subitem {
+    font-size: var(--fs-sm);
+    color: var(--text);
+    line-height: 1.4;
+}
+
+.todo-subitem-context {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.todo-closed-note {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-sub);
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.todo-add-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.todo-add-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 8px 12px;
+    min-height: var(--tap);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
 }

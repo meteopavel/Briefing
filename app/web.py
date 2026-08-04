@@ -1,5 +1,6 @@
 """FastAPI web application: маршруты Briefing."""
 
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import hashlib
@@ -8,23 +9,61 @@ from datetime import date, timedelta
 
 import requests as req_lib
 import textile
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.config import REDMINE_API_KEY, REDMINE_API_KEY_ADMIN, REDMINE_URL
+from app.config import MCP_TOKEN, REDMINE_API_KEY, REDMINE_API_KEY_ADMIN, REDMINE_URL
 from app.services.gitlab.client import GitLabClient
 from app.services.redmine.client import RedmineClient
+from app.services.projects import repository as projects_repo
+from app.mcp_server import create_asgi_app as create_mcp_asgi_app
+from app.mcp_server import mcp as mcp_server_instance
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = PROJECT_ROOT / 'web_static'
 TEMPLATES_DIR = PROJECT_ROOT / 'templates'
 
-app = FastAPI(title='Briefing')
+
+@asynccontextmanager
+async def _lifespan(_: FastAPI):
+    # session_manager.run() обычно запускается lifespan'ом собственного
+    # Starlette-приложения MCP — но Starlette не прокидывает lifespan
+    # вложенного Mount автоматически, поэтому подключаем его к lifespan
+    # самого Briefing.
+    async with mcp_server_instance.session_manager.run():
+        yield
+
+
+app = FastAPI(title='Briefing', lifespan=_lifespan)
 
 app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
 
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
+
+class _BearerAuthASGIApp:
+    """Оборачивает ASGI-приложение проверкой заголовка Authorization: Bearer <token>."""
+
+    def __init__(self, inner_app, token: str):
+        self.inner_app = inner_app
+        self.token = token
+
+    async def __call__(self, scope, receive, send):
+        if scope['type'] == 'http':
+            headers = dict(scope.get('headers') or [])
+            auth_header = headers.get(b'authorization', b'').decode()
+            if auth_header != f'Bearer {self.token}':
+                response = Response(status_code=401, content='Unauthorized')
+                await response(scope, receive, send)
+                return
+        await self.inner_app(scope, receive, send)
+
+
+if MCP_TOKEN:
+    app.mount('/mcp', _BearerAuthASGIApp(create_mcp_asgi_app(), MCP_TOKEN))
+else:
+    print('[mcp] MCP_TOKEN не задан в .env — эндпоинт /mcp не подключён')
 
 
 _SPAN_RE = re.compile(r'%\{([^}]+)\}([^%]*)%')
@@ -172,6 +211,29 @@ def _group_issues(issues: list) -> list:
     if buckets['прочее']:
         result.append({'key': 'прочее', 'title': 'Прочее', 'issues': buckets['прочее']})
     return result
+
+
+_TODO_PRIORITY_ORDER = {'high': 0, 'medium': 1, 'low': 2}
+_TODO_STATUS_ORDER = {'in_progress': 0, 'open': 1}
+
+
+def _group_todos(todos: list) -> list:
+    """
+    Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все
+    четыре) и делит каждую на открытые/закрытые. Открытые сортируются по
+    приоритету, внутри приоритета — 🚧 выше 📋 (как в скилле `todo`).
+    """
+    buckets = {section: {'open': [], 'closed': []} for section in projects_repo.SECTIONS}
+    for todo in todos:
+        bucket = buckets[todo['section']]['closed'] if todo['status'] in ('done', 'wontdo') else buckets[todo['section']]['open']
+        bucket.append(todo)
+    for bucket in buckets.values():
+        bucket['open'].sort(key=lambda t: (_TODO_PRIORITY_ORDER.get(t['priority'], 1), _TODO_STATUS_ORDER.get(t['status'], 1), t['number']))
+        bucket['closed'].sort(key=lambda t: t['number'])
+    return [
+        {'key': section, 'title': projects_repo.SECTION_TITLES[section], **buckets[section]}
+        for section in projects_repo.SECTIONS
+    ]
 
 
 _LABEL_Q_RE  = re.compile(r'\[Q', re.IGNORECASE)
@@ -475,6 +537,103 @@ def avatar(user_id: int):
     except Exception:
         pass
     return Response(status_code=404)
+
+
+@app.get('/projects')
+def projects_index(request: Request):
+    try:
+        projects = projects_repo.list_projects()
+        error = None
+    except Exception as e:
+        projects = []
+        error = str(e)
+    return templates.TemplateResponse(
+        request=request,
+        name='projects.html',
+        context={'title': 'Briefing · Проекты', 'active_tab': 'projects', 'projects': projects, 'selected': None, 'groups': [], 'error': error},
+    )
+
+
+@app.get('/projects/{slug}')
+def project_detail(request: Request, slug: str):
+    try:
+        projects = projects_repo.list_projects()
+        project = projects_repo.get_project_by_slug(slug)
+        groups = _group_todos(projects_repo.get_todos(project['id'])) if project else []
+        error = None if project else f'Проект «{slug}» не найден'
+    except Exception as e:
+        projects = []
+        project = None
+        groups = []
+        error = str(e)
+    return templates.TemplateResponse(
+        request=request,
+        name='projects.html',
+        context={
+            'title': f'Briefing · {project["title"]}' if project else 'Briefing · Проекты',
+            'active_tab': 'projects',
+            'projects': projects,
+            'selected': project,
+            'groups': groups,
+            'error': error,
+        },
+    )
+
+
+@app.post('/api/projects/{slug}/todos')
+async def create_project_todo(slug: str, request: Request):
+    project = projects_repo.get_project_by_slug(slug)
+    if project is None:
+        raise HTTPException(404, f'Проект «{slug}» не найден')
+    body = await request.json()
+    section = body.get('section')
+    priority = body.get('priority')
+    title = (body.get('title') or '').strip()
+    subitems = body.get('subitems') or []
+    if section not in projects_repo.SECTIONS:
+        raise HTTPException(400, 'Некорректная секция')
+    if priority not in projects_repo.PRIORITIES:
+        raise HTTPException(400, 'Некорректный приоритет')
+    if not title:
+        raise HTTPException(400, 'Текст задачи не может быть пустым')
+    todo_id = projects_repo.create_todo(project['id'], section, priority, title, subitems)
+    return {'id': todo_id}
+
+
+@app.post('/api/projects/{slug}/todos/{todo_id}/status')
+async def update_todo_status(slug: str, todo_id: int, request: Request):
+    body = await request.json()
+    status = body.get('status')
+    closed_note = (body.get('closed_note') or '').strip() or None
+    if status not in projects_repo.STATUSES:
+        raise HTTPException(400, 'Некорректный статус')
+    if status in ('done', 'wontdo') and not closed_note:
+        raise HTTPException(400, 'Для закрытия задачи нужна заметка — что сделано / что решили')
+    projects_repo.update_status(todo_id, status, closed_note)
+    return {'ok': True}
+
+
+@app.post('/api/projects/{slug}/todos/{todo_id}/priority')
+async def update_todo_priority(slug: str, todo_id: int, request: Request):
+    body = await request.json()
+    priority = body.get('priority')
+    if priority not in projects_repo.PRIORITIES:
+        raise HTTPException(400, 'Некорректный приоритет')
+    projects_repo.update_priority(todo_id, priority)
+    return {'ok': True}
+
+
+@app.post('/api/projects/{slug}/todos/{todo_id}/subitems')
+async def add_todo_subitem(slug: str, todo_id: int, request: Request):
+    body = await request.json()
+    kind = body.get('kind')
+    text = (body.get('text') or '').strip()
+    if kind not in ('requirement', 'context'):
+        raise HTTPException(400, 'Некорректный тип подпункта')
+    if not text:
+        raise HTTPException(400, 'Текст подпункта не может быть пустым')
+    projects_repo.add_subitem(todo_id, kind, text)
+    return {'ok': True}
 
 
 @app.get('/health')
