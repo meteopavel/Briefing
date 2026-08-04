@@ -2,6 +2,8 @@
     width: min(1120px, calc(100% - 32px));
     margin: 0 auto;
     padding: 32px 0 24px;
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
 }
 
 .header {
@@ -9,55 +11,75 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
 }
 
 .eyebrow {
-    color: var(--blue);
-    font-size: 13px;
-    font-weight: 700;
+    color: var(--amber-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
 }
 
 .header-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    background: rgba(23, 32, 51, 0.8);
-    color: var(--text);
+    padding: 8px 14px;
+    border-radius: var(--radius-btn);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     white-space: nowrap;
+    border-top: 1px solid var(--bezel-hi);
+    border-left: 1px solid var(--bezel-hi);
+    border-bottom: 1px solid var(--bezel-lo);
+    border-right: 1px solid var(--bezel-lo);
 }
 
 .status-dot {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     display: inline-block;
 }
 
 .status-dot-green {
     background: var(--green);
-    box-shadow: 0 0 0 5px rgba(74, 222, 128, 0.12);
+    box-shadow: 0 0 0 3px rgba(78, 207, 142, 0.18), 0 0 6px rgba(78, 207, 142, 0.6);
 }
 
 .tabs {
     display: flex;
     gap: 2px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
+.tabs::-webkit-scrollbar { display: none; }
 
 .tab {
-    padding: 10px 20px;
+    padding: 11px 18px;
+    min-height: var(--tap);
+    display: inline-flex;
+    align-items: center;
     color: var(--muted);
+    font-family: var(--font-mono);
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--fs-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     text-decoration: none;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
@@ -77,8 +99,8 @@
 
 .tab-active,
 .tab-active:visited {
-    color: var(--text);
-    border-bottom-color: var(--blue);
+    color: var(--amber);
+    border-bottom-color: var(--amber);
 }
 
 .issue-search-form {
@@ -88,19 +110,21 @@
     padding: 4px 0;
 }
 .issue-search-input {
-    background: var(--bg-input, var(--bg-row));
+    background: var(--bg-input);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: var(--radius-btn);
     color: var(--text);
+    font-family: var(--font-mono);
     font-size: 13px;
-    padding: 4px 10px;
-    width: 90px;
+    padding: 7px 10px;
+    min-height: 36px;
+    width: 84px;
     outline: none;
     transition: border-color var(--transition), width var(--transition);
 }
 .issue-search-input:focus {
-    border-color: var(--blue);
-    width: 130px;
+    border-color: var(--amber);
+    width: 120px;
 }
 .issue-search-input::placeholder { color: var(--muted); }
 
@@ -112,18 +136,30 @@
 
 .footer {
     color: var(--muted);
+    font-family: var(--font-mono);
     text-align: center;
-    font-size: 13px;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
     margin-top: 24px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
     .page {
-        padding: 20px 0 16px;
+        padding: 16px 0 16px;
     }
 
     .header {
         align-items: flex-start;
         flex-direction: column;
+        gap: 12px;
+    }
+
+    .header-badge {
+        align-self: flex-start;
+    }
+
+    .tab {
+        padding: 10px 14px;
     }
 }

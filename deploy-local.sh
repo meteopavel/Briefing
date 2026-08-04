@@ -126,11 +126,11 @@ fi
 if [[ "$BACKUP_OK" -eq 1 ]]; then
     mkdir -p "${ARCHIVE_DIR}"
     [[ -f "${ARCHIVE_PATH}" ]] && rm -f "${ARCHIVE_PATH}"
-    log "🔒 Создаём зашифрованный архив (.env, .local_secure/, CLAUDE.md)..."
+    log "🔒 Создаём зашифрованный архив (.env, .local_secure/, CLAUDE.md, PRODUCT.md, DESIGN.md)..."
     (
         cd "${PROJECT_ROOT}"
         7z a -p"${ARCHIVE_PASSWORD}" -mhe=on "${ARCHIVE_PATH}" \
-            ".env" "CLAUDE.md" ".local_secure/" > /dev/null 2>&1 || true
+            ".env" "CLAUDE.md" "PRODUCT.md" "DESIGN.md" ".local_secure/" > /dev/null 2>&1 || true
     )
     run_with_heartbeat "отправка backup" \
         rsync_via_tunnel "${SECURE_RSYNC_USER}" "${SECURE_RSYNC_HOST}" \

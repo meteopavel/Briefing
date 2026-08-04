@@ -1,59 +1,90 @@
+/*
+ * DIRECTION: The Night Watch Console (see DESIGN.md)
+ * THESIS: a personal instrument panel for triaging tasks, not a SaaS kanban
+ *   card grid — refuses the navy/blue-gradient/pill-badge default.
+ * OWN-WORLD: near-black riveted panel chrome, one live backlit-amber accent,
+ *   IBM Plex Mono for every readout, embossed bezel edges instead of shadows.
+ * STORY: the operator scans the console like pre-shift instruments — which
+ *   lamps are red (overdue), which are armed amber (in progress).
+ * FIRST VIEWPORT: a stacked bank of sector modules (urgent/working/review/
+ *   passive), each a bezelled task card with a lamp-strip priority edge.
+ * FORM: cockpit/instrument-panel direction (seed 2e6f72dd, assigned index 4
+ *   of 7 authored candidates); no staging challenger adopted — a plain panel
+ *   stack served the dense-triage task better than the dealt challengers.
+ */
 :root {
-    --bg: #101827;
-    --panel: #172033;
-    --panel-soft: #1f2b44;
-    --text: #e8edf7;
-    --muted: #97a3b6;
-    --border: rgba(255, 255, 255, 0.08);
-    --green: #4ade80;
-    --blue: #60a5fa;
-    --blue-dark: #2563eb;
-    --red: #f87171;
-    --yellow: #facc15;
+    --bg: #0d0f11;
+    --panel: #1a1d21;
+    --panel-soft: #20242a;
+    --bezel-hi: rgba(255, 255, 255, 0.07);
+    --bezel-lo: rgba(0, 0, 0, 0.55);
+    --text: #ecebe4;
+    --muted: #8b9096;
+    --border: rgba(255, 255, 255, 0.09);
+
+    --amber: #ffb454;
+    --amber-dim: #a8763a;
+    --green: #4ecf8e;
+    --cyan: #5fc3d1;
+    --red: #ff5a49;
+    --yellow: var(--amber);
+    --blue: var(--cyan);
     --danger: var(--red);
 
-    --tint-blue-bg:     rgba(96, 165, 250, 0.12);
-    --tint-blue-border: rgba(96, 165, 250, 0.22);
-    --tint-blue-text:   #bfdbfe;
+    --tint-blue-bg:     rgba(95, 195, 209, 0.12);
+    --tint-blue-border: rgba(95, 195, 209, 0.32);
+    --tint-blue-text:   #a9e2ea;
 
-    --tint-green-bg:     rgba(74, 222, 128, 0.12);
-    --tint-green-border: rgba(74, 222, 128, 0.28);
-    --tint-green-text:   #bbf7d0;
+    --tint-green-bg:     rgba(78, 207, 142, 0.13);
+    --tint-green-border: rgba(78, 207, 142, 0.35);
+    --tint-green-text:   #a9edc9;
 
-    --tint-red-bg:     rgba(248, 113, 113, 0.12);
-    --tint-red-border: rgba(248, 113, 113, 0.35);
-    --tint-red-text:   #fecaca;
+    --tint-red-bg:     rgba(255, 90, 73, 0.13);
+    --tint-red-border: rgba(255, 90, 73, 0.4);
+    --tint-red-text:   #ffb3a8;
 
-    --tint-yellow-bg:     rgba(250, 204, 21, 0.12);
-    --tint-yellow-border: rgba(250, 204, 21, 0.28);
-    --tint-yellow-text:   #fef08a;
+    --tint-yellow-bg:     rgba(255, 180, 84, 0.14)  ;
+    --tint-yellow-border: rgba(255, 180, 84, 0.4);
+    --tint-yellow-text:   #ffd9a8;
 
-    --tint-gray-bg:     rgba(148, 163, 184, 0.12);
-    --tint-gray-border: rgba(148, 163, 184, 0.28);
-    --tint-gray-text:   #cbd5e1;
+    --tint-gray-bg:     rgba(139, 144, 150, 0.12);
+    --tint-gray-border: rgba(139, 144, 150, 0.3);
+    --tint-gray-text:   #c4c8cc;
 
-    --shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+    --shadow: none;
 
-    --bg-card:      linear-gradient(180deg, rgba(31, 43, 68, 0.95), rgba(23, 32, 51, 0.95));
-    --bg-row:       rgba(16, 24, 39, 0.45);
-    --bg-btn:       rgba(30, 41, 59, 0.75);
-    --bg-btn-hover: rgba(51, 65, 85, 0.9);
-    --bg-sunken:    rgba(15, 23, 42, 0.45);
-    --bg-input:     var(--bg-row);
+    --bg-card:      var(--panel);
+    --bg-row:       rgba(0, 0, 0, 0.22);
+    --bg-btn:       var(--panel-soft);
+    --bg-btn-hover: #282d34;
+    --bg-sunken:    rgba(0, 0, 0, 0.3);
+    --bg-input:     rgba(0, 0, 0, 0.28);
+    --bg-hover:     var(--panel-soft);
 
-    --radius-card:    22px;
-    --radius-row:     16px;
-    --radius-btn:     12px;
+    --radius-card:    6px;
+    --radius-row:     6px;
+    --radius-btn:     3px;
     --radius-pill:    999px;
     --radius:         var(--radius-btn);
 
-    --border-sub: rgba(148, 163, 184, 0.12);
+    --border-sub: rgba(255, 255, 255, 0.06);
 
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --fs-2xs:  10px;
-    --fs-xs:   11px;
+    --fs-xs:   11.5px;
     --fs-sm:   13px;
     --fs-base: 14px;
 
     --transition: 0.15s ease;
+    --tap: 40px;
+}
+
+@media (max-width: 640px) {
+    :root {
+        --fs-2xs: 11px;
+        --fs-xs:  12.5px;
+        --fs-sm:  14px;
+        --fs-base: 15px;
+    }
 }
