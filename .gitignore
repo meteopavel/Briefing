@@ -1,4 +1,5 @@
 .env
+.mcp.json
 .claude/
 CLAUDE.md
 PRODUCT.md
