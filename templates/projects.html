@@ -23,12 +23,12 @@
         <span class="dd-label">{{ label }}</span>
         <svg class="icon dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
-    <div class="dd-menu">
+    <div class="dd-menu" tabindex="-1">
         {% for k in keys %}
         {% set m = meta[k] %}
         {% set opt_label = m.label if m.label else k %}
         <div class="dd-item{% if current_value == k %} dd-item-active{% endif %}"
-             data-value="{{ k }}" onclick="ddSelect(this)">
+             data-value="{{ k }}" tabindex="0" onclick="ddSelect(this)">
             {% if m.icon %}<svg class="icon {{ m.icon_class or '' }}"><use href="#{{ m.icon }}"/></svg>{% endif %}
             <span class="dd-label">{{ opt_label }}</span>
             <svg class="icon dd-item-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -191,7 +191,12 @@ function ddToggle(triggerBtn) {
     const dd = triggerBtn.closest('.dd');
     const wasOpen = dd.classList.contains('dd-open');
     ddCloseAll();
-    if (!wasOpen) dd.classList.add('dd-open');
+    if (!wasOpen) {
+        dd.classList.add('dd-open');
+        // Перенос фокуса на меню держит :focus-within родительской формы
+        // (иначе компактная форма новой задачи схлопывается, пока открыт дропдаун).
+        dd.querySelector('.dd-menu')?.focus();
+    }
 }
 
 function ddCloseAll() {
@@ -237,6 +242,10 @@ function ddSelect(item) {
     dd.querySelectorAll('.dd-item').forEach(i => i.classList.toggle('dd-item-active', i === item));
 
     dd.classList.remove('dd-open');
+
+    // Возвращаем фокус на триггер: для new-priority-* (без перезагрузки) это
+    // удержит :focus-within формы и она не схлопнется сразу после выбора.
+    trigger.focus();
 
     // Маршрутизация по data-name: <prefix>-<todoId> или new-priority-<sectionKey>.
     const name = dd.dataset.name;
