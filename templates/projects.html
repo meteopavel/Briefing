@@ -1,44 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-{# Секции: короткие лейблы (однообразны по длине). Статус/приоритет — из контекста
-   (status_meta/priority_meta, источник — repository.py). #}
-{% set section_opts = [
-    {'value': 'bug',  'label': 'bug',  'icon': 'i-sec-bug',  'icon_class': 'icon-sec-bug'},
-    {'value': 'feat', 'label': 'feat', 'icon': 'i-sec-feat', 'icon_class': 'icon-sec-feat'},
-    {'value': 'ref',  'label': 'ref',  'icon': 'i-sec-ref',  'icon_class': 'icon-sec-ref'},
-    {'value': 'ques', 'label': 'ques', 'icon': 'i-sec-ques', 'icon_class': 'icon-sec-ques'}
-] %}
+{# Секции: короткие лейблы. Статус/приоритет — из контекста (источник — repository.py). #}
+{% set section_meta = {
+    'bug':  {'icon': 'i-sec-bug',  'icon_class': 'icon-sec-bug'},
+    'feat': {'icon': 'i-sec-feat', 'icon_class': 'icon-sec-feat'},
+    'ref':  {'icon': 'i-sec-ref',  'icon_class': 'icon-sec-ref'},
+    'ques': {'icon': 'i-sec-ques', 'icon_class': 'icon-sec-ques'}
+} %}
+{% set section_order = ['bug', 'feat', 'ref', 'ques'] %}
 
-{# Переиспользуемый dropdown: SVG в опци­ях (нативный <option> их не умеет).
-   Закрыт — только иконка; текст в триггере и пунктах появляется при открытии (CSS .dd-open). #}
-{% macro dd(trigger_value, trigger_label, options, name, current_value) %}
+{# Переиспользуемый dropdown: SVG в опци­ах (нативный <option> их не умеет).
+   meta = {value: {label?, icon?, icon_class?}}, keys — порядок пунктов.
+   Лейбл берётся из meta[k].label, иначе сам ключ k (как у секций).
+   Закрыт — только иконка; текст в триггере и пунктах появляется при открытии. #}
+{% macro dd(current_value, meta, keys, name) %}
+{% set cur = meta[current_value] %}
+{% set label = cur.label if cur and cur.label else current_value %}
 <div class="dd" data-name="{{ name }}">
     <button type="button" class="dd-trigger" onclick="ddToggle(this)">
-        {% if options | selectattr('value', 'equalto', trigger_value) | first %}
-            {% set t = options | selectattr('value', 'equalto', trigger_value) | first %}
-            {% if t.icon %}<svg class="icon {{ t.icon_class or '' }}"><use href="#{{ t.icon }}"/></svg>{% endif %}
-        {% endif %}
-        <span class="dd-label">{{ trigger_label }}</span>
+        {% if cur and cur.icon %}<svg class="icon {{ cur.icon_class or '' }}"><use href="#{{ cur.icon }}"/></svg>{% endif %}
+        <span class="dd-label">{{ label }}</span>
         <svg class="icon dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="dd-menu">
-        {% for opt in options %}
-        <div class="dd-item{% if current_value == opt.value %} dd-item-active{% endif %}"
-             data-value="{{ opt.value }}" onclick="ddSelect(this)">
-            {% if opt.icon %}<svg class="icon {{ opt.icon_class or '' }}"><use href="#{{ opt.icon }}"/></svg>{% endif %}
-            <span class="dd-label">{{ opt.label }}</span>
+        {% for k in keys %}
+        {% set m = meta[k] %}
+        {% set opt_label = m.label if m.label else k %}
+        <div class="dd-item{% if current_value == k %} dd-item-active{% endif %}"
+             data-value="{{ k }}" onclick="ddSelect(this)">
+            {% if m.icon %}<svg class="icon {{ m.icon_class or '' }}"><use href="#{{ m.icon }}"/></svg>{% endif %}
+            <span class="dd-label">{{ opt_label }}</span>
             <svg class="icon dd-item-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         {% endfor %}
     </div>
 </div>
 {% endmacro %}
-
-{# Список options из meta-словаря {value: {label, icon, icon_class}} в порядке ключей #}
-{% macro meta_opts(meta, keys) -%}
-[{% for k in keys %}{'value': '{{ k }}', 'label': '{{ meta[k].label }}', 'icon': '{{ meta[k].icon }}', 'icon_class': '{{ meta[k].icon_class }}'}{% if not loop.last %}, {% endif %}{% endfor %}]
-{%- endmacro %}
 
 {% macro render_todo(todo) %}
 <div class="todo-item todo-priority-{{ todo.priority }} todo-section-{{ todo.section }}" data-id="{{ todo.id }}">
@@ -47,18 +45,9 @@
                 onclick="copyTodoId('{{ todo.section }}.{{ todo.number }}')">{{ todo.section }}.{{ todo.number }}</button>
         <span class="todo-item-title">{{ todo.title }}</span>
         <span class="todo-item-controls">
-            {{ dd(todo.status, status_meta[todo.status].label,
-                  meta_opts(status_meta, ['open', 'in_progress', 'done', 'wontdo']),
-                  'status-' ~ todo.id, todo.status)
-               }}
-            {{ dd(todo.priority, priority_meta[todo.priority].label,
-                  meta_opts(priority_meta, ['high', 'medium', 'low']),
-                  'priority-' ~ todo.id, todo.priority)
-               }}
-            {{ dd(todo.section, todo.section,
-                  section_opts,
-                  'section-' ~ todo.id, todo.section)
-               }}
+            {{ dd(todo.status, status_meta, ['open', 'in_progress', 'done', 'wontdo'], 'status-' ~ todo.id) }}
+            {{ dd(todo.priority, priority_meta, ['high', 'medium', 'low'], 'priority-' ~ todo.id) }}
+            {{ dd(todo.section, section_meta, section_order, 'section-' ~ todo.id) }}
             <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">
                 <svg class="icon"><use href="#i-edit"/></svg>
             </button>
@@ -147,10 +136,7 @@
             <span class="issue-group-count">{{ group.open | length }}</span>
             <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
                 <input type="text" name="title" class="todo-add-input" placeholder="+ новая…" required>
-                {{ dd('medium', priority_meta['medium'].label,
-                      meta_opts(priority_meta, ['high', 'medium', 'low']),
-                      'new-priority-' ~ group.key, 'medium')
-                   }}
+                {{ dd('medium', priority_meta, ['high', 'medium', 'low'], 'new-priority-' ~ group.key) }}
                 <button type="submit" class="btn btn-amber">Добавить</button>
             </form>
         </div>
