@@ -1090,6 +1090,22 @@ blockquote.redmine-quote {
     font-size: var(--fs-task);
     color: var(--muted);
     flex-shrink: 0;
+    cursor: pointer;
+    padding: 0 4px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.todo-item-id:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+}
+
+.todo-item-id.copied {
+    background: rgba(78, 207, 142, 0.8);
+    color: #fff;
 }
 
 .todo-item-title {
