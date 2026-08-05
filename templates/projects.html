@@ -21,12 +21,24 @@
                 {% endfor %}
             </select>
             <button type="button" class="todo-action-btn" title="Редактировать" onclick="editTodo({{ todo.id }})">✎</button>
-            <button type="button" class="todo-action-btn" title="Добавить подпункт" onclick="addSubitem({{ todo.id }})">➕</button>
             <button type="button" class="todo-action-btn todo-action-danger" title="Удалить" onclick="deleteTodo({{ todo.id }})">🗑</button>
         </span>
     </div>
     <form class="todo-edit-form" data-todo-id="{{ todo.id }}" hidden onsubmit="return submitEdit(event, {{ todo.id }})">
         <textarea name="title" class="todo-edit-textarea" rows="2" required>{{ todo.title }}</textarea>
+        <div class="todo-edit-subitems" data-todo-id="{{ todo.id }}">
+            {% for sub in todo.subitems %}
+            <div class="todo-edit-subitem-row">
+                <select name="kind" class="select-control select-control-sm">
+                    <option value="requirement" {% if sub.kind == 'requirement' %}selected{% endif %}>требование</option>
+                    <option value="context" {% if sub.kind == 'context' %}selected{% endif %}>контекст</option>
+                </select>
+                <input type="text" name="text" class="todo-add-input" value="{{ sub.text }}" required>
+                <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this)">×</button>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn todo-edit-add-subitem" onclick="addSubitemRow({{ todo.id }})">+ подпункт</button>
         <div class="todo-edit-row">
             <select name="section" class="select-control select-control-sm">
                 {% for key in ['bug', 'feat', 'refactor', 'q'] %}
@@ -36,18 +48,7 @@
             <button type="submit" class="btn btn-primary">Сохранить</button>
             <button type="button" class="btn" onclick="cancelEdit({{ todo.id }})">Отмена</button>
         </div>
-        <div class="todo-form-hint">При смене секции номер перевыпускается (например, bug.3 → feat.5).</div>
-    </form>
-    <form class="todo-subitem-form" data-todo-id="{{ todo.id }}" hidden onsubmit="return submitSubitem(event, {{ todo.id }})">
-        <div class="todo-edit-row">
-            <select name="kind" class="select-control select-control-sm">
-                <option value="requirement">требование</option>
-                <option value="context">контекст</option>
-            </select>
-            <input type="text" name="text" class="todo-add-input" placeholder="Текст подпункта…" required>
-            <button type="submit" class="btn btn-primary">Добавить</button>
-            <button type="button" class="btn" onclick="cancelSubitem({{ todo.id }})">Отмена</button>
-        </div>
+        <div class="todo-form-hint">При смене секции номер перевыпускается (например, bug.3 → feat.5). Подпункты сохраняются в указанном порядке; пустые не сохранятся.</div>
     </form>
     {% if todo.subitems %}
     <ul class="todo-subitems">
@@ -204,32 +205,43 @@ function submitEdit(event, todoId) {
     const title = form.title.value.trim();
     const section = form.section.value;
     if (!title) return false;
-    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section})
+    const subitems = _collectSubitems(form);
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems})
         .then(() => location.reload())
         .catch(e => { alert(e.message); location.reload(); });
     return false;
 }
 
-function addSubitem(todoId) {
-    const item = _todoEl(todoId);
-    item.querySelector('.todo-subitem-form').hidden = false;
-    item.querySelector('.todo-subitem-form input[name="text"]').focus();
+function _collectSubitems(form) {
+    // Собираем подпункты из строк редактора; пустые по тексту пропускаем.
+    const rows = form.querySelectorAll('.todo-edit-subitem-row');
+    const out = [];
+    rows.forEach(row => {
+        const kind = row.querySelector('select[name="kind"]').value;
+        const text = (row.querySelector('input[name="text"]').value || '').trim();
+        if (text) out.push({kind, text});
+    });
+    return out;
 }
 
-function cancelSubitem(todoId) {
-    _todoEl(todoId).querySelector('.todo-subitem-form').hidden = true;
+function addSubitemRow(todoId) {
+    const container = _todoEl(todoId).querySelector('.todo-edit-subitems');
+    const row = document.createElement('div');
+    row.className = 'todo-edit-subitem-row';
+    row.innerHTML = `
+        <select name="kind" class="select-control select-control-sm">
+            <option value="requirement">требование</option>
+            <option value="context">контекст</option>
+        </select>
+        <input type="text" name="text" class="todo-add-input" required>
+        <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this)">×</button>
+    `;
+    container.appendChild(row);
+    row.querySelector('input[name="text"]').focus();
 }
 
-function submitSubitem(event, todoId) {
-    event.preventDefault();
-    const form = event.target;
-    const kind = form.kind.value;
-    const text = form.text.value.trim();
-    if (!text) return false;
-    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/subitems`, {kind, text})
-        .then(() => location.reload())
-        .catch(e => alert(e.message));
-    return false;
+function removeSubitemRow(btn) {
+    btn.closest('.todo-edit-subitem-row').remove();
 }
 
 function deleteTodo(todoId) {
