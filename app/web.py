@@ -659,8 +659,7 @@ async def edit_project_todo(slug: str, todo_id: int, request: Request):
                 raise HTTPException(400, 'Некорректный тип подпункта')
             if not (sub.get('text') or '').strip():
                 raise HTTPException(400, 'Текст подпункта не может быть пустым')
-        projects_repo.replace_subitems(todo_id, subitems)
-    projects_repo.update_todo_meta(todo_id, title, section)
+    projects_repo.edit_todo(todo_id, title, section, subitems)
     return {'ok': True}
 
 

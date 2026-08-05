@@ -123,8 +123,7 @@ def edit_todo(
                 raise ValueError(f'Некорректный тип подпункта: {sub.get("kind")} (ожидается requirement|context)')
             if not (sub.get('text') or '').strip():
                 raise ValueError('Текст подпункта не может быть пустым')
-        projects_repo.replace_subitems(todo_id, subitems)
-    projects_repo.update_todo_meta(todo_id, title, section)
+    projects_repo.edit_todo(todo_id, title, section, subitems)
 
 
 @mcp.tool()

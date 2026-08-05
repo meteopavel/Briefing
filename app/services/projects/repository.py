@@ -166,43 +166,49 @@ def add_subitem(todo_id: int, kind: str, text: str) -> None:
             )
 
 
-def replace_subitems(todo_id: int, subitems: list[dict]) -> None:
+def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None:
     """
-    Полная замена подпунктов задачи: удаляет старые, вставляет переданный
-    список (position = порядок в списке). Удобно для single-user UI, где форма
-    ✎ присылает актуальный снимок подпунктов одним батчем. Пустой список —
-    удалить все подпункты.
+    Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной
+    транзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем
+    явные begin()/commit() с rollback() при ошибке — иначе replace+update
+    прошли бы в раздельных авто-коммитах и при сбое второго шага подпункты
+    оказались бы перезаписаны при старом заголовке/секции (рассинхрон).
+
+    title — новый заголовок; section — bug|feat|ref|ques (при смене номер
+    перевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт
+    project_id+section+number не даёт сохранить старый);
+    subitems — None (не трогать) либо полная замена списком
+    {'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.
+    Валидация значений — на вызывающей стороне (роут/MCP).
     """
     with get_connection() as conn:
         with conn.cursor() as cursor:
-            cursor.execute('DELETE FROM todo_subitems WHERE todo_id = %s', (todo_id,))
-            for position, subitem in enumerate(subitems):
-                cursor.execute(
-                    'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
-                    (todo_id, subitem['kind'], subitem['text'], position),
-                )
-
-
-def update_todo_meta(todo_id: int, title: str, section: str) -> None:
-    """
-    Меняет заголовок задачи и (опционально) секцию. При смене секции номер
-    перевыпускается как следующий свободный в новой секции (UNIQUE-констрейнт
-    project_id+section+number не даёт сохранить старый). Подпункты не трогает.
-    """
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute('SELECT project_id, section FROM todos WHERE id = %s', (todo_id,))
-            current = cursor.fetchone()
-            if current is None:
-                return
-            if section == current['section']:
-                cursor.execute('UPDATE todos SET title = %s WHERE id = %s', (title, todo_id))
-            else:
-                next_number = _next_number(cursor, current['project_id'], section)
-                cursor.execute(
-                    'UPDATE todos SET title = %s, section = %s, number = %s WHERE id = %s',
-                    (title, section, next_number, todo_id),
-                )
+            try:
+                conn.begin()
+                if subitems is not None:
+                    cursor.execute('DELETE FROM todo_subitems WHERE todo_id = %s', (todo_id,))
+                    for position, subitem in enumerate(subitems):
+                        cursor.execute(
+                            'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
+                            (todo_id, subitem['kind'], subitem['text'], position),
+                        )
+                cursor.execute('SELECT project_id, section FROM todos WHERE id = %s', (todo_id,))
+                current = cursor.fetchone()
+                if current is None:
+                    conn.rollback()
+                    return
+                if section == current['section']:
+                    cursor.execute('UPDATE todos SET title = %s WHERE id = %s', (title, todo_id))
+                else:
+                    next_number = _next_number(cursor, current['project_id'], section)
+                    cursor.execute(
+                        'UPDATE todos SET title = %s, section = %s, number = %s WHERE id = %s',
+                        (title, section, next_number, todo_id),
+                    )
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
 
 
 def delete_todo(todo_id: int) -> None:
