@@ -31,6 +31,7 @@
     --yellow: var(--amber);
     --blue: var(--cyan);
     --danger: var(--red);
+    --prio-low: #55559a;
 
     --tint-blue-bg:     rgba(95, 195, 209, 0.12);
     --tint-blue-border: rgba(95, 195, 209, 0.32);
