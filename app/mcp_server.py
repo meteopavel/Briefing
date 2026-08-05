@@ -13,6 +13,11 @@ mcp = FastMCP('briefing')
 # бы двойное /mcp/mcp, потому что streamable_http_app() по умолчанию сам
 # ожидает путь /mcp внутри себя.
 mcp.settings.streamable_http_path = '/'
+# Stateless: сервер не ведёт сессий в памяти. Каждый tools/call изолирован —
+# без session-id, без state между вызовами. Тулы здесь чистые БД-операции,
+# межзапросное состояние не нужно, а так session store жил в ОП процесса и
+# протухал при каждом `systemctl restart` во время деплоя (No valid session ID).
+mcp.settings.stateless_http = True
 
 
 def _project_or_raise(project_slug: str) -> dict:
