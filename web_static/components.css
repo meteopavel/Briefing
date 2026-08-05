@@ -1153,3 +1153,66 @@ blockquote.redmine-quote {
     font-family: var(--font-sans);
     font-size: var(--fs-sm);
 }
+
+/* Кнопки-действия и inline-формы правки/подпункта */
+.todo-action-btn {
+    min-width: 30px;
+    min-height: 30px;
+    padding: 0 6px;
+    background: var(--bg-btn);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.todo-action-btn:hover {
+    background: var(--bg-btn-hover);
+    color: var(--text);
+}
+
+.todo-action-danger:hover {
+    color: var(--danger);
+    background: var(--tint-red-bg);
+    border-color: var(--tint-red-border);
+}
+
+.todo-edit-form,
+.todo-subitem-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.todo-edit-textarea {
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+    resize: vertical;
+}
+
+.todo-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.todo-form-hint {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    line-height: 1.4;
+}

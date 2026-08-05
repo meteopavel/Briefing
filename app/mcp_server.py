@@ -92,5 +92,25 @@ def add_todo_subitem(todo_id: int, kind: str, text: str) -> None:
     projects_repo.add_subitem(todo_id, kind, text)
 
 
+@mcp.tool()
+def edit_todo(todo_id: int, title: str, section: str) -> None:
+    """
+    Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.
+    При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
+    к секции. Подпункты и статус сохраняются.
+    """
+    if section not in projects_repo.SECTIONS:
+        raise ValueError(f'Некорректная секция: {section} (ожидается одна из {projects_repo.SECTIONS})')
+    if not title.strip():
+        raise ValueError('Текст задачи не может быть пустым')
+    projects_repo.update_todo_meta(todo_id, title, section)
+
+
+@mcp.tool()
+def delete_todo(todo_id: int) -> None:
+    """Удаляет задачу вместе с подпунктами (они снимаются каскадом)."""
+    projects_repo.delete_todo(todo_id)
+
+
 def create_asgi_app():
     return mcp.streamable_http_app()

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-04T13:58:33.821834+00:00",
+  "generated_at": "2026-08-05T04:21:47.325250+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 29,
@@ -19,7 +19,7 @@
     "modules": 22,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 114,
+    "functions": 120,
     "methods": 16,
     "constants": 68
   },
@@ -523,21 +523,45 @@
           "end_lineno": 92
         },
         {
+          "name": "edit_todo",
+          "signature": "edit_todo(todo_id: int, title: str, section: str) -> None",
+          "docstring": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.\nПри смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан\nк секции. Подпункты и статус сохраняются.",
+          "summary": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 96,
+          "end_lineno": 106
+        },
+        {
+          "name": "delete_todo",
+          "signature": "delete_todo(todo_id: int) -> None",
+          "docstring": "Удаляет задачу вместе с подпунктами (они снимаются каскадом).",
+          "summary": "Удаляет задачу вместе с подпунктами (они снимаются каскадом).",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 110,
+          "end_lineno": 112
+        },
+        {
           "name": "create_asgi_app",
           "signature": "create_asgi_app()",
           "docstring": null,
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 95,
-          "end_lineno": 96
+          "lineno": 115,
+          "end_lineno": 116
         }
       ],
       "constants": [],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 9,
+        "functions": 11,
         "methods": 0,
         "constants": 0
       }
@@ -1038,6 +1062,26 @@
           "decorators": [],
           "lineno": 142,
           "end_lineno": 153
+        },
+        {
+          "name": "update_todo_meta",
+          "signature": "update_todo_meta(todo_id: int, title: str, section: str) -> None",
+          "docstring": "Меняет заголовок задачи и (опционально) секцию. При смене секции номер\nперевыпускается как следующий свободный в новой секции (UNIQUE-констрейнт\nproject_id+section+number не даёт сохранить старый). Подпункты не трогает.",
+          "summary": "Меняет заголовок задачи и (опционально) секцию. При смене секции номер",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 156,
+          "end_lineno": 175
+        },
+        {
+          "name": "delete_todo",
+          "signature": "delete_todo(todo_id: int) -> None",
+          "docstring": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
+          "summary": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 178,
+          "end_lineno": 182
         }
       ],
       "constants": [
@@ -1069,7 +1113,7 @@
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 9,
+        "functions": 11,
         "methods": 0,
         "constants": 4
       }
@@ -2131,6 +2175,30 @@
           "end_lineno": 641
         },
         {
+          "name": "edit_project_todo",
+          "signature": "edit_project_todo(slug: str, todo_id: int, request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
+          ],
+          "lineno": 645,
+          "end_lineno": 654
+        },
+        {
+          "name": "delete_project_todo",
+          "signature": "delete_project_todo(slug: str, todo_id: int)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
+          ],
+          "lineno": 658,
+          "end_lineno": 660
+        },
+        {
           "name": "health",
           "signature": "health()",
           "docstring": null,
@@ -2139,8 +2207,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 645,
-          "end_lineno": 646
+          "lineno": 664,
+          "end_lineno": 665
         }
       ],
       "constants": [
@@ -2250,7 +2318,7 @@
       "stats": {
         "classes": 1,
         "dataclasses": 0,
-        "functions": 29,
+        "functions": 31,
         "methods": 2,
         "constants": 17
       }

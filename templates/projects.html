@@ -20,8 +20,35 @@
                 <option value="{{ key }}" {% if todo.priority == key %}selected{% endif %}>{{ priority_emoji[key] }}</option>
                 {% endfor %}
             </select>
+            <button type="button" class="todo-action-btn" title="Редактировать" onclick="editTodo({{ todo.id }})">✎</button>
+            <button type="button" class="todo-action-btn" title="Добавить подпункт" onclick="addSubitem({{ todo.id }})">➕</button>
+            <button type="button" class="todo-action-btn todo-action-danger" title="Удалить" onclick="deleteTodo({{ todo.id }})">🗑</button>
         </span>
     </div>
+    <form class="todo-edit-form" data-todo-id="{{ todo.id }}" hidden onsubmit="return submitEdit(event, {{ todo.id }})">
+        <textarea name="title" class="todo-edit-textarea" rows="2" required>{{ todo.title }}</textarea>
+        <div class="todo-edit-row">
+            <select name="section" class="select-control select-control-sm">
+                {% for key in ['bug', 'feat', 'refactor', 'q'] %}
+                <option value="{{ key }}" {% if todo.section == key %}selected{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <button type="button" class="btn" onclick="cancelEdit({{ todo.id }})">Отмена</button>
+        </div>
+        <div class="todo-form-hint">При смене секции номер перевыпускается (например, bug.3 → feat.5).</div>
+    </form>
+    <form class="todo-subitem-form" data-todo-id="{{ todo.id }}" hidden onsubmit="return submitSubitem(event, {{ todo.id }})">
+        <div class="todo-edit-row">
+            <select name="kind" class="select-control select-control-sm">
+                <option value="requirement">требование</option>
+                <option value="context">контекст</option>
+            </select>
+            <input type="text" name="text" class="todo-add-input" placeholder="Текст подпункта…" required>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+            <button type="button" class="btn" onclick="cancelSubitem({{ todo.id }})">Отмена</button>
+        </div>
+    </form>
     {% if todo.subitems %}
     <ul class="todo-subitems">
         {% for sub in todo.subitems %}
@@ -151,6 +178,65 @@ function submitNewTodo(event) {
         .then(() => location.reload())
         .catch(e => alert(e.message));
     return false;
+}
+
+function _todoEl(todoId) {
+    return document.querySelector(`.todo-item[data-id="${todoId}"]`);
+}
+
+function editTodo(todoId) {
+    const item = _todoEl(todoId);
+    item.querySelector('.todo-item-header').hidden = true;
+    const form = item.querySelector('.todo-edit-form');
+    form.hidden = false;
+    form.title.focus();
+}
+
+function cancelEdit(todoId) {
+    const item = _todoEl(todoId);
+    item.querySelector('.todo-edit-form').hidden = true;
+    item.querySelector('.todo-item-header').hidden = false;
+}
+
+function submitEdit(event, todoId) {
+    event.preventDefault();
+    const form = event.target;
+    const title = form.title.value.trim();
+    const section = form.section.value;
+    if (!title) return false;
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section})
+        .then(() => location.reload())
+        .catch(e => { alert(e.message); location.reload(); });
+    return false;
+}
+
+function addSubitem(todoId) {
+    const item = _todoEl(todoId);
+    item.querySelector('.todo-subitem-form').hidden = false;
+    item.querySelector('.todo-subitem-form input[name="text"]').focus();
+}
+
+function cancelSubitem(todoId) {
+    _todoEl(todoId).querySelector('.todo-subitem-form').hidden = true;
+}
+
+function submitSubitem(event, todoId) {
+    event.preventDefault();
+    const form = event.target;
+    const kind = form.kind.value;
+    const text = form.text.value.trim();
+    if (!text) return false;
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/subitems`, {kind, text})
+        .then(() => location.reload())
+        .catch(e => alert(e.message));
+    return false;
+}
+
+function deleteTodo(todoId) {
+    if (!confirm('Удалить задачу? Подпункты снимутся тоже.')) return;
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/delete`, {})
+        .then(() => location.reload())
+        .catch(e => alert(e.message));
 }
 </script>
 {% endif %}
