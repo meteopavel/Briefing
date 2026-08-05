@@ -34,8 +34,8 @@
     --prio-low: #55559a;
     --sec-bug: var(--red);
     --sec-feat: var(--green);
-    --sec-refactor: var(--cyan);
-    --sec-q: var(--amber-dim);
+    --sec-ref: var(--cyan);
+    --sec-ques: var(--amber-dim);
 
     --tint-blue-bg:     rgba(95, 195, 209, 0.12);
     --tint-blue-border: rgba(95, 195, 209, 0.32);

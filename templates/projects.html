@@ -1,22 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% set status_meta = {
-    'open':        {'icon': 'i-status-open',     'label': 'Открыта'},
-    'in_progress': {'icon': 'i-status-progress', 'label': 'В работе'},
-    'done':        {'icon': 'i-status-done',     'label': 'Готово'},
-    'wontdo':      {'icon': 'i-status-wontdo',   'label': 'Отклонено'}
-} %}
-{% set priority_meta = {
-    'high':   {'label': 'Высокий'},
-    'medium': {'label': 'Средний'},
-    'low':    {'label': 'Низкий'}
-} %}
-{% set section_titles = {'bug': 'bug', 'feat': 'feat', 'refactor': 'refactor', 'q': 'q'} %}
+{# Секции: короткие лейблы (однообразны по длине). Статус/приоритет — из контекста
+   (status_meta/priority_meta, источник — repository.py). #}
+{% set section_opts = [
+    {'value': 'bug',  'label': 'bug',  'icon': 'i-sec-bug',  'icon_class': 'icon-sec-bug'},
+    {'value': 'feat', 'label': 'feat', 'icon': 'i-sec-feat', 'icon_class': 'icon-sec-feat'},
+    {'value': 'ref',  'label': 'ref',  'icon': 'i-sec-ref',  'icon_class': 'icon-sec-ref'},
+    {'value': 'ques', 'label': 'ques', 'icon': 'i-sec-ques', 'icon_class': 'icon-sec-ques'}
+] %}
 
-{# Reusable custom dropdown. Renders SVG icons in options (native <option> can't).
-   Closed state shows only the icon; text appears in trigger and items on open (CSS .dd-open).
-   dd(trigger_value, trigger_label, options=[{value,label,icon?,icon_class?}], name, current_value) #}
+{# Переиспользуемый dropdown: SVG в опци­ях (нативный <option> их не умеет).
+   Закрыт — только иконка; текст в триггере и пунктах появляется при открытии (CSS .dd-open). #}
 {% macro dd(trigger_value, trigger_label, options, name, current_value) %}
 <div class="dd" data-name="{{ name }}">
     <button type="button" class="dd-trigger" onclick="ddToggle(this)">
@@ -40,6 +35,11 @@
 </div>
 {% endmacro %}
 
+{# Список options из meta-словаря {value: {label, icon, icon_class}} в порядке ключей #}
+{% macro meta_opts(meta, keys) -%}
+[{% for k in keys %}{'value': '{{ k }}', 'label': '{{ meta[k].label }}', 'icon': '{{ meta[k].icon }}', 'icon_class': '{{ meta[k].icon_class }}'}{% if not loop.last %}, {% endif %}{% endfor %}]
+{%- endmacro %}
+
 {% macro render_todo(todo) %}
 <div class="todo-item todo-priority-{{ todo.priority }} todo-section-{{ todo.section }}" data-id="{{ todo.id }}">
     <div class="todo-item-header">
@@ -48,23 +48,15 @@
         <span class="todo-item-title">{{ todo.title }}</span>
         <span class="todo-item-controls">
             {{ dd(todo.status, status_meta[todo.status].label,
-                  [{'value': 'open',        'label': 'Открыта',  'icon': 'i-status-open',     'icon_class': 'icon-status-open'},
-                   {'value': 'in_progress', 'label': 'В работе', 'icon': 'i-status-progress', 'icon_class': 'icon-status-progress'},
-                   {'value': 'done',        'label': 'Готово',   'icon': 'i-status-done',     'icon_class': 'icon-status-done'},
-                   {'value': 'wontdo',      'label': 'Отклонено','icon': 'i-status-wontdo',   'icon_class': 'icon-status-wontdo'}],
+                  meta_opts(status_meta, ['open', 'in_progress', 'done', 'wontdo']),
                   'status-' ~ todo.id, todo.status)
                }}
             {{ dd(todo.priority, priority_meta[todo.priority].label,
-                  [{'value': 'high',   'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'},
-                   {'value': 'medium', 'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
-                   {'value': 'low',    'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'}],
+                  meta_opts(priority_meta, ['high', 'medium', 'low']),
                   'priority-' ~ todo.id, todo.priority)
                }}
-            {{ dd(todo.section, section_titles[todo.section],
-                  [{'value': 'bug',      'label': 'bug',      'icon': 'i-sec-bug',      'icon_class': 'icon-sec-bug'},
-                   {'value': 'feat',     'label': 'feat',     'icon': 'i-sec-feat',     'icon_class': 'icon-sec-feat'},
-                   {'value': 'refactor', 'label': 'refactor', 'icon': 'i-sec-refactor', 'icon_class': 'icon-sec-refactor'},
-                   {'value': 'q',        'label': 'q',        'icon': 'i-sec-q',        'icon_class': 'icon-sec-q'}],
+            {{ dd(todo.section, todo.section,
+                  section_opts,
                   'section-' ~ todo.id, todo.section)
                }}
             <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">
@@ -155,10 +147,8 @@
             <span class="issue-group-count">{{ group.open | length }}</span>
             <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
                 <input type="text" name="title" class="todo-add-input" placeholder="+ новая…" required>
-                {{ dd('medium', 'Средний',
-                      [{'value': 'high',   'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'},
-                       {'value': 'medium', 'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
-                       {'value': 'low',    'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'}],
+                {{ dd('medium', priority_meta['medium'].label,
+                      meta_opts(priority_meta, ['high', 'medium', 'low']),
                       'new-priority-' ~ group.key, 'medium')
                    }}
                 <button type="submit" class="btn btn-amber">Добавить</button>

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-05T11:26:16.454236+00:00",
+  "generated_at": "2026-08-05T11:58:15.683226+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -21,7 +21,7 @@
     "dataclasses": 1,
     "functions": 119,
     "methods": 16,
-    "constants": 60
+    "constants": 62
   },
   "modules": [
     {
@@ -477,7 +477,7 @@
         {
           "name": "create_todo",
           "signature": "create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int",
-          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|refactor|q. priority: high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nВозвращает id созданной задачи.",
+          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|ref|ques. priority: high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nВозвращает id созданной задачи.",
           "summary": "Создаёт задачу со следующим свободным номером в указанной секции.",
           "kind": "function",
           "decorators": [
@@ -525,8 +525,8 @@
         {
           "name": "edit_todo",
           "signature": "edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None",
-          "docstring": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.\nПри смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан\nк секции. Статус и приоритет сохраняются.\n\nsubitems (опционально): полная замена подпунктов списком\n[{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}] в указанном порядке.\nПустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.",
-          "summary": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.",
+          "docstring": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.\nПри смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан\nк секции. Статус и приоритет сохраняются.\n\nsubitems (опционально): полная замена подпунктов списком\n[{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}] в указанном порядке.\nПустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.",
+          "summary": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.",
           "kind": "function",
           "decorators": [
             "mcp.tool()"
@@ -884,8 +884,8 @@
     },
     {
       "path": "app/services/projects/repository.py",
-      "module_docstring": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,\nподпункты). Формат данных — тот же, что использует скилл `todo` (zcode).",
-      "module_summary": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,",
+      "module_docstring": "CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,\nподпункты). Формат данных — тот же, что у скилла `todo`.",
+      "module_summary": "CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,",
       "classes": [],
       "functions": [
         {
@@ -895,8 +895,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 19,
-          "end_lineno": 23
+          "lineno": 32,
+          "end_lineno": 36
         },
         {
           "name": "get_project_by_slug",
@@ -905,8 +905,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 26,
-          "end_lineno": 30
+          "lineno": 39,
+          "end_lineno": 43
         },
         {
           "name": "get_todos",
@@ -915,8 +915,8 @@
           "summary": "Возвращает все задачи проекта с подпунктами, без группировки/сортировки",
           "kind": "function",
           "decorators": [],
-          "lineno": 33,
-          "end_lineno": 59
+          "lineno": 46,
+          "end_lineno": 72
         },
         {
           "name": "_next_number",
@@ -925,8 +925,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 62,
-          "end_lineno": 67
+          "lineno": 75,
+          "end_lineno": 80
         },
         {
           "name": "import_todo",
@@ -935,8 +935,8 @@
           "summary": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,",
           "kind": "function",
           "decorators": [],
-          "lineno": 70,
-          "end_lineno": 98
+          "lineno": 83,
+          "end_lineno": 111
         },
         {
           "name": "create_todo",
@@ -945,8 +945,8 @@
           "summary": "Создаёт задачу со следующим свободным номером в секции.",
           "kind": "function",
           "decorators": [],
-          "lineno": 101,
-          "end_lineno": 120
+          "lineno": 114,
+          "end_lineno": 133
         },
         {
           "name": "update_status",
@@ -955,8 +955,8 @@
           "summary": "Меняет статус. При переходе в done/wontdo заметка обязательна —",
           "kind": "function",
           "decorators": [],
-          "lineno": 123,
-          "end_lineno": 133
+          "lineno": 136,
+          "end_lineno": 146
         },
         {
           "name": "update_priority",
@@ -965,8 +965,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 136,
-          "end_lineno": 139
+          "lineno": 149,
+          "end_lineno": 152
         },
         {
           "name": "add_subitem",
@@ -975,8 +975,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 142,
-          "end_lineno": 153
+          "lineno": 155,
+          "end_lineno": 166
         },
         {
           "name": "replace_subitems",
@@ -985,8 +985,8 @@
           "summary": "Полная замена подпунктов задачи: удаляет старые, вставляет переданный",
           "kind": "function",
           "decorators": [],
-          "lineno": 156,
-          "end_lineno": 170
+          "lineno": 169,
+          "end_lineno": 183
         },
         {
           "name": "update_todo_meta",
@@ -995,8 +995,8 @@
           "summary": "Меняет заголовок задачи и (опционально) секцию. При смене секции номер",
           "kind": "function",
           "decorators": [],
-          "lineno": 173,
-          "end_lineno": 192
+          "lineno": 186,
+          "end_lineno": 205
         },
         {
           "name": "delete_todo",
@@ -1005,21 +1005,21 @@
           "summary": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
           "kind": "function",
           "decorators": [],
-          "lineno": 195,
-          "end_lineno": 199
+          "lineno": 208,
+          "end_lineno": 212
         }
       ],
       "constants": [
         {
           "name": "SECTIONS",
           "annotation": null,
-          "value_repr": "['bug', 'feat', 'refactor', 'q']",
+          "value_repr": "['bug', 'feat', 'ref', 'ques']",
           "lineno": 8
         },
         {
           "name": "SECTION_TITLES",
           "annotation": null,
-          "value_repr": "{'bug': 'Баги', 'feat': 'Идеи / Фичи', 'refactor': 'Рефакторинг / Техдолг', 'q': 'Вопросы / Исследовать'}",
+          "value_repr": "{'bug': 'Баги', 'feat': 'Идеи / Фичи', 'ref': 'Рефакторинг / Техдолг', 'ques': 'Вопросы / Исследовать'}",
           "lineno": 9
         },
         {
@@ -1033,6 +1033,18 @@
           "annotation": null,
           "value_repr": "['high', 'medium', 'low']",
           "lineno": 16
+        },
+        {
+          "name": "STATUS_META",
+          "annotation": null,
+          "value_repr": "{'open': {'label': 'Открыта', 'icon': 'i-status-open', 'icon_class': 'icon-status-open'}, 'in_progress': {'label': 'В работе', 'icon': 'i-status-progress', 'icon_class': 'icon-status-progress'}, 'done': {'label': 'Готово', 'icon': 'i-status-done', 'icon_class': 'icon-status-done'}, 'wontdo': {'label': 'Отклонено', 'icon': 'i-status-wontdo', 'icon_class': 'icon-status-wontdo'}}",
+          "lineno": 19
+        },
+        {
+          "name": "PRIORITY_META",
+          "annotation": null,
+          "value_repr": "{'high': {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'}, 'medium': {'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'}, 'low': {'label': 'Низкий', 'icon': 'i-prio', 'icon_class': 'icon-prio-low'}}",
+          "lineno": 25
         }
       ],
       "stats": {
@@ -1040,7 +1052,7 @@
         "dataclasses": 0,
         "functions": 12,
         "methods": 0,
-        "constants": 4
+        "constants": 6
       }
     },
     {
@@ -1874,8 +1886,8 @@
         {
           "name": "_group_todos",
           "signature": "_group_todos(todos: list) -> list",
-          "docstring": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все\nчетыре) и делит каждую на открытые/закрытые. Открытые сортируются по\nприоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).",
-          "summary": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все",
+          "docstring": "Группирует задачи проекта по секциям (bug/feat/ref/ques, всегда все\nчетыре) и делит каждую на открытые/закрытые. Открытые сортируются по\nприоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).",
+          "summary": "Группирует задачи проекта по секциям (bug/feat/ref/ques, всегда все",
           "kind": "function",
           "decorators": [],
           "lineno": 225,
@@ -2049,7 +2061,7 @@
             "app.get('/projects/{slug}')"
           ],
           "lineno": 563,
-          "end_lineno": 585
+          "end_lineno": 587
         },
         {
           "name": "create_project_todo",
@@ -2060,8 +2072,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos')"
           ],
-          "lineno": 589,
-          "end_lineno": 605
+          "lineno": 591,
+          "end_lineno": 607
         },
         {
           "name": "update_todo_status",
@@ -2072,8 +2084,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/status')"
           ],
-          "lineno": 609,
-          "end_lineno": 618
+          "lineno": 611,
+          "end_lineno": 620
         },
         {
           "name": "update_todo_priority",
@@ -2084,8 +2096,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
           ],
-          "lineno": 622,
-          "end_lineno": 628
+          "lineno": 624,
+          "end_lineno": 630
         },
         {
           "name": "add_todo_subitem",
@@ -2096,8 +2108,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
           ],
-          "lineno": 632,
-          "end_lineno": 641
+          "lineno": 634,
+          "end_lineno": 643
         },
         {
           "name": "edit_project_todo",
@@ -2108,8 +2120,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
           ],
-          "lineno": 645,
-          "end_lineno": 662
+          "lineno": 647,
+          "end_lineno": 664
         },
         {
           "name": "delete_project_todo",
@@ -2120,8 +2132,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
           ],
-          "lineno": 666,
-          "end_lineno": 668
+          "lineno": 668,
+          "end_lineno": 670
         },
         {
           "name": "health",
@@ -2132,8 +2144,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 672,
-          "end_lineno": 673
+          "lineno": 674,
+          "end_lineno": 675
         }
       ],
       "constants": [

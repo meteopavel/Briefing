@@ -177,6 +177,28 @@ source .venv/bin/activate
 python -m pip install --upgrade pip -q
 python -m pip install -r requirements.txt -q
 
+# Миграция: переименование секций refactor→ref, q→ques. Идемпотентна —
+# повторные прогоны no-op. Гонится через контейнер edu_mysql (на хосте нет mysql-клиента).
+# Должна пройти ДО restart сервиса, иначе _next_number словит UNIQUE-конфликт.
+set -a; . .env; set +a
+MYSQL_DB="\${MYSQL_DATABASE:-briefing}"
+MYSQL_USER_V="\${MYSQL_USER}"
+MYSQL_PASS="\${MYSQL_PASSWORD}"
+LEGACY_COUNT=\$(docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -sN \
+    -e "SELECT COUNT(*) FROM todos WHERE section IN ('refactor','q')")
+if [[ "\$LEGACY_COUNT" -gt 0 ]]; then
+    echo "🔁 Миграция секций: найдено \$LEGACY_COUNT строк refactor/q, бэкап + перевод в ref/ques..."
+    docker exec edu_mysql mysqldump -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" todos > /tmp/todos_pre_rename.sql
+    docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -e "
+        ALTER TABLE todos MODIFY COLUMN section ENUM('bug','feat','refactor','q','ref','ques') NOT NULL;
+        UPDATE todos SET section='ref'  WHERE section='refactor';
+        UPDATE todos SET section='ques' WHERE section='q';
+        ALTER TABLE todos MODIFY COLUMN section ENUM('bug','feat','ref','ques') NOT NULL;"
+    echo "✅ Миграция секций завершена (бэкап: /tmp/todos_pre_rename.sql на роутере)."
+else
+    echo "✅ Миграция секций: уже в ref/ques, пропуск."
+fi
+
 sudo -n systemctl restart "$DEPLOY_SERVICE"
 sudo -n systemctl status "$DEPLOY_SERVICE" --no-pager --lines=5
 echo "✅ Server deploy completed"

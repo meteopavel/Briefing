@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS projects (
 CREATE TABLE IF NOT EXISTS todos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     project_id INT NOT NULL,
-    section ENUM('bug', 'feat', 'refactor', 'q') NOT NULL,
+    section ENUM('bug', 'feat', 'ref', 'ques') NOT NULL,
     number INT NOT NULL,
     status ENUM('open', 'in_progress', 'done', 'wontdo') NOT NULL DEFAULT 'open',
     priority ENUM('high', 'medium', 'low') NOT NULL,
