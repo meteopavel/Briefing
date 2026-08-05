@@ -1,8 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% set status_emoji = {'open': '📋', 'in_progress': '🚧', 'done': '✅', 'wontdo': '❌'} %}
-{% set priority_emoji = {'high': '🔴', 'medium': '🟡', 'low': '⚪'} %}
+{% set status_meta = {
+    'open':        {'icon': 'i-status-open',     'label': 'Открыта'},
+    'in_progress': {'icon': 'i-status-progress', 'label': 'В работе'},
+    'done':        {'icon': 'i-status-done',     'label': 'Готово'},
+    'wontdo':      {'icon': 'i-status-wontdo',   'label': 'Отклон.'}
+} %}
+{% set priority_meta = {
+    'high':   {'label': 'Высокий'},
+    'medium': {'label': 'Средний'},
+    'low':    {'label': 'Низкий'}
+} %}
+{% set section_titles = {'bug': 'bug', 'feat': 'feat', 'refactor': 'refactor', 'q': 'q'} %}
+
+{# Reusable custom dropdown. Renders SVG icons in options (native <option> can't).
+   dd(trigger_value, trigger_label, options=[{value,label,icon?,icon_class?}], name, current_value) #}
+{% macro dd(trigger_value, trigger_label, options, name, current_value) %}
+<div class="dd" data-name="{{ name }}">
+    <button type="button" class="dd-trigger" onclick="ddToggle(this)">
+        {% if options | selectattr('value', 'equalto', trigger_value) | first %}
+            {% set t = options | selectattr('value', 'equalto', trigger_value) | first %}
+            {% if t.icon %}<svg class="icon {{ t.icon_class or '' }}"><use href="#{{ t.icon }}"/></svg>{% endif %}
+        {% endif %}
+        <span>{{ trigger_label }}</span>
+        <svg class="icon dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="dd-menu">
+        {% for opt in options %}
+        <div class="dd-item{% if current_value == opt.value %} dd-item-active{% endif %}"
+             data-value="{{ opt.value }}" onclick="ddSelect(this)">
+            {% if opt.icon %}<svg class="icon {{ opt.icon_class or '' }}"><use href="#{{ opt.icon }}"/></svg>{% endif %}
+            <span>{{ opt.label }}</span>
+            <svg class="icon dd-item-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}
 
 {% macro render_todo(todo) %}
 <div class="todo-item todo-priority-{{ todo.priority }}" data-id="{{ todo.id }}">
@@ -11,18 +46,25 @@
                 onclick="copyTodoId('{{ todo.section }}.{{ todo.number }}')">{{ todo.section }}.{{ todo.number }}</button>
         <span class="todo-item-title">{{ todo.title }}</span>
         <span class="todo-item-controls">
-            <select class="select-control select-control-sm" onchange="changeTodoStatus({{ todo.id }}, this)">
-                {% for key in ['open', 'in_progress', 'done', 'wontdo'] %}
-                <option value="{{ key }}" {% if todo.status == key %}selected{% endif %}>{{ status_emoji[key] }}</option>
-                {% endfor %}
-            </select>
-            <select class="select-control select-control-sm" onchange="changeTodoPriority({{ todo.id }}, this.value)">
-                {% for key in ['high', 'medium', 'low'] %}
-                <option value="{{ key }}" {% if todo.priority == key %}selected{% endif %}>{{ priority_emoji[key] }}</option>
-                {% endfor %}
-            </select>
-            <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">✎</button>
-            <button type="button" class="todo-action-btn todo-action-danger" title="Удалить" onclick="deleteTodo({{ todo.id }})">🗑</button>
+            {{ dd(todo.status, status_meta[todo.status].label,
+                  [{'value': 'open',        'label': 'Открыта', 'icon': 'i-status-open'},
+                   {'value': 'in_progress', 'label': 'В работе', 'icon': 'i-status-progress'},
+                   {'value': 'done',        'label': 'Готово',  'icon': 'i-status-done'},
+                   {'value': 'wontdo',      'label': 'Отклон.', 'icon': 'i-status-wontdo'}],
+                  'status-' ~ todo.id, todo.status)
+               }}
+            {{ dd(todo.priority, priority_meta[todo.priority].label,
+                  [{'value': 'high',   'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'},
+                   {'value': 'medium', 'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
+                   {'value': 'low',    'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'}],
+                  'priority-' ~ todo.id, todo.priority)
+               }}
+            <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">
+                <svg class="icon"><use href="#i-edit"/></svg>
+            </button>
+            <button type="button" class="todo-action-btn todo-action-danger" title="Удалить" onclick="deleteTodo({{ todo.id }})">
+                <svg class="icon"><use href="#i-trash"/></svg>
+            </button>
         </span>
     </div>
     <form class="todo-edit-form" data-todo-id="{{ todo.id }}" hidden onsubmit="return submitEdit(event, {{ todo.id }})">
@@ -31,17 +73,19 @@
             {% for sub in todo.subitems %}
             <div class="todo-edit-subitem-row">
                 <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required>{{ sub.text }}</textarea>
-                <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, true)">×</button>
+                <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, true)">
+                    <svg class="icon"><use href="#i-x"/></svg>
+                </button>
             </div>
             {% endfor %}
         </div>
         <button type="button" class="btn todo-edit-add-subitem" onclick="addSubitemRow({{ todo.id }})">+ подпункт</button>
         <div class="todo-edit-row">
-            <select name="section" class="select-control select-control-sm">
-                {% for key in ['bug', 'feat', 'refactor', 'q'] %}
-                <option value="{{ key }}" {% if todo.section == key %}selected{% endif %}>{{ key }}</option>
-                {% endfor %}
-            </select>
+            {{ dd(todo.section, section_titles[todo.section],
+                  [{'value': 'bug', 'label': 'bug'}, {'value': 'feat', 'label': 'feat'},
+                   {'value': 'refactor', 'label': 'refactor'}, {'value': 'q', 'label': 'q'}],
+                  'section-' ~ todo.id, todo.section)
+               }}
             <button type="submit" class="btn btn-primary">Сохранить</button>
             <button type="button" class="btn btn-danger" onclick="cancelEdit({{ todo.id }})">Отмена</button>
         </div>
@@ -65,23 +109,33 @@
             <h2>Проекты</h2>
             <p>Тудушки проектов — статусы и приоритеты вживую</p>
         </div>
-        <select class="select-control" onchange="if (this.value) window.location = '/projects/' + this.value">
-            <option value="">Выбери проект…</option>
-            {% for p in projects %}
-            <option value="{{ p.slug }}" {% if selected and selected.slug == p.slug %}selected{% endif %}>{{ p.title }}</option>
-            {% endfor %}
-        </select>
+        <div class="dd" data-name="project">
+            <button type="button" class="dd-trigger dd-trigger-project" onclick="ddToggle(this)">
+                <svg class="icon"><use href="#i-inbox"/></svg>
+                <span>{% if selected %}{{ selected.title }}{% else %}Выбери проект…{% endif %}</span>
+                <svg class="icon dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dd-menu">
+                {% for p in projects %}
+                <div class="dd-item{% if selected and selected.slug == p.slug %} dd-item-active{% endif %}"
+                     data-value="{{ p.slug }}" data-nav="/projects/{{ p.slug }}" onclick="ddSelect(this)">
+                    <span>{{ p.title }}</span>
+                    <svg class="icon dd-item-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     {% if error %}
     <div class="empty-state">
-        <div class="empty-state-icon">⚠️</div>
+        <div class="empty-state-icon"><svg class="icon"><use href="#i-warning"/></svg></div>
         <div class="empty-state-text">Ошибка</div>
         <div class="empty-state-hint">{{ error }}</div>
     </div>
     {% elif not selected %}
     <div class="empty-state">
-        <div class="empty-state-icon">🗂️</div>
+        <div class="empty-state-icon"><svg class="icon"><use href="#i-inbox"/></svg></div>
         <div class="empty-state-text">Выбери проект</div>
         <div class="empty-state-hint">Тудушка появится здесь — секции, статусы, приоритеты</div>
     </div>
@@ -93,11 +147,12 @@
             <span class="issue-group-count">{{ group.open | length }}</span>
             <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
                 <input type="text" name="title" class="todo-add-input" placeholder="+ новая…" required>
-                <select name="priority" class="select-control select-control-sm">
-                    <option value="high">🔴 высокий</option>
-                    <option value="medium" selected>🟡 средний</option>
-                    <option value="low">⚪ низкий</option>
-                </select>
+                {{ dd('medium', 'Средний',
+                      [{'value': 'high',   'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'},
+                       {'value': 'medium', 'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
+                       {'value': 'low',    'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'}],
+                      'new-priority-' ~ group.key, 'medium')
+                   }}
                 <button type="submit" class="btn btn-primary">Добавить</button>
             </form>
         </div>
@@ -145,8 +200,71 @@ function apiPost(path, payload) {
     });
 }
 
-function changeTodoStatus(todoId, selectEl) {
-    const status = selectEl.value;
+/* ─── Custom dropdown engine (replaces native <select> for SVG-in-options) ───
+   Каждый .dd хранит выбранное значение в data-value на корне. ddSelect вызывается
+   из onclick пункта меню; по data-name корня разруливает, кто запросил выбор. */
+function ddToggle(triggerBtn) {
+    const dd = triggerBtn.closest('.dd');
+    const wasOpen = dd.classList.contains('dd-open');
+    ddCloseAll();
+    if (!wasOpen) dd.classList.add('dd-open');
+}
+
+function ddCloseAll() {
+    document.querySelectorAll('.dd-open').forEach(dd => dd.classList.remove('dd-open'));
+}
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('.dd')) ddCloseAll();
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') ddCloseAll();
+});
+
+function ddValue(container, name) {
+    const dd = (typeof container === 'string') ? container : container.closest('.dd');
+    const el = (typeof dd === 'string')
+        ? document.querySelector(`.dd[data-name="${dd}"]`)
+        : dd;
+    return el?.dataset.value || '';
+}
+
+function ddSelect(item) {
+    const dd = item.closest('.dd');
+    const value = item.dataset.value;
+    dd.dataset.value = value;
+
+    // Навигационный dropdown (выбор проекта) — переход вместо смены значения.
+    if (item.dataset.nav) {
+        window.location = item.dataset.nav;
+        return;
+    }
+
+    // Синхронизируем метку/иконку триггера с выбранным пунктом.
+    const trigger = dd.querySelector('.dd-trigger');
+    const oldIcon = trigger.querySelector('.icon:not(.dd-caret)');
+    const newIcon = item.querySelector('.icon')?.cloneNode(true);
+    if (newIcon && oldIcon) oldIcon.replaceWith(newIcon);
+    else if (newIcon && !oldIcon) trigger.insertBefore(newIcon, trigger.firstChild);
+    const label = item.querySelector('span').textContent;
+    trigger.querySelector('span').textContent = label;
+
+    // Подсветка активного пункта + галочка.
+    dd.querySelectorAll('.dd-item').forEach(i => i.classList.toggle('dd-item-active', i === item));
+
+    dd.classList.remove('dd-open');
+
+    // Маршрутизация по data-name: <prefix>-<todoId> или new-priority-<sectionKey>.
+    const name = dd.dataset.name;
+    if (name.startsWith('status-')) {
+        changeTodoStatus(name.slice(7), value);
+    } else if (name.startsWith('priority-')) {
+        changeTodoPriority(name.slice(9), value);
+    }
+    // 'section-<id>' и 'new-priority-<key>' — только хранят значение, читаются при сабмите.
+}
+
+function changeTodoStatus(todoId, status) {
     let closedNote = null;
     if (status === 'done' || status === 'wontdo') {
         closedNote = prompt('Заметка о закрытии — что сделано / что решили:');
@@ -167,8 +285,9 @@ function submitNewTodo(event) {
     event.preventDefault();
     const form = event.target;
     const title = form.title.value.trim();
-    const priority = form.priority.value;
     const section = form.dataset.section;
+    const dd = form.querySelector('.dd');
+    const priority = dd ? (dd.dataset.value || 'medium') : 'medium';
     if (!title) return false;
     apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos`, {section, priority, title, subitems: []})
         .then(() => location.reload())
@@ -201,7 +320,8 @@ function submitEdit(event, todoId) {
     event.preventDefault();
     const form = event.target;
     const title = form.title.value.trim();
-    const section = form.section.value;
+    const dd = form.querySelector('.dd');
+    const section = dd ? (dd.dataset.value || '') : '';
     if (!title) return false;
     const subitems = _collectSubitems(form);
     apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems})
@@ -228,7 +348,7 @@ function addSubitemRow(todoId) {
     row.className = 'todo-edit-subitem-row';
     row.innerHTML = `
         <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required></textarea>
-        <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, false)">×</button>
+        <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, false)"><svg class="icon"><use href="#i-x"/></svg></button>
     `;
     container.appendChild(row);
     row.querySelector('textarea[name="text"]').focus();

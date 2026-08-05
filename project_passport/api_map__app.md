@@ -1,16 +1,16 @@
 # API map: app
 
-Просканировано Python-файлов: 29
-Включено в карту: 22
+Просканировано Python-файлов: 28
+Включено в карту: 21
 Пропущено без значимой API-информации: 7
 
 Сводная статистика:
-- модулей: 22
+- модулей: 21
 - классов: 3
 - dataclass: 1
-- функций: 121
+- функций: 119
 - методов: 16
-- констант: 68
+- констант: 60
 
 ---
 
@@ -329,33 +329,6 @@ README с дальнейшими шагами и итогового prompt'а д
 - `get_connection()`
   Отдаёт открытое соединение с БД briefing (autocommit включён).
   Закрывает соединение при выходе из контекста в любом случае.
-
----
-
-# app/services/projects/markdown_import.py
-
-Модуль:
-Разовый парсер формата тудушки скилла `todo` (docs/TODO.md) → структурированные
-задачи для импорта в MySQL. Формат описан в ~/.agents/skills/todo/SKILL.md.
-
-Константы:
-- `STATUS_MAP = {'📋': 'open', '🚧': 'in_progress', '✅': 'done', '❌': 'wontdo'}`
-- `PRIORITY_MAP = {'🔴': 'high', '🟡': 'medium', '⚪': 'low'}`
-- `SECTION_HEADER_MAP = {'Баги': 'bug', 'Идеи / Фичи': 'feat', 'Рефакторинг / Техдолг': 'refactor', 'Вопросы / Исследовать'…`
-- `_SECTION_RE = re.compile('^## (.+)$')`
-- `_TODO_RE = re.compile('^- ([📋🚧✅❌]) ([🔴🟡⚪]) (bug|feat|refactor|q)\\.(\\d+) (.*)$')`
-- `_SUBITEM_RE = re.compile('^  - (.*)$')`
-- `_NOTE_LINE_RE = re.compile('^  — (.*)$')`
-- `_INLINE_NOTE_RE = re.compile('\\s—\\s((?:fixed|done|решили):.*)$')`
-
-Функции:
-
-- `_classify_subitem(text: str) -> str`
-  Нет докстринга.
-
-- `parse(markdown: str) -> list[dict]`
-  Возвращает список задач в порядке появления в файле, каждая:
-  {section, number, status, priority, title, closed_note, subitems: [{kind, text}]}.
 
 ---
 
@@ -813,7 +786,7 @@ FastAPI web application: маршруты Briefing.
 - `_group_todos(todos: list) -> list`
   Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все
   четыре) и делит каждую на открытые/закрытые. Открытые сортируются по
-  приоритету, внутри приоритета — 🚧 выше 📋 (как в скилле `todo`).
+  приоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).
 
 - `_detect_label(subject: str) -> str`
   Нет докстринга.

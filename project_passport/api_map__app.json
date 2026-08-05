@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-05T09:54:26.403425+00:00",
+  "generated_at": "2026-08-05T10:29:00.136141+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
-  "scanned_python_files": 29,
-  "files_count": 22,
+  "scanned_python_files": 28,
+  "files_count": 21,
   "skipped_files_count": 7,
   "skipped_files": [
     "app/__init__.py",
@@ -16,12 +16,12 @@
     "app/utils/__init__.py"
   ],
   "stats": {
-    "modules": 22,
+    "modules": 21,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 121,
+    "functions": 119,
     "methods": 16,
-    "constants": 68
+    "constants": 60
   },
   "modules": [
     {
@@ -880,91 +880,6 @@
         "functions": 1,
         "methods": 0,
         "constants": 0
-      }
-    },
-    {
-      "path": "app/services/projects/markdown_import.py",
-      "module_docstring": "Разовый парсер формата тудушки скилла `todo` (docs/TODO.md) → структурированные\nзадачи для импорта в MySQL. Формат описан в ~/.agents/skills/todo/SKILL.md.",
-      "module_summary": "Разовый парсер формата тудушки скилла `todo` (docs/TODO.md) → структурированные",
-      "classes": [],
-      "functions": [
-        {
-          "name": "_classify_subitem",
-          "signature": "_classify_subitem(text: str) -> str",
-          "docstring": null,
-          "summary": null,
-          "kind": "function",
-          "decorators": [],
-          "lineno": 24,
-          "end_lineno": 25
-        },
-        {
-          "name": "parse",
-          "signature": "parse(markdown: str) -> list[dict]",
-          "docstring": "Возвращает список задач в порядке появления в файле, каждая:\n{section, number, status, priority, title, closed_note, subitems: [{kind, text}]}.",
-          "summary": "Возвращает список задач в порядке появления в файле, каждая:",
-          "kind": "function",
-          "decorators": [],
-          "lineno": 28,
-          "end_lineno": 94
-        }
-      ],
-      "constants": [
-        {
-          "name": "STATUS_MAP",
-          "annotation": null,
-          "value_repr": "{'📋': 'open', '🚧': 'in_progress', '✅': 'done', '❌': 'wontdo'}",
-          "lineno": 8
-        },
-        {
-          "name": "PRIORITY_MAP",
-          "annotation": null,
-          "value_repr": "{'🔴': 'high', '🟡': 'medium', '⚪': 'low'}",
-          "lineno": 9
-        },
-        {
-          "name": "SECTION_HEADER_MAP",
-          "annotation": null,
-          "value_repr": "{'Баги': 'bug', 'Идеи / Фичи': 'feat', 'Рефакторинг / Техдолг': 'refactor', 'Вопросы / Исследовать': 'q'}",
-          "lineno": 10
-        },
-        {
-          "name": "_SECTION_RE",
-          "annotation": null,
-          "value_repr": "re.compile('^## (.+)$')",
-          "lineno": 17
-        },
-        {
-          "name": "_TODO_RE",
-          "annotation": null,
-          "value_repr": "re.compile('^- ([📋🚧✅❌]) ([🔴🟡⚪]) (bug|feat|refactor|q)\\\\.(\\\\d+) (.*)$')",
-          "lineno": 18
-        },
-        {
-          "name": "_SUBITEM_RE",
-          "annotation": null,
-          "value_repr": "re.compile('^  - (.*)$')",
-          "lineno": 19
-        },
-        {
-          "name": "_NOTE_LINE_RE",
-          "annotation": null,
-          "value_repr": "re.compile('^  — (.*)$')",
-          "lineno": 20
-        },
-        {
-          "name": "_INLINE_NOTE_RE",
-          "annotation": null,
-          "value_repr": "re.compile('\\\\s—\\\\s((?:fixed|done|решили):.*)$')",
-          "lineno": 21
-        }
-      ],
-      "stats": {
-        "classes": 0,
-        "dataclasses": 0,
-        "functions": 2,
-        "methods": 0,
-        "constants": 8
       }
     },
     {
@@ -1959,7 +1874,7 @@
         {
           "name": "_group_todos",
           "signature": "_group_todos(todos: list) -> list",
-          "docstring": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все\nчетыре) и делит каждую на открытые/закрытые. Открытые сортируются по\nприоритету, внутри приоритета — 🚧 выше 📋 (как в скилле `todo`).",
+          "docstring": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все\nчетыре) и делит каждую на открытые/закрытые. Открытые сортируются по\nприоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).",
           "summary": "Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все",
           "kind": "function",
           "decorators": [],
