@@ -93,16 +93,32 @@ def add_todo_subitem(todo_id: int, kind: str, text: str) -> None:
 
 
 @mcp.tool()
-def edit_todo(todo_id: int, title: str, section: str) -> None:
+def edit_todo(
+    todo_id: int,
+    title: str,
+    section: str,
+    subitems: list[dict] | None = None,
+) -> None:
     """
     Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.
     При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
-    к секции. Подпункты и статус сохраняются.
+    к секции. Статус и приоритет сохраняются.
+
+    subitems (опционально): полная замена подпунктов списком
+    [{"kind": "requirement"|"context", "text": "..."}] в указанном порядке.
+    Пустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.
     """
     if section not in projects_repo.SECTIONS:
         raise ValueError(f'Некорректная секция: {section} (ожидается одна из {projects_repo.SECTIONS})')
     if not title.strip():
         raise ValueError('Текст задачи не может быть пустым')
+    if subitems is not None:
+        for sub in subitems:
+            if sub.get('kind') not in ('requirement', 'context'):
+                raise ValueError(f'Некорректный тип подпункта: {sub.get("kind")} (ожидается requirement|context)')
+            if not (sub.get('text') or '').strip():
+                raise ValueError('Текст подпункта не может быть пустым')
+        projects_repo.replace_subitems(todo_id, subitems)
     projects_repo.update_todo_meta(todo_id, title, section)
 
 

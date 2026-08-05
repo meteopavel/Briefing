@@ -153,6 +153,23 @@ def add_subitem(todo_id: int, kind: str, text: str) -> None:
             )
 
 
+def replace_subitems(todo_id: int, subitems: list[dict]) -> None:
+    """
+    Полная замена подпунктов задачи: удаляет старые, вставляет переданный
+    список (position = порядок в списке). Удобно для single-user UI, где форма
+    ✎ присылает актуальный снимок подпунктов одним батчем. Пустой список —
+    удалить все подпункты.
+    """
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM todo_subitems WHERE todo_id = %s', (todo_id,))
+            for position, subitem in enumerate(subitems):
+                cursor.execute(
+                    'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
+                    (todo_id, subitem['kind'], subitem['text'], position),
+                )
+
+
 def update_todo_meta(todo_id: int, title: str, section: str) -> None:
     """
     Меняет заголовок задачи и (опционально) секцию. При смене секции номер

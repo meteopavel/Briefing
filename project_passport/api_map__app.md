@@ -8,7 +8,7 @@
 - модулей: 22
 - классов: 3
 - dataclass: 1
-- функций: 120
+- функций: 121
 - методов: 16
 - констант: 68
 
@@ -162,10 +162,14 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 - `add_todo_subitem(todo_id: int, kind: str, text: str) -> None`
   Добавляет подпункт к задаче. kind: requirement|context.
 
-- `edit_todo(todo_id: int, title: str, section: str) -> None`
+- `edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None`
   Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.
   При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
-  к секции. Подпункты и статус сохраняются.
+  к секции. Статус и приоритет сохраняются.
+  
+  subitems (опционально): полная замена подпунктов списком
+  [{"kind": "requirement"|"context", "text": "..."}] в указанном порядке.
+  Пустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.
 
 - `delete_todo(todo_id: int) -> None`
   Удаляет задачу вместе с подпунктами (они снимаются каскадом).
@@ -400,6 +404,12 @@ CRUD для тудушек проектов (секции bug/feat/refactor/q, �
 
 - `add_subitem(todo_id: int, kind: str, text: str) -> None`
   Нет докстринга.
+
+- `replace_subitems(todo_id: int, subitems: list[dict]) -> None`
+  Полная замена подпунктов задачи: удаляет старые, вставляет переданный
+  список (position = порядок в списке). Удобно для single-user UI, где форма
+  ✎ присылает актуальный снимок подпунктов одним батчем. Пустой список —
+  удалить все подпункты.
 
 - `update_todo_meta(todo_id: int, title: str, section: str) -> None`
   Меняет заголовок задачи и (опционально) секцию. При смене секции номер

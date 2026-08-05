@@ -646,10 +646,18 @@ async def edit_project_todo(slug: str, todo_id: int, request: Request):
     body = await request.json()
     title = (body.get('title') or '').strip()
     section = body.get('section')
+    subitems = body.get('subitems')  # None = не трогать; список = полная замена
     if not title:
         raise HTTPException(400, 'Текст задачи не может быть пустым')
     if section not in projects_repo.SECTIONS:
         raise HTTPException(400, 'Некорректная секция')
+    if subitems is not None:
+        for sub in subitems:
+            if sub.get('kind') not in ('requirement', 'context'):
+                raise HTTPException(400, 'Некорректный тип подпункта')
+            if not (sub.get('text') or '').strip():
+                raise HTTPException(400, 'Текст подпункта не может быть пустым')
+        projects_repo.replace_subitems(todo_id, subitems)
     projects_repo.update_todo_meta(todo_id, title, section)
     return {'ok': True}
 
