@@ -160,18 +160,18 @@
 
 .issue-group-title {
     font-family: var(--font-mono);
-    font-size: var(--fs-xs);
+    font-size: var(--fs-sm);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--muted);
+    color: var(--text);
 }
 
 .issue-group-count {
     font-family: var(--font-mono);
-    font-size: var(--fs-2xs);
+    font-size: var(--fs-xs);
     font-weight: 600;
-    color: var(--amber-dim);
+    color: var(--amber);
     background: var(--bg-row);
     border: 1px solid var(--border);
     border-radius: var(--radius-btn);
