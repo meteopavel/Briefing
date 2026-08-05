@@ -133,6 +133,12 @@
     color: var(--amber);
 }
 
+.btn-danger:hover {
+    color: var(--danger);
+    background: var(--tint-red-bg);
+    border-color: var(--tint-red-border);
+}
+
 /* Muted text */
 .text-muted { color: var(--muted); }
 .text-sm    { font-size: var(--fs-sm); }
@@ -1248,6 +1254,16 @@ blockquote.redmine-quote {
     color: var(--danger);
     background: var(--tint-red-bg);
     border-color: var(--tint-red-border);
+}
+
+.todo-action-edit {
+    font-size: calc(var(--fs-sm) + 3px);
+}
+
+.todo-action-edit:hover {
+    color: var(--amber);
+    background: var(--tint-yellow-bg);
+    border-color: var(--tint-yellow-border);
 }
 
 .todo-edit-form {

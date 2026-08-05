@@ -21,7 +21,7 @@
                 <option value="{{ key }}" {% if todo.priority == key %}selected{% endif %}>{{ priority_emoji[key] }}</option>
                 {% endfor %}
             </select>
-            <button type="button" class="todo-action-btn" title="Редактировать" onclick="editTodo({{ todo.id }})">✎</button>
+            <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">✎</button>
             <button type="button" class="todo-action-btn todo-action-danger" title="Удалить" onclick="deleteTodo({{ todo.id }})">🗑</button>
         </span>
     </div>
@@ -43,7 +43,7 @@
                 {% endfor %}
             </select>
             <button type="submit" class="btn btn-primary">Сохранить</button>
-            <button type="button" class="btn" onclick="cancelEdit({{ todo.id }})">Отмена</button>
+            <button type="button" class="btn btn-danger" onclick="cancelEdit({{ todo.id }})">Отмена</button>
         </div>
     </form>
     {% if todo.subitems %}
@@ -98,7 +98,7 @@
                     <option value="medium" selected>🟡 средний</option>
                     <option value="low">⚪ низкий</option>
                 </select>
-                <button type="submit" class="btn">Добавить</button>
+                <button type="submit" class="btn btn-primary">Добавить</button>
             </form>
         </div>
 
