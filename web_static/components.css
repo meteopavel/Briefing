@@ -30,12 +30,6 @@
     line-height: 1.5;
 }
 
-.section-hint {
-    color: var(--muted);
-    font-size: var(--fs-sm);
-    margin-bottom: 12px;
-}
-
 /* Empty state */
 .empty-state {
     display: flex;
@@ -91,12 +85,6 @@
     letter-spacing: 0.05em;
 }
 
-.badge-blue   { background: var(--tint-blue-bg);   border: 1px solid var(--tint-blue-border);   color: var(--tint-blue-text); }
-.badge-green  { background: var(--tint-green-bg);  border: 1px solid var(--tint-green-border);  color: var(--tint-green-text); }
-.badge-red    { background: var(--tint-red-bg);    border: 1px solid var(--tint-red-border);    color: var(--tint-red-text); }
-.badge-yellow { background: var(--tint-yellow-bg); border: 1px solid var(--tint-yellow-border); color: var(--tint-yellow-text); }
-.badge-gray   { background: var(--tint-gray-bg);   border: 1px solid var(--tint-gray-border);   color: var(--tint-gray-text); }
-
 /* Button */
 .btn {
     display: inline-flex;
@@ -137,7 +125,6 @@
 /* Muted text */
 .text-muted { color: var(--muted); }
 .text-sm    { font-size: var(--fs-sm); }
-.text-xs    { font-size: var(--fs-xs); }
 
 /* Issue groups — bezelled section cards */
 .issue-group {
@@ -274,13 +261,7 @@
     white-space: nowrap;
 }
 
-.badge-priority-urgent, .badge-priority-срочный    { background: var(--tint-red-bg);    border-color: var(--tint-red-border);    color: var(--tint-red-text); }
-.badge-priority-high, .badge-priority-высокий      { background: var(--tint-yellow-bg); border-color: var(--tint-yellow-border); color: var(--tint-yellow-text); }
-.badge-priority-normal, .badge-priority-нормальный { background: var(--tint-blue-bg);   border-color: var(--tint-blue-border);   color: var(--tint-blue-text); }
-.badge-priority-low, .badge-priority-низкий        { background: var(--tint-gray-bg);   border-color: var(--tint-gray-border);   color: var(--tint-gray-text); }
 .badge-status   { color: var(--muted); }
-.badge-tracker  { color: var(--muted); }
-.badge-project  { color: var(--muted); }
 
 /* Subject — shrinks with its row instead of forcing horizontal overflow */
 .issue-subject {
@@ -359,7 +340,6 @@
     transition: opacity var(--transition);
 }
 .mr-badge:hover { opacity: 0.7; text-decoration: none; }
-.mr-badge-loading { color: var(--muted); border-color: var(--border); pointer-events: none; }
 .mr-badge-open     { color: var(--green); border-color: var(--tint-green-border);  background: var(--tint-green-bg); }
 .mr-badge-conflict { color: var(--red);   border-color: var(--tint-red-border);    background: var(--tint-red-bg); }
 .mr-badge-merged   { color: var(--cyan);  border-color: var(--tint-blue-border);   background: var(--tint-blue-bg); }
@@ -400,7 +380,6 @@
     from { transform: translate(-50%, -50%) rotate(0deg); }
     to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
-.timelog-loading { color: var(--muted); font-size: var(--fs-xs); }
 
 .issue-due {
     font-family: var(--font-mono);
@@ -412,27 +391,6 @@
 .issue-due.due-overdue { color: var(--red); }
 .issue-due.due-soon    { color: var(--amber); }
 .issue-due.due-ok      { color: var(--muted); }
-
-.issue-progress-inline {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.issue-progress-bar-inline {
-    display: inline-block;
-    height: 4px;
-    min-width: 2px;
-    max-width: 60px;
-    border-radius: 2px;
-    background: var(--tint-blue-border);
-    vertical-align: middle;
-}
-
-.issue-progress-text {
-    font-size: var(--fs-xs);
-    color: var(--muted);
-}
 
 /* Toggle button SVG icon */
 .issue-toggle-btn svg {
@@ -1040,25 +998,7 @@ blockquote.redmine-quote {
     }
 }
 
-/* Проекты: селект + карточки тудушки */
-.select-control {
-    padding: 8px 12px;
-    min-height: var(--tap);
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-btn);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: var(--fs-sm);
-    cursor: pointer;
-}
-
-.select-control-sm {
-    min-height: 30px;
-    padding: 3px 6px;
-    font-size: var(--fs-xs);
-}
-
+/* Проекты: карточки тудушек */
 .todo-group {
     background: var(--panel);
     border-top: 1px solid var(--bezel-hi);
@@ -1126,6 +1066,11 @@ blockquote.redmine-quote {
     color: #fff;
 }
 
+/* Свечение за ID задачи цветом её приоритета (подсветка «лампы») */
+.todo-priority-high   .todo-item-id { text-shadow: 0 0 8px rgba(255, 90, 73, 0.55); }
+.todo-priority-medium .todo-item-id { text-shadow: 0 0 8px rgba(255, 180, 84, 0.55); }
+.todo-priority-low    .todo-item-id { text-shadow: 0 0 8px rgba(85, 85, 154, 0.6); }
+
 .todo-item-title {
     flex: 1 1 auto;
     min-width: 0;
@@ -1185,7 +1130,6 @@ blockquote.redmine-quote {
     font-size: var(--fs-xs);
 }
 
-.todo-add-form--compact .select-control-sm,
 .todo-add-form--compact .btn {
     display: none;
 }
@@ -1203,7 +1147,6 @@ blockquote.redmine-quote {
     font-size: var(--fs-sm);
 }
 
-.todo-add-form--compact:focus-within .select-control-sm,
 .todo-add-form--compact:focus-within .btn {
     display: inline-flex;
 }
@@ -1287,8 +1230,16 @@ blockquote.redmine-quote {
     flex: 1 1 auto;
 }
 
-.todo-edit-add-subitem {
-    align-self: flex-start;
+.todo-edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* Плюс-кнопка добавления подпункта слева, Сохранить/Отмена прижаты вправо */
+.todo-edit-actions .todo-edit-row {
+    margin-left: auto;
 }
 
 /* Когда задача в режиме редактирования, прячем read-only показ подпунктов —
@@ -1316,12 +1267,6 @@ blockquote.redmine-quote {
     flex-wrap: wrap;
 }
 
-.todo-form-hint {
-    font-size: var(--fs-xs);
-    color: var(--muted);
-    line-height: 1.4;
-}
-
 /* ─── SVG icon sprite + reusable icon class ─── */
 .icon-sprite {
     position: absolute;
@@ -1342,6 +1287,18 @@ blockquote.redmine-quote {
 .icon-prio-high   { color: var(--red); }
 .icon-prio-medium { color: var(--amber); }
 .icon-prio-low    { color: var(--prio-low); }
+
+/* Section icon colors */
+.icon-sec-bug      { color: var(--sec-bug); }
+.icon-sec-feat     { color: var(--sec-feat); }
+.icon-sec-refactor { color: var(--sec-refactor); }
+.icon-sec-q        { color: var(--sec-q); }
+
+/* Status icon colors */
+.icon-status-open     { color: var(--cyan); }
+.icon-status-progress { color: var(--amber); }
+.icon-status-done     { color: var(--green); }
+.icon-status-wontdo   { color: var(--muted); }
 
 /* ─── Custom dropdown (replaces native <select> where SVG-in-options is needed) ─── */
 .dd {
@@ -1375,6 +1332,15 @@ blockquote.redmine-quote {
 
 .dd-trigger .icon {
     font-size: 14px;
+}
+
+/* Closed state: icon-only trigger; padding square like an action button */
+.dd:not(.dd-open) > .dd-trigger {
+    padding: 3px 6px;
+}
+.dd:not(.dd-open) > .dd-trigger .dd-label,
+.dd:not(.dd-open) > .dd-trigger .dd-caret {
+    display: none;
 }
 
 .dd-caret {

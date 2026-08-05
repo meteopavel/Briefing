@@ -5,7 +5,7 @@
     'open':        {'icon': 'i-status-open',     'label': 'Открыта'},
     'in_progress': {'icon': 'i-status-progress', 'label': 'В работе'},
     'done':        {'icon': 'i-status-done',     'label': 'Готово'},
-    'wontdo':      {'icon': 'i-status-wontdo',   'label': 'Отклон.'}
+    'wontdo':      {'icon': 'i-status-wontdo',   'label': 'Отклонено'}
 } %}
 {% set priority_meta = {
     'high':   {'label': 'Высокий'},
@@ -15,6 +15,7 @@
 {% set section_titles = {'bug': 'bug', 'feat': 'feat', 'refactor': 'refactor', 'q': 'q'} %}
 
 {# Reusable custom dropdown. Renders SVG icons in options (native <option> can't).
+   Closed state shows only the icon; text appears in trigger and items on open (CSS .dd-open).
    dd(trigger_value, trigger_label, options=[{value,label,icon?,icon_class?}], name, current_value) #}
 {% macro dd(trigger_value, trigger_label, options, name, current_value) %}
 <div class="dd" data-name="{{ name }}">
@@ -23,7 +24,7 @@
             {% set t = options | selectattr('value', 'equalto', trigger_value) | first %}
             {% if t.icon %}<svg class="icon {{ t.icon_class or '' }}"><use href="#{{ t.icon }}"/></svg>{% endif %}
         {% endif %}
-        <span>{{ trigger_label }}</span>
+        <span class="dd-label">{{ trigger_label }}</span>
         <svg class="icon dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="dd-menu">
@@ -31,7 +32,7 @@
         <div class="dd-item{% if current_value == opt.value %} dd-item-active{% endif %}"
              data-value="{{ opt.value }}" onclick="ddSelect(this)">
             {% if opt.icon %}<svg class="icon {{ opt.icon_class or '' }}"><use href="#{{ opt.icon }}"/></svg>{% endif %}
-            <span>{{ opt.label }}</span>
+            <span class="dd-label">{{ opt.label }}</span>
             <svg class="icon dd-item-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         {% endfor %}
@@ -47,10 +48,10 @@
         <span class="todo-item-title">{{ todo.title }}</span>
         <span class="todo-item-controls">
             {{ dd(todo.status, status_meta[todo.status].label,
-                  [{'value': 'open',        'label': 'Открыта', 'icon': 'i-status-open'},
-                   {'value': 'in_progress', 'label': 'В работе', 'icon': 'i-status-progress'},
-                   {'value': 'done',        'label': 'Готово',  'icon': 'i-status-done'},
-                   {'value': 'wontdo',      'label': 'Отклон.', 'icon': 'i-status-wontdo'}],
+                  [{'value': 'open',        'label': 'Открыта',  'icon': 'i-status-open',     'icon_class': 'icon-status-open'},
+                   {'value': 'in_progress', 'label': 'В работе', 'icon': 'i-status-progress', 'icon_class': 'icon-status-progress'},
+                   {'value': 'done',        'label': 'Готово',   'icon': 'i-status-done',     'icon_class': 'icon-status-done'},
+                   {'value': 'wontdo',      'label': 'Отклонено','icon': 'i-status-wontdo',   'icon_class': 'icon-status-wontdo'}],
                   'status-' ~ todo.id, todo.status)
                }}
             {{ dd(todo.priority, priority_meta[todo.priority].label,
@@ -58,6 +59,13 @@
                    {'value': 'medium', 'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
                    {'value': 'low',    'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'}],
                   'priority-' ~ todo.id, todo.priority)
+               }}
+            {{ dd(todo.section, section_titles[todo.section],
+                  [{'value': 'bug',      'label': 'bug',      'icon': 'i-sec-bug',      'icon_class': 'icon-sec-bug'},
+                   {'value': 'feat',     'label': 'feat',     'icon': 'i-sec-feat',     'icon_class': 'icon-sec-feat'},
+                   {'value': 'refactor', 'label': 'refactor', 'icon': 'i-sec-refactor', 'icon_class': 'icon-sec-refactor'},
+                   {'value': 'q',        'label': 'q',        'icon': 'i-sec-q',        'icon_class': 'icon-sec-q'}],
+                  'section-' ~ todo.id, todo.section)
                }}
             <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">
                 <svg class="icon"><use href="#i-edit"/></svg>
@@ -79,15 +87,14 @@
             </div>
             {% endfor %}
         </div>
-        <button type="button" class="btn btn-amber todo-edit-add-subitem" onclick="addSubitemRow({{ todo.id }})">+ подпункт</button>
-        <div class="todo-edit-row">
-            {{ dd(todo.section, section_titles[todo.section],
-                  [{'value': 'bug', 'label': 'bug'}, {'value': 'feat', 'label': 'feat'},
-                   {'value': 'refactor', 'label': 'refactor'}, {'value': 'q', 'label': 'q'}],
-                  'section-' ~ todo.id, todo.section)
-               }}
-            <button type="submit" class="btn btn-amber">Сохранить</button>
-            <button type="button" class="btn btn-danger" onclick="cancelEdit({{ todo.id }})">Отмена</button>
+        <div class="todo-edit-actions">
+            <button type="button" class="todo-action-btn todo-action-edit todo-edit-add-subitem" title="Добавить подпункт" onclick="addSubitemRow({{ todo.id }})">
+                <svg class="icon"><use href="#i-plus"/></svg>
+            </button>
+            <span class="todo-edit-row">
+                <button type="button" class="btn btn-danger" onclick="cancelEdit({{ todo.id }})">Отмена</button>
+                <button type="submit" class="btn btn-amber">Сохранить</button>
+            </span>
         </div>
     </form>
     {% if todo.subitems %}
@@ -143,6 +150,7 @@
     {% for group in groups %}
     <div class="todo-group">
         <div class="issue-group-header">
+            <svg class="icon icon-sec-{{ group.key }}"><use href="#i-sec-{{ group.key }}"/></svg>
             <span class="issue-group-title">{{ group.title }}</span>
             <span class="issue-group-count">{{ group.open | length }}</span>
             <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
@@ -260,8 +268,21 @@ function ddSelect(item) {
         changeTodoStatus(name.slice(7), value);
     } else if (name.startsWith('priority-')) {
         changeTodoPriority(name.slice(9), value);
+    } else if (name.startsWith('section-')) {
+        changeTodoSection(name.slice(8), value);
     }
-    // 'section-<id>' и 'new-priority-<key>' — только хранят значение, читаются при сабмите.
+    // 'new-priority-<key>' — только хранит значение, читается при сабмите новой задачи.
+}
+
+function changeTodoSection(todoId, section) {
+    // Секция меняется через edit-эндпоинт: нужен непустой title (берём из карточки),
+    // подпункты не трогаем (subitems: undefined → сервер пропустит).
+    const item = _todoEl(todoId);
+    const title = item.querySelector('.todo-item-title')?.textContent.trim() || '';
+    if (!title) return;
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems: undefined})
+        .then(() => location.reload())
+        .catch(e => { alert(e.message); location.reload(); });
 }
 
 function changeTodoStatus(todoId, status) {
@@ -320,10 +341,11 @@ function submitEdit(event, todoId) {
     event.preventDefault();
     const form = event.target;
     const title = form.title.value.trim();
-    const dd = form.querySelector('.dd');
-    const section = dd ? (dd.dataset.value || '') : '';
     if (!title) return false;
     const subitems = _collectSubitems(form);
+    // Секция редактируется отдельно (dropdown в шапке карточки); при edit
+    // отправляем её текущее значение из карточки, чтобы сервер не упал на валидации.
+    const section = _todoEl(todoId).querySelector('.dd[data-name^="section-"]')?.dataset.value || '';
     apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems})
         .then(() => location.reload())
         .catch(e => { alert(e.message); location.reload(); });
