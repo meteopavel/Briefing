@@ -9,6 +9,11 @@ WorkingDirectory=/opt/Briefing
 ExecStart=/opt/Briefing/.venv/bin/python -m uvicorn app.web:app --host 127.0.0.1 --port 8001
 Restart=always
 RestartSec=5
+# Сервер stateless (mcp.settings.stateless_http = True): в памяти нет сессий/состояния,
+# висящие MCP streaming-соединения несут ничего ценного — клиенты переподключаются.
+# Поэтому graceful shutdown нам не нужен; режем быстро, иначе uvicorn висит на дрейне
+# стримов ~90s (дефолт systemd), всё это время nginx отдаёт 502.
+TimeoutStopSec=3
 
 [Install]
 WantedBy=multi-user.target
