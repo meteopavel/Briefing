@@ -1071,6 +1071,12 @@ blockquote.redmine-quote {
 .todo-priority-medium .todo-item-id { text-shadow: 0 0 8px rgba(255, 180, 84, 0.55); }
 .todo-priority-low    .todo-item-id { text-shadow: 0 0 8px rgba(85, 85, 154, 0.6); }
 
+/* Цвет текста ID задачи — цветом её секции */
+.todo-section-bug      .todo-item-id { color: var(--sec-bug); }
+.todo-section-feat     .todo-item-id { color: var(--sec-feat); }
+.todo-section-refactor .todo-item-id { color: var(--sec-refactor); }
+.todo-section-q        .todo-item-id { color: var(--sec-q); }
+
 .todo-item-title {
     flex: 1 1 auto;
     min-width: 0;

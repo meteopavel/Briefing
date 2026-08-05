@@ -41,7 +41,7 @@
 {% endmacro %}
 
 {% macro render_todo(todo) %}
-<div class="todo-item todo-priority-{{ todo.priority }}" data-id="{{ todo.id }}">
+<div class="todo-item todo-priority-{{ todo.priority }} todo-section-{{ todo.section }}" data-id="{{ todo.id }}">
     <div class="todo-item-header">
         <button type="button" class="todo-item-id" title="Скопировать /skill todo {{ todo.section }}.{{ todo.number }}"
                 onclick="copyTodoId('{{ todo.section }}.{{ todo.number }}')">{{ todo.section }}.{{ todo.number }}</button>
