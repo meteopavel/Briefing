@@ -29,11 +29,7 @@
         <div class="todo-edit-subitems" data-todo-id="{{ todo.id }}">
             {% for sub in todo.subitems %}
             <div class="todo-edit-subitem-row">
-                <select name="kind" class="select-control select-control-sm">
-                    <option value="requirement" {% if sub.kind == 'requirement' %}selected{% endif %}>требование</option>
-                    <option value="context" {% if sub.kind == 'context' %}selected{% endif %}>контекст</option>
-                </select>
-                <input type="text" name="text" class="todo-add-input" value="{{ sub.text }}" required>
+                <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required>{{ sub.text }}</textarea>
                 <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this)">×</button>
             </div>
             {% endfor %}
@@ -48,7 +44,6 @@
             <button type="submit" class="btn btn-primary">Сохранить</button>
             <button type="button" class="btn" onclick="cancelEdit({{ todo.id }})">Отмена</button>
         </div>
-        <div class="todo-form-hint">При смене секции номер перевыпускается (например, bug.3 → feat.5). Подпункты сохраняются в указанном порядке; пустые не сохранятся.</div>
     </form>
     {% if todo.subitems %}
     <ul class="todo-subitems">
@@ -188,6 +183,8 @@ function _todoEl(todoId) {
 function editTodo(todoId) {
     const item = _todoEl(todoId);
     item.querySelector('.todo-item-header').hidden = true;
+    // Либо всё редактируется, либо ничего — прячем read-only показ подпунктов.
+    item.querySelector('.todo-subitems')?.classList.add('hidden-while-editing');
     const form = item.querySelector('.todo-edit-form');
     form.hidden = false;
     form.title.focus();
@@ -197,6 +194,7 @@ function cancelEdit(todoId) {
     const item = _todoEl(todoId);
     item.querySelector('.todo-edit-form').hidden = true;
     item.querySelector('.todo-item-header').hidden = false;
+    item.querySelector('.todo-subitems')?.classList.remove('hidden-while-editing');
 }
 
 function submitEdit(event, todoId) {
@@ -213,13 +211,13 @@ function submitEdit(event, todoId) {
 }
 
 function _collectSubitems(form) {
-    // Собираем подпункты из строк редактора; пустые по тексту пропускаем.
+    // Все подпункты по умолчанию обязательны (kind=requirement). Пустые по
+    // тексту пропускаем — их сохранять не нужно.
     const rows = form.querySelectorAll('.todo-edit-subitem-row');
     const out = [];
     rows.forEach(row => {
-        const kind = row.querySelector('select[name="kind"]').value;
-        const text = (row.querySelector('input[name="text"]').value || '').trim();
-        if (text) out.push({kind, text});
+        const text = (row.querySelector('textarea[name="text"]').value || '').trim();
+        if (text) out.push({kind: 'requirement', text});
     });
     return out;
 }
@@ -229,15 +227,11 @@ function addSubitemRow(todoId) {
     const row = document.createElement('div');
     row.className = 'todo-edit-subitem-row';
     row.innerHTML = `
-        <select name="kind" class="select-control select-control-sm">
-            <option value="requirement">требование</option>
-            <option value="context">контекст</option>
-        </select>
-        <input type="text" name="text" class="todo-add-input" required>
+        <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required></textarea>
         <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this)">×</button>
     `;
     container.appendChild(row);
-    row.querySelector('input[name="text"]').focus();
+    row.querySelector('textarea[name="text"]').focus();
 }
 
 function removeSubitemRow(btn) {

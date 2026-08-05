@@ -1206,16 +1206,22 @@ blockquote.redmine-quote {
 
 .todo-edit-subitem-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 6px;
 }
 
-.todo-edit-subitem-row .todo-add-input {
+.todo-edit-subitem-text {
     flex: 1 1 auto;
 }
 
 .todo-edit-add-subitem {
     align-self: flex-start;
+}
+
+/* Когда задача в режиме редактирования, прячем read-only показ подпунктов —
+   редактируемое состояние полностью заменяет просмотр. */
+.hidden-while-editing {
+    display: none;
 }
 
 .todo-edit-textarea {
