@@ -10,7 +10,7 @@
 - dataclass: 1
 - функций: 119
 - методов: 16
-- констант: 60
+- констант: 62
 
 ---
 
@@ -148,7 +148,7 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 
 - `create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int`
   Создаёт задачу со следующим свободным номером в указанной секции.
-  section: bug|feat|refactor|q. priority: high|medium|low.
+  section: bug|feat|ref|ques. priority: high|medium|low.
   subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
   Возвращает id созданной задачи.
 
@@ -163,7 +163,7 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   Добавляет подпункт к задаче. kind: requirement|context.
 
 - `edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None`
-  Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.
+  Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.
   При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
   к секции. Статус и приоритет сохраняются.
   
@@ -335,14 +335,16 @@ README с дальнейшими шагами и итогового prompt'а д
 # app/services/projects/repository.py
 
 Модуль:
-CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,
-подпункты). Формат данных — тот же, что использует скилл `todo` (zcode).
+CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,
+подпункты). Формат данных — тот же, что у скилла `todo`.
 
 Константы:
-- `SECTIONS = ['bug', 'feat', 'refactor', 'q']`
-- `SECTION_TITLES = {'bug': 'Баги', 'feat': 'Идеи / Фичи', 'refactor': 'Рефакторинг / Техдолг', 'q': 'Вопросы / Исследо…`
+- `SECTIONS = ['bug', 'feat', 'ref', 'ques']`
+- `SECTION_TITLES = {'bug': 'Баги', 'feat': 'Идеи / Фичи', 'ref': 'Рефакторинг / Техдолг', 'ques': 'Вопросы / Исследова…`
 - `STATUSES = ['open', 'in_progress', 'done', 'wontdo']`
 - `PRIORITIES = ['high', 'medium', 'low']`
+- `STATUS_META = {'open': {'label': 'Открыта', 'icon': 'i-status-open', 'icon_class': 'icon-status-open'}, 'in_progr…`
+- `PRIORITY_META = {'high': {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'}, 'medium': {'label'…`
 
 Функции:
 
@@ -784,7 +786,7 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `_group_todos(todos: list) -> list`
-  Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все
+  Группирует задачи проекта по секциям (bug/feat/ref/ques, всегда все
   четыре) и делит каждую на открытые/закрытые. Открытые сортируются по
   приоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).
 

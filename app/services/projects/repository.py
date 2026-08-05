@@ -1,19 +1,32 @@
 """
-CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,
-подпункты). Формат данных — тот же, что использует скилл `todo` (zcode).
+CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,
+подпункты). Формат данных — тот же, что у скилла `todo`.
 """
 
 from app.services.projects.db import get_connection
 
-SECTIONS = ['bug', 'feat', 'refactor', 'q']
+SECTIONS = ['bug', 'feat', 'ref', 'ques']
 SECTION_TITLES = {
     'bug': 'Баги',
     'feat': 'Идеи / Фичи',
-    'refactor': 'Рефакторинг / Техдолг',
-    'q': 'Вопросы / Исследовать',
+    'ref': 'Рефакторинг / Техдолг',
+    'ques': 'Вопросы / Исследовать',
 }
 STATUSES = ['open', 'in_progress', 'done', 'wontdo']
 PRIORITIES = ['high', 'medium', 'low']
+
+# Единый источник правды для UI: лейбл + SVG-иконка статуса/приоритета.
+STATUS_META = {
+    'open':        {'label': 'Открыта',  'icon': 'i-status-open',     'icon_class': 'icon-status-open'},
+    'in_progress': {'label': 'В работе', 'icon': 'i-status-progress', 'icon_class': 'icon-status-progress'},
+    'done':        {'label': 'Готово',   'icon': 'i-status-done',     'icon_class': 'icon-status-done'},
+    'wontdo':      {'label': 'Отклонено', 'icon': 'i-status-wontdo',  'icon_class': 'icon-status-wontdo'},
+}
+PRIORITY_META = {
+    'high':   {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'},
+    'medium': {'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
+    'low':    {'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'},
+}
 
 
 def list_projects() -> list[dict]:

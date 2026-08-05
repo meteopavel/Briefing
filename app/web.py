@@ -224,7 +224,7 @@ _TODO_STATUS_ORDER = {'in_progress': 0, 'open': 1}
 
 def _group_todos(todos: list) -> list:
     """
-    Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все
+    Группирует задачи проекта по секциям (bug/feat/ref/ques, всегда все
     четыре) и делит каждую на открытые/закрытые. Открытые сортируются по
     приоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).
     """
@@ -581,6 +581,8 @@ def project_detail(request: Request, slug: str):
             'selected': project,
             'groups': groups,
             'error': error,
+            'status_meta': projects_repo.STATUS_META,
+            'priority_meta': projects_repo.PRIORITY_META,
         },
     )
 

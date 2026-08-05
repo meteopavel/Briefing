@@ -30,7 +30,6 @@
     line-height: 1.5;
 }
 
-/* Empty state */
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -60,7 +59,6 @@
     line-height: 1.5;
 }
 
-/* Row */
 .row {
     display: flex;
     align-items: center;
@@ -72,7 +70,6 @@
     background: var(--bg-row);
 }
 
-/* Badge */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -85,7 +82,6 @@
     letter-spacing: 0.05em;
 }
 
-/* Button */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -122,11 +118,10 @@
     border-color: var(--tint-red-border);
 }
 
-/* Muted text */
 .text-muted { color: var(--muted); }
 .text-sm    { font-size: var(--fs-sm); }
 
-/* Issue groups — bezelled section cards */
+/* Группы задач — заклёпанные секции-карточки */
 .issue-group {
     display: flex;
     flex-direction: column;
@@ -171,7 +166,6 @@
     padding: 1px 7px;
 }
 
-/* Issue list */
 .issue-list {
     display: flex;
     flex-direction: column;
@@ -190,7 +184,7 @@
     transition: border-left-color var(--transition);
 }
 
-/* Priority lamp: filled edge + soft glow bleeding onto the panel */
+/* Лампа приоритета: залитый край + мягкое внутреннее свечение */
 .issue-card.priority-urgent,           .issue-card.priority-срочный            { border-left-color: var(--red); box-shadow: inset 6px 0 12px -8px var(--red); }
 .issue-card.priority-критичный-баг                                              { border-left-color: var(--red); box-shadow: inset 6px 0 12px -8px var(--red); }
 .issue-card.priority-недельный-фокус                                            { border-left-color: #e0546b; box-shadow: inset 6px 0 12px -8px #e0546b; }
@@ -198,7 +192,6 @@
 .issue-card.priority-normal,           .issue-card.priority-нормальный          { border-left-color: var(--cyan); }
 .issue-card.priority-low,              .issue-card.priority-низкий              { border-left-color: var(--muted); }
 
-/* Card header */
 .issue-header {
     display: flex;
     flex-wrap: wrap;
@@ -213,7 +206,6 @@
 .issue-toggle-btn              { background: none; border: none; padding: 4px; cursor: pointer; line-height: 1; width: var(--tap); height: var(--tap); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-btn); transition: background var(--transition); }
 .issue-toggle-btn:hover        { background: var(--bg-hover); }
 
-/* Meta badges row */
 .issue-meta {
     display: flex;
     flex-direction: column;
@@ -263,7 +255,7 @@
 
 .badge-status   { color: var(--muted); }
 
-/* Subject — shrinks with its row instead of forcing horizontal overflow */
+/* Тема: сжимается вместе со строкой, не провоцируя горизонтальный overflow */
 .issue-subject {
     font-size: var(--fs-task);
     color: var(--text);
@@ -282,7 +274,7 @@
     flex-basis: 100%;
 }
 
-/* Priority colors for ID and subject */
+/* Цвета ID и темы по приоритету */
 .priority-urgent .issue-id,           .priority-срочный .issue-id,
 .priority-urgent .issue-subject,      .priority-срочный .issue-subject       { color: var(--tint-red-text); }
 .priority-критичный-баг .issue-id,
@@ -296,12 +288,12 @@
 .priority-low .issue-id,              .priority-низкий .issue-id,
 .priority-low .issue-subject,         .priority-низкий .issue-subject         { color: var(--muted); }
 
-/* Label: q (quarterly) */
+/* Redmine-лейбл: [Q...] (квартальная задача) */
 .issue-card.label-q { border-left-color: #f0a35a; }
 .issue-card.label-q .issue-id,
 .issue-card.label-q .issue-subject { color: #f6c088; }
 
-/* Label: ai */
+/* Redmine-лейбл: [ai] */
 .issue-card.label-ai { border-left-color: var(--cyan); }
 .issue-card.label-ai .issue-id,
 .issue-card.label-ai .issue-subject { color: var(--tint-blue-text); }
@@ -322,7 +314,7 @@
     animation: issue-spin 0.7s linear infinite;
 }
 
-/* MR badge — patch-panel jack, not a pill */
+/* MR-бейдж — джек патч-панели, не пилюля */
 .mr-badge {
     display: inline-flex;
     align-items: center;
@@ -392,7 +384,7 @@
 .issue-due.due-soon    { color: var(--amber); }
 .issue-due.due-ok      { color: var(--muted); }
 
-/* Toggle button SVG icon */
+/* Иконка-стрелка раскрытия карточки */
 .issue-toggle-btn svg {
     width: 18px; height: 18px;
     color: var(--muted);
@@ -402,7 +394,6 @@
 .issue-toggle-btn:hover svg { color: var(--amber); }
 .issue-card.issue-open .issue-toggle-btn svg { transform: rotate(90deg); color: var(--amber); }
 
-/* Body */
 .issue-body {
     max-height: 0;
     overflow: hidden;
@@ -458,7 +449,6 @@
     border-radius: calc(var(--radius-row) - 1px) calc(var(--radius-row) - 1px) 0 0;
 }
 
-/* Progress bar full */
 .issue-progress-wrap {
     display: flex;
     align-items: center;
@@ -488,7 +478,6 @@
     white-space: nowrap;
 }
 
-/* Description */
 .issue-description {
     font-size: var(--fs-sm);
     line-height: 1.65;
@@ -499,7 +488,6 @@
 
 .issue-description-empty { color: var(--muted); font-style: italic; }
 
-/* Markdown rendered content */
 .markdown-body h1, .markdown-body h2, .markdown-body h3,
 .markdown-body h4, .markdown-body h5, .markdown-body h6 {
     font-weight: 700;
@@ -565,7 +553,6 @@ blockquote.redmine-quote {
 .markdown-body del { text-decoration: line-through; color: var(--muted); }
 .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
 
-/* Meta grid */
 .issue-meta-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -599,7 +586,6 @@ blockquote.redmine-quote {
     font-weight: 500;
 }
 
-/* Footer */
 .issue-footer {
     display: flex;
     align-items: center;
@@ -625,7 +611,6 @@ blockquote.redmine-quote {
     color: var(--muted);
 }
 
-/* Journals */
 .issue-journals {
     margin-bottom: 12px;
     padding: 0 14px;
@@ -770,7 +755,6 @@ blockquote.redmine-quote {
     object-fit: contain;
 }
 
-/* Image modal */
 .img-modal {
     display: none;
     position: fixed;
@@ -850,7 +834,6 @@ blockquote.redmine-quote {
     word-break: break-word;
 }
 
-/* Alert */
 .alert-error {
     background: var(--tint-red-bg);
     border: 1px solid var(--tint-red-border);
@@ -860,7 +843,7 @@ blockquote.redmine-quote {
     font-size: var(--fs-sm);
 }
 
-/* Timelog section — analog usage counter */
+/* Трудозатраты — аналоговый счётчик наработки */
 .section-label {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -950,7 +933,7 @@ blockquote.redmine-quote {
 }
 .closed-show-more:hover { color: var(--amber); border-color: var(--amber-dim); }
 
-/* Mobile: metadata gets room to breathe instead of being crushed into one row */
+/* Мобила: метаданные переходят в отдельные строки вместо сжатия в одну */
 @media (max-width: 640px) {
     .issue-header {
         padding: 10px 12px;
@@ -1074,8 +1057,8 @@ blockquote.redmine-quote {
 /* Цвет текста ID задачи — цветом её секции */
 .todo-section-bug      .todo-item-id { color: var(--sec-bug); }
 .todo-section-feat     .todo-item-id { color: var(--sec-feat); }
-.todo-section-refactor .todo-item-id { color: var(--sec-refactor); }
-.todo-section-q        .todo-item-id { color: var(--sec-q); }
+.todo-section-ref  .todo-item-id { color: var(--sec-ref); }
+.todo-section-ques .todo-item-id { color: var(--sec-ques); }
 
 .todo-item-title {
     flex: 1 1 auto;
@@ -1127,7 +1110,7 @@ blockquote.redmine-quote {
     align-self: center;
 }
 
-/* Compact add form — collapsed in the section header, expands on focus */
+/* Компактная форма добавления: свёрнута в шапке секции, разворачивается по фокусу */
 .todo-add-form--compact .todo-add-input {
     flex: 0 0 auto;
     width: 140px;
@@ -1289,18 +1272,16 @@ blockquote.redmine-quote {
     vertical-align: -0.15em;
 }
 
-/* Priority dot colors */
+/* Цвета иконок */
 .icon-prio-high   { color: var(--red); }
 .icon-prio-medium { color: var(--amber); }
 .icon-prio-low    { color: var(--prio-low); }
 
-/* Section icon colors */
 .icon-sec-bug      { color: var(--sec-bug); }
 .icon-sec-feat     { color: var(--sec-feat); }
-.icon-sec-refactor { color: var(--sec-refactor); }
-.icon-sec-q        { color: var(--sec-q); }
+.icon-sec-ref  { color: var(--sec-ref); }
+.icon-sec-ques { color: var(--sec-ques); }
 
-/* Status icon colors */
 .icon-status-open     { color: var(--cyan); }
 .icon-status-progress { color: var(--amber); }
 .icon-status-done     { color: var(--green); }
@@ -1340,7 +1321,7 @@ blockquote.redmine-quote {
     font-size: 14px;
 }
 
-/* Closed state: icon-only trigger; padding square like an action button */
+/* Закрытое состояние: триггер = только иконка (квадратный отступ, как action-кнопка) */
 .dd:not(.dd-open) > .dd-trigger {
     padding: 3px 6px;
 }

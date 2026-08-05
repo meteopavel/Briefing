@@ -52,7 +52,7 @@ def list_todos(project_slug: str) -> list[dict]:
 def create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int:
     """
     Создаёт задачу со следующим свободным номером в указанной секции.
-    section: bug|feat|refactor|q. priority: high|medium|low.
+    section: bug|feat|ref|ques. priority: high|medium|low.
     subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
     Возвращает id созданной задачи.
     """
@@ -105,7 +105,7 @@ def edit_todo(
     subitems: list[dict] | None = None,
 ) -> None:
     """
-    Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.
+    Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.
     При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
     к секции. Статус и приоритет сохраняются.
 
