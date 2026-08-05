@@ -1192,6 +1192,14 @@ blockquote.redmine-quote {
     margin-top: 8px;
 }
 
+/* display:flex выше перебивает браузерный [hidden]{display:none}, поэтому
+   возвращаем скрытие явно — иначе формы видны всегда. */
+.todo-edit-form[hidden],
+.todo-subitem-form[hidden],
+.todo-item-header[hidden] {
+    display: none;
+}
+
 .todo-edit-textarea {
     padding: 8px 12px;
     background: var(--bg-input);
