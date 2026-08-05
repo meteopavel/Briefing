@@ -79,14 +79,14 @@
             </div>
             {% endfor %}
         </div>
-        <button type="button" class="btn todo-edit-add-subitem" onclick="addSubitemRow({{ todo.id }})">+ подпункт</button>
+        <button type="button" class="btn btn-amber todo-edit-add-subitem" onclick="addSubitemRow({{ todo.id }})">+ подпункт</button>
         <div class="todo-edit-row">
             {{ dd(todo.section, section_titles[todo.section],
                   [{'value': 'bug', 'label': 'bug'}, {'value': 'feat', 'label': 'feat'},
                    {'value': 'refactor', 'label': 'refactor'}, {'value': 'q', 'label': 'q'}],
                   'section-' ~ todo.id, todo.section)
                }}
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <button type="submit" class="btn btn-amber">Сохранить</button>
             <button type="button" class="btn btn-danger" onclick="cancelEdit({{ todo.id }})">Отмена</button>
         </div>
     </form>
@@ -153,7 +153,7 @@
                        {'value': 'low',    'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'}],
                       'new-priority-' ~ group.key, 'medium')
                    }}
-                <button type="submit" class="btn btn-primary">Добавить</button>
+                <button type="submit" class="btn btn-amber">Добавить</button>
             </form>
         </div>
 

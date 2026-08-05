@@ -122,15 +122,10 @@
     color: var(--text);
 }
 
-.btn-primary {
-    background: rgba(255, 180, 84, 0.14);
-    border-color: var(--amber-dim);
+.btn-amber:hover {
     color: var(--amber);
-}
-
-.btn-primary:hover {
-    background: rgba(255, 180, 84, 0.22);
-    color: var(--amber);
+    background: var(--tint-yellow-bg);
+    border-color: var(--tint-yellow-border);
 }
 
 .btn-danger:hover {
@@ -1234,7 +1229,7 @@ blockquote.redmine-quote {
     background: var(--bg-btn);
     border: 1px solid var(--border);
     border-radius: var(--radius-btn);
-    color: var(--muted);
+    color: var(--text);
     font-family: var(--font-mono);
     font-size: 16px;
     line-height: 1;
