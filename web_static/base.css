@@ -16,12 +16,13 @@ body {
     background-image:
         radial-gradient(
             circle at top left,
-            rgba(255, 180, 84, 0.05),
-            transparent 60vmax
+            rgba(255, 180, 84, 0.13),
+            rgba(255, 180, 84, 0.04) 25vmax,
+            transparent 55vmax
         ),
         linear-gradient(
             180deg,
-            #181c24 0%,
+            #1f2630 0%,
             var(--bg) 100%
         );
     background-attachment: fixed;
