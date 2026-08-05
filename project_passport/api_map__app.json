@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-05T12:03:16.542700+00:00",
+  "generated_at": "2026-08-05T12:25:22.079039+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -19,7 +19,7 @@
     "modules": 21,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 119,
+    "functions": 118,
     "methods": 16,
     "constants": 62
   },
@@ -532,7 +532,7 @@
             "mcp.tool()"
           ],
           "lineno": 101,
-          "end_lineno": 127
+          "end_lineno": 126
         },
         {
           "name": "delete_todo",
@@ -543,8 +543,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 131,
-          "end_lineno": 133
+          "lineno": 130,
+          "end_lineno": 132
         },
         {
           "name": "create_asgi_app",
@@ -553,8 +553,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 136,
-          "end_lineno": 137
+          "lineno": 135,
+          "end_lineno": 136
         }
       ],
       "constants": [],
@@ -979,24 +979,14 @@
           "end_lineno": 166
         },
         {
-          "name": "replace_subitems",
-          "signature": "replace_subitems(todo_id: int, subitems: list[dict]) -> None",
-          "docstring": "Полная замена подпунктов задачи: удаляет старые, вставляет переданный\nсписок (position = порядок в списке). Удобно для single-user UI, где форма\n✎ присылает актуальный снимок подпунктов одним батчем. Пустой список —\nудалить все подпункты.",
-          "summary": "Полная замена подпунктов задачи: удаляет старые, вставляет переданный",
+          "name": "edit_todo",
+          "signature": "edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None",
+          "docstring": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной\nтранзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем\nявные begin()/commit() с rollback() при ошибке — иначе replace+update\nпрошли бы в раздельных авто-коммитах и при сбое второго шага подпункты\nоказались бы перезаписаны при старом заголовке/секции (рассинхрон).\n\ntitle — новый заголовок; section — bug|feat|ref|ques (при смене номер\nперевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт\nproject_id+section+number не даёт сохранить старый);\nsubitems — None (не трогать) либо полная замена списком\n{'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.\nВалидация значений — на вызывающей стороне (роут/MCP).",
+          "summary": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной",
           "kind": "function",
           "decorators": [],
           "lineno": 169,
-          "end_lineno": 183
-        },
-        {
-          "name": "update_todo_meta",
-          "signature": "update_todo_meta(todo_id: int, title: str, section: str) -> None",
-          "docstring": "Меняет заголовок задачи и (опционально) секцию. При смене секции номер\nперевыпускается как следующий свободный в новой секции (UNIQUE-констрейнт\nproject_id+section+number не даёт сохранить старый). Подпункты не трогает.",
-          "summary": "Меняет заголовок задачи и (опционально) секцию. При смене секции номер",
-          "kind": "function",
-          "decorators": [],
-          "lineno": 186,
-          "end_lineno": 205
+          "end_lineno": 211
         },
         {
           "name": "delete_todo",
@@ -1005,8 +995,8 @@
           "summary": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
           "kind": "function",
           "decorators": [],
-          "lineno": 208,
-          "end_lineno": 212
+          "lineno": 214,
+          "end_lineno": 218
         }
       ],
       "constants": [
@@ -1050,7 +1040,7 @@
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 12,
+        "functions": 11,
         "methods": 0,
         "constants": 6
       }
@@ -2121,7 +2111,7 @@
             "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
           ],
           "lineno": 647,
-          "end_lineno": 664
+          "end_lineno": 663
         },
         {
           "name": "delete_project_todo",
@@ -2132,8 +2122,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
           ],
-          "lineno": 668,
-          "end_lineno": 670
+          "lineno": 667,
+          "end_lineno": 669
         },
         {
           "name": "health",
@@ -2144,8 +2134,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 674,
-          "end_lineno": 675
+          "lineno": 673,
+          "end_lineno": 674
         }
       ],
       "constants": [

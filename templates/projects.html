@@ -17,7 +17,7 @@
 {% macro dd(current_value, meta, keys, name) %}
 {% set cur = meta[current_value] %}
 {% set label = cur.label if cur and cur.label else current_value %}
-<div class="dd" data-name="{{ name }}">
+<div class="dd" data-name="{{ name }}" data-value="{{ current_value }}">
     <button type="button" class="dd-trigger" onclick="ddToggle(this)">
         {% if cur and cur.icon %}<svg class="icon {{ cur.icon_class or '' }}"><use href="#{{ cur.icon }}"/></svg>{% endif %}
         <span class="dd-label">{{ label }}</span>
