@@ -1330,3 +1330,131 @@ blockquote.redmine-quote {
     color: var(--muted);
     line-height: 1.4;
 }
+
+/* ─── SVG icon sprite + reusable icon class ─── */
+.icon-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: -0.15em;
+}
+
+/* Priority dot colors */
+.icon-prio-high   { color: var(--red); }
+.icon-prio-medium { color: var(--amber); }
+.icon-prio-low    { color: var(--muted); }
+
+/* ─── Custom dropdown (replaces native <select> where SVG-in-options is needed) ─── */
+.dd {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+}
+
+.dd-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 30px;
+    padding: 3px 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-btn);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+.dd-trigger:hover {
+    border-color: var(--amber-dim);
+}
+
+.dd-trigger .icon {
+    font-size: 14px;
+}
+
+.dd-caret {
+    color: var(--muted);
+    transition: transform var(--transition), color var(--transition);
+    font-size: 10px;
+}
+
+.dd-open > .dd-trigger .dd-caret {
+    transform: rotate(180deg);
+    color: var(--amber);
+}
+
+.dd-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    z-index: 50;
+    min-width: 100%;
+    background: var(--panel-soft);
+    border-top: 1px solid var(--bezel-hi);
+    border-left: 1px solid var(--bezel-hi);
+    border-bottom: 1px solid var(--bezel-lo);
+    border-right: 1px solid var(--bezel-lo);
+    border-radius: var(--radius-btn);
+    padding: 4px;
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.dd-open > .dd-menu {
+    display: flex;
+}
+
+.dd-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 2px;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1;
+    transition: background var(--transition), color var(--transition);
+}
+
+.dd-item:hover {
+    background: var(--bg-btn-hover);
+}
+
+.dd-item .icon {
+    font-size: 14px;
+}
+
+.dd-item-active {
+    color: var(--amber);
+    background: rgba(255, 180, 84, 0.08);
+}
+
+.dd-item-check {
+    margin-left: auto;
+    color: var(--amber);
+    opacity: 0;
+    font-size: 12px;
+}
+
+.dd-item-active .dd-item-check {
+    opacity: 1;
+}

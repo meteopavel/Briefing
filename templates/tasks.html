@@ -79,7 +79,7 @@
 <div class="alert alert-error">Ошибка Redmine: {{ error }}</div>
 {% elif not issues %}
 <div class="empty-state">
-    <div class="empty-state-icon">✓</div>
+    <div class="empty-state-icon"><svg class="icon"><use href="#i-check"/></svg></div>
     <div class="empty-state-text">Нет активных задач</div>
 </div>
 {% elif groups %}
@@ -219,7 +219,7 @@ function toggleIssue(header) {
                                                      '<img class="journal-attach-img" src="' + thumbUrl + '" alt="' + escapeHtml(a.filename) + '" loading="lazy">' +
                                                      '</span>';
                                           }
-                                          return '<a class="journal-attach-file" href="' + fullUrl + '" target="_blank">📎 ' + escapeHtml(a.filename) + '</a>';
+                                              return '<a class="journal-attach-file" href="' + fullUrl + '" target="_blank"><svg class="icon"><use href="#i-paperclip"/></svg> ' + escapeHtml(a.filename) + '</a>';
                                       }).join('') +
                                       '</div>'
                                     : '';

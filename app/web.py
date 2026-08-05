@@ -226,7 +226,7 @@ def _group_todos(todos: list) -> list:
     """
     Группирует задачи проекта по секциям (bug/feat/refactor/q, всегда все
     четыре) и делит каждую на открытые/закрытые. Открытые сортируются по
-    приоритету, внутри приоритета — 🚧 выше 📋 (как в скилле `todo`).
+    приоритету, внутри приоритета — in_progress выше open (как в скилле `todo`).
     """
     buckets = {section: {'open': [], 'closed': []} for section in projects_repo.SECTIONS}
     for todo in todos:
