@@ -75,8 +75,8 @@
     --fs-xs:   11.5px;
     --fs-sm:   13px;
     --fs-base: 14px;
-    --fs-task:      15px;
-    --fs-task-meta: 14px;
+    --fs-task:      16px;
+    --fs-task-meta: 15px;
 
     --transition: 0.15s ease;
     --tap: 40px;
@@ -88,7 +88,7 @@
         --fs-xs:  12.5px;
         --fs-sm:  14px;
         --fs-base: 15px;
-        --fs-task:      16px;
-        --fs-task-meta: 15px;
+        --fs-task:      17px;
+        --fs-task-meta: 16px;
     }
 }
