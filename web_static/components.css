@@ -1236,7 +1236,7 @@ blockquote.redmine-quote {
     border-radius: var(--radius-btn);
     color: var(--muted);
     font-family: var(--font-mono);
-    font-size: var(--fs-sm);
+    font-size: 16px;
     line-height: 1;
     cursor: pointer;
     display: inline-flex;
@@ -1254,10 +1254,6 @@ blockquote.redmine-quote {
     color: var(--danger);
     background: var(--tint-red-bg);
     border-color: var(--tint-red-border);
-}
-
-.todo-action-edit {
-    font-size: calc(var(--fs-sm) + 3px);
 }
 
 .todo-action-edit:hover {
