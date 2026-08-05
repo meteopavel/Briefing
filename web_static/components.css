@@ -1097,9 +1097,9 @@ blockquote.redmine-quote {
     padding: 10px 14px;
 }
 
-.todo-priority-high   { border-left-color: var(--red);    box-shadow: inset 6px 0 12px -8px var(--red); }
+.todo-priority-high   { border-left-color: var(--red);      box-shadow: inset 6px 0 12px -8px var(--red); }
 .todo-priority-medium { border-left-color: var(--amber); }
-.todo-priority-low    { border-left-color: var(--muted); }
+.todo-priority-low    { border-left-color: var(--prio-low); box-shadow: inset 6px 0 12px -8px var(--prio-low); }
 
 .todo-item-header {
     display: flex;
@@ -1346,7 +1346,7 @@ blockquote.redmine-quote {
 /* Priority dot colors */
 .icon-prio-high   { color: var(--red); }
 .icon-prio-medium { color: var(--amber); }
-.icon-prio-low    { color: #55559a; }
+.icon-prio-low    { color: var(--prio-low); }
 
 /* ─── Custom dropdown (replaces native <select> where SVG-in-options is needed) ─── */
 .dd {
