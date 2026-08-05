@@ -1346,7 +1346,7 @@ blockquote.redmine-quote {
 /* Priority dot colors */
 .icon-prio-high   { color: var(--red); }
 .icon-prio-medium { color: var(--amber); }
-.icon-prio-low    { color: var(--muted); }
+.icon-prio-low    { color: #55559a; }
 
 /* ─── Custom dropdown (replaces native <select> where SVG-in-options is needed) ─── */
 .dd {
