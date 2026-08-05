@@ -13,11 +13,12 @@
  *   stack served the dense-triage task better than the dealt challengers.
  */
 :root {
-    --bg: #0d0f11;
-    --panel: #1a1d21;
-    --panel-soft: #20242a;
-    --bezel-hi: rgba(255, 255, 255, 0.07);
-    --bezel-lo: rgba(0, 0, 0, 0.55);
+    --bg: #14181e;
+    --panel: #1c222b;
+    --panel-soft: #242c38;
+    --bg-todo: #2e3842;
+    --bezel-hi: rgba(255, 255, 255, 0.06);
+    --bezel-lo: rgba(0, 0, 0, 0.45);
     --text: #f4f3ec;
     --muted: #a3a8ae;
     --border: rgba(255, 255, 255, 0.09);
