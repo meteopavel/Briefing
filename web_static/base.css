@@ -16,8 +16,8 @@ body {
     background-image:
         radial-gradient(
             circle at top left,
-            rgba(255, 180, 84, 0.13),
-            rgba(255, 180, 84, 0.04) 25vmax,
+            rgba(255, 180, 84, 0.16),
+            rgba(255, 180, 84, 0.05) 25vmax,
             transparent 55vmax
         ),
         linear-gradient(
