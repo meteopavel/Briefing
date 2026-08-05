@@ -91,6 +91,15 @@
         <div class="issue-group-header">
             <span class="issue-group-title">{{ group.title }}</span>
             <span class="issue-group-count">{{ group.open | length }}</span>
+            <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
+                <input type="text" name="title" class="todo-add-input" placeholder="+ новая…" required>
+                <select name="priority" class="select-control select-control-sm">
+                    <option value="high">🔴 высокий</option>
+                    <option value="medium" selected>🟡 средний</option>
+                    <option value="low">⚪ низкий</option>
+                </select>
+                <button type="submit" class="btn">Добавить</button>
+            </form>
         </div>
 
         <div class="todo-list">
@@ -110,16 +119,6 @@
             Показать закрытые · {{ group.closed | length }}
         </button>
         {% endif %}
-
-        <form class="todo-add-form" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
-            <input type="text" name="title" class="todo-add-input" placeholder="Новая задача…" required>
-            <select name="priority" class="select-control select-control-sm">
-                <option value="high">🔴 высокий</option>
-                <option value="medium" selected>🟡 средний</option>
-                <option value="low">⚪ низкий</option>
-            </select>
-            <button type="submit" class="btn">Добавить</button>
-        </form>
     </div>
     {% endfor %}
     {% endif %}

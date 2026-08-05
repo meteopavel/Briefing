@@ -138,12 +138,19 @@
 .text-sm    { font-size: var(--fs-sm); }
 .text-xs    { font-size: var(--fs-xs); }
 
-/* Issue groups — rack seams, not soft section cards */
+/* Issue groups — bezelled section cards */
 .issue-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-bottom: 20px;
+    background: var(--panel);
+    border-top: 1px solid var(--bezel-hi);
+    border-left: 1px solid var(--bezel-hi);
+    border-bottom: 1px solid var(--bezel-lo);
+    border-right: 1px solid var(--bezel-lo);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    margin-bottom: 18px;
 }
 
 .issue-group:last-child { margin-bottom: 0; }
@@ -152,10 +159,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 2px 7px;
-    border-bottom: 1px solid var(--bezel-lo);
-    box-shadow: 0 1px 0 var(--bezel-hi);
-    margin-bottom: 4px;
+    padding: 0 2px 10px;
+    margin-bottom: 6px;
 }
 
 .issue-group-title {
@@ -187,7 +192,7 @@
 
 .issue-card {
     position: relative;
-    background: var(--panel);
+    background: var(--bg-todo);
     border-top: 1px solid var(--bezel-hi);
     border-right: 1px solid var(--bezel-lo);
     border-bottom: 1px solid var(--bezel-lo);
@@ -1027,6 +1032,11 @@ blockquote.redmine-quote {
     .todo-add-form {
         flex-wrap: wrap;
     }
+
+    .todo-add-form--compact:focus-within {
+        flex-basis: 100%;
+        margin-top: 8px;
+    }
 }
 
 /* Проекты: селект + карточки тудушки */
@@ -1049,7 +1059,14 @@ blockquote.redmine-quote {
 }
 
 .todo-group {
-    margin-bottom: 24px;
+    background: var(--panel);
+    border-top: 1px solid var(--bezel-hi);
+    border-left: 1px solid var(--bezel-hi);
+    border-bottom: 1px solid var(--bezel-lo);
+    border-right: 1px solid var(--bezel-lo);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    margin-bottom: 18px;
 }
 
 .todo-group:last-child { margin-bottom: 0; }
@@ -1065,7 +1082,7 @@ blockquote.redmine-quote {
 }
 
 .todo-item {
-    background: var(--panel);
+    background: var(--bg-todo);
     border-top: 1px solid var(--bezel-hi);
     border-right: 1px solid var(--bezel-lo);
     border-bottom: 1px solid var(--bezel-lo);
@@ -1154,7 +1171,40 @@ blockquote.redmine-quote {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 10px;
+    margin-left: auto;
+    align-self: center;
+}
+
+/* Compact add form — collapsed in the section header, expands on focus */
+.todo-add-form--compact .todo-add-input {
+    flex: 0 0 auto;
+    width: 140px;
+    padding: 4px 10px;
+    min-height: 30px;
+    font-size: var(--fs-xs);
+}
+
+.todo-add-form--compact .select-control-sm,
+.todo-add-form--compact .btn {
+    display: none;
+}
+
+.todo-add-form--compact:focus-within {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.todo-add-form--compact:focus-within .todo-add-input {
+    width: auto;
+    flex: 1 1 auto;
+    padding: 8px 12px;
+    min-height: var(--tap);
+    font-size: var(--fs-sm);
+}
+
+.todo-add-form--compact:focus-within .select-control-sm,
+.todo-add-form--compact:focus-within .btn {
+    display: inline-flex;
 }
 
 .todo-add-input {
