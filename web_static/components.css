@@ -278,7 +278,7 @@
 
 /* Subject — shrinks with its row instead of forcing horizontal overflow */
 .issue-subject {
-    font-size: var(--fs-sm);
+    font-size: var(--fs-task);
     color: var(--text);
     margin-right: 4px;
     flex: 1 1 100px;
@@ -1095,7 +1095,7 @@ blockquote.redmine-quote {
 .todo-item-title {
     flex: 1 1 auto;
     min-width: 0;
-    font-size: var(--fs-sm);
+    font-size: var(--fs-task);
     line-height: 1.4;
 }
 
@@ -1115,7 +1115,7 @@ blockquote.redmine-quote {
 }
 
 .todo-subitem {
-    font-size: var(--fs-sm);
+    font-size: var(--fs-task-meta);
     color: var(--text);
     line-height: 1.4;
 }
@@ -1129,7 +1129,7 @@ blockquote.redmine-quote {
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px dashed var(--border-sub);
-    font-size: var(--fs-sm);
+    font-size: var(--fs-task-meta);
     color: var(--muted);
     line-height: 1.5;
 }

@@ -18,8 +18,8 @@
     --panel-soft: #20242a;
     --bezel-hi: rgba(255, 255, 255, 0.07);
     --bezel-lo: rgba(0, 0, 0, 0.55);
-    --text: #ecebe4;
-    --muted: #8b9096;
+    --text: #f4f3ec;
+    --muted: #a3a8ae;
     --border: rgba(255, 255, 255, 0.09);
 
     --amber: #ffb454;
@@ -75,6 +75,8 @@
     --fs-xs:   11.5px;
     --fs-sm:   13px;
     --fs-base: 14px;
+    --fs-task:      15px;
+    --fs-task-meta: 14px;
 
     --transition: 0.15s ease;
     --tap: 40px;
@@ -86,5 +88,7 @@
         --fs-xs:  12.5px;
         --fs-sm:  14px;
         --fs-base: 15px;
+        --fs-task:      16px;
+        --fs-task-meta: 15px;
     }
 }
