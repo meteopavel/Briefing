@@ -30,7 +30,7 @@
             {% for sub in todo.subitems %}
             <div class="todo-edit-subitem-row">
                 <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required>{{ sub.text }}</textarea>
-                <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this)">×</button>
+                <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, true)">×</button>
             </div>
             {% endfor %}
         </div>
@@ -228,13 +228,16 @@ function addSubitemRow(todoId) {
     row.className = 'todo-edit-subitem-row';
     row.innerHTML = `
         <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required></textarea>
-        <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this)">×</button>
+        <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, false)">×</button>
     `;
     container.appendChild(row);
     row.querySelector('textarea[name="text"]').focus();
 }
 
-function removeSubitemRow(btn) {
+function removeSubitemRow(btn, confirmNeeded) {
+    // confirmNeeded=true — подпункт уже есть в БД, переспрашиваем.
+    // false — только что добавленная пустая строка, убираем без вопросов.
+    if (confirmNeeded && !confirm('Удалить подпункт?')) return;
     btn.closest('.todo-edit-subitem-row').remove();
 }
 
