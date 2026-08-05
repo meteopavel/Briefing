@@ -641,6 +641,25 @@ async def add_todo_subitem(slug: str, todo_id: int, request: Request):
     return {'ok': True}
 
 
+@app.post('/api/projects/{slug}/todos/{todo_id}/edit')
+async def edit_project_todo(slug: str, todo_id: int, request: Request):
+    body = await request.json()
+    title = (body.get('title') or '').strip()
+    section = body.get('section')
+    if not title:
+        raise HTTPException(400, 'Текст задачи не может быть пустым')
+    if section not in projects_repo.SECTIONS:
+        raise HTTPException(400, 'Некорректная секция')
+    projects_repo.update_todo_meta(todo_id, title, section)
+    return {'ok': True}
+
+
+@app.post('/api/projects/{slug}/todos/{todo_id}/delete')
+async def delete_project_todo(slug: str, todo_id: int):
+    projects_repo.delete_todo(todo_id)
+    return {'ok': True}
+
+
 @app.get('/health')
 def health():
     return {'status': 'ok'}

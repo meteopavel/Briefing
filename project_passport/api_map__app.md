@@ -8,7 +8,7 @@
 - модулей: 22
 - классов: 3
 - dataclass: 1
-- функций: 114
+- функций: 120
 - методов: 16
 - констант: 68
 
@@ -161,6 +161,14 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 
 - `add_todo_subitem(todo_id: int, kind: str, text: str) -> None`
   Добавляет подпункт к задаче. kind: requirement|context.
+
+- `edit_todo(todo_id: int, title: str, section: str) -> None`
+  Меняет заголовок задачи и (опционально) секцию. section: bug|feat|refactor|q.
+  При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
+  к секции. Подпункты и статус сохраняются.
+
+- `delete_todo(todo_id: int) -> None`
+  Удаляет задачу вместе с подпунктами (они снимаются каскадом).
 
 - `create_asgi_app()`
   Нет докстринга.
@@ -392,6 +400,14 @@ CRUD для тудушек проектов (секции bug/feat/refactor/q, �
 
 - `add_subitem(todo_id: int, kind: str, text: str) -> None`
   Нет докстринга.
+
+- `update_todo_meta(todo_id: int, title: str, section: str) -> None`
+  Меняет заголовок задачи и (опционально) секцию. При смене секции номер
+  перевыпускается как следующий свободный в новой секции (UNIQUE-констрейнт
+  project_id+section+number не даёт сохранить старый). Подпункты не трогает.
+
+- `delete_todo(todo_id: int) -> None`
+  Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).
 
 ---
 
@@ -844,6 +860,12 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `add_todo_subitem(slug: str, todo_id: int, request: Request)`
+  Нет докстринга.
+
+- `edit_project_todo(slug: str, todo_id: int, request: Request)`
+  Нет докстринга.
+
+- `delete_project_todo(slug: str, todo_id: int)`
   Нет докстринга.
 
 - `health()`

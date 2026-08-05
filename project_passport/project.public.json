@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-04T13:58:33.872518+00:00",
+  "generated_at": "2026-08-05T04:21:47.400156+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -59,7 +59,7 @@
     "scanned_python_files": 29,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 114,
+    "functions": 120,
     "methods": 16,
     "constants": 68,
     "has_cli": true,
@@ -90,7 +90,7 @@
         "stats": {
           "classes": 1,
           "dataclasses": 0,
-          "functions": 29,
+          "functions": 31,
           "methods": 2,
           "constants": 17
         }
@@ -107,6 +107,17 @@
         }
       },
       {
+        "path": "app/services/projects/repository.py",
+        "summary": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,",
+        "stats": {
+          "classes": 0,
+          "dataclasses": 0,
+          "functions": 11,
+          "methods": 0,
+          "constants": 4
+        }
+      },
+      {
         "path": "app/services/redmine/client.py",
         "summary": "HTTP-клиент для получения данных из Redmine API.",
         "stats": {
@@ -115,17 +126,6 @@
           "functions": 0,
           "methods": 10,
           "constants": 1
-        }
-      },
-      {
-        "path": "app/services/projects/repository.py",
-        "summary": "CRUD для тудушек проектов (секции bug/feat/refactor/q, статусы, приоритеты,",
-        "stats": {
-          "classes": 0,
-          "dataclasses": 0,
-          "functions": 9,
-          "methods": 0,
-          "constants": 4
         }
       },
       {
@@ -160,7 +160,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-08-04T13:58:33.821834+00:00",
+    "api_map_generated_at": "2026-08-05T04:21:47.325250+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"

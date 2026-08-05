@@ -151,3 +151,32 @@ def add_subitem(todo_id: int, kind: str, text: str) -> None:
                 'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
                 (todo_id, kind, text, next_position),
             )
+
+
+def update_todo_meta(todo_id: int, title: str, section: str) -> None:
+    """
+    Меняет заголовок задачи и (опционально) секцию. При смене секции номер
+    перевыпускается как следующий свободный в новой секции (UNIQUE-констрейнт
+    project_id+section+number не даёт сохранить старый). Подпункты не трогает.
+    """
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT project_id, section FROM todos WHERE id = %s', (todo_id,))
+            current = cursor.fetchone()
+            if current is None:
+                return
+            if section == current['section']:
+                cursor.execute('UPDATE todos SET title = %s WHERE id = %s', (title, todo_id))
+            else:
+                next_number = _next_number(cursor, current['project_id'], section)
+                cursor.execute(
+                    'UPDATE todos SET title = %s, section = %s, number = %s WHERE id = %s',
+                    (title, section, next_number, todo_id),
+                )
+
+
+def delete_todo(todo_id: int) -> None:
+    """Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE)."""
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM todos WHERE id = %s', (todo_id,))
