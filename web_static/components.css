@@ -1197,21 +1197,16 @@ blockquote.redmine-quote {
     border-bottom-color: var(--amber-dim);
 }
 
-/* Кнопка-тоггл флага утверждения. Неутверждённая — как обычный .todo-action-btn
-   (muted-иконка); утверждённая (.is-approved) — зелёная галка. */
-.todo-action-approve .icon {
-    color: var(--muted);
-}
-
+/* Кнопка-тоггл флага утверждения. В покое галка того же цвета, что карандаш
+   (наследует --text от .todo-action-btn); утверждённая (.is-approved) — зелёная.
+   Ховер — по образцу .todo-action-edit, но зелёный (--tint-green-* — аналоги
+   жёлтых тинтов карандаша, тот же спокойный оттенок по альфе). */
 .todo-action-approve.is-approved .icon {
     color: var(--green);
 }
 
-.todo-action-approve:hover .icon {
-    color: var(--text);
-}
-
-.todo-action-approve.is-approved:hover {
+.todo-action-approve:hover {
+    color: var(--green);
     background: var(--tint-green-bg);
     border-color: var(--tint-green-border);
 }
