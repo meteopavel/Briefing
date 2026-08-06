@@ -231,7 +231,7 @@ function ddSelect(item) {
     trigger.focus();
 
     // Маршрутизация по data-name: <prefix>-<todoId> или new-priority-<sectionKey>.
-    // changeTodo* определены ниже только при выбранном проекте (блок {% if selected %});
+    // changeTodo* определены ниже только при выбранном проекте (блок "если selected");
     // до этих веток доходит лишь клик по дропдаунам карточек задач, которых на
     // странице без проекта нет, поэтому ReferenceError не возникнет.
     const name = dd.dataset.name;
