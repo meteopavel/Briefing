@@ -163,30 +163,13 @@
     {% endif %}
 </div>
 
-{% if selected %}
 <script>
-const CURRENT_PROJECT_SLUG = {{ selected.slug | tojson }};
-
-function toggleClosedTodos(btn) {
-    const group = btn.closest('.todo-group');
-    group.querySelectorAll('.closed-hidden').forEach(el => el.classList.remove('closed-hidden'));
-    btn.remove();
-}
-
-function apiPost(path, payload) {
-    return fetch(path, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload),
-    }).then(r => {
-        if (!r.ok) return r.json().then(e => { throw new Error(e.detail || 'Ошибка'); });
-        return r.json();
-    });
-}
-
-/* ─── Custom dropdown engine (replaces native <select> for SVG-in-options) ───
-   Каждый .dd хранит выбранное значение в data-value на корне. ddSelect вызывается
-   из onclick пункта меню; по data-name корня разруливает, кто запросил выбор. */
+/* ─── Движок дропдаунов (ddToggle/ddSelect/ddCloseAll) ───
+   Рендерится ВСЕГДА, без привязки к выбранному проекту. Иначе выбор проекта
+   не работает на /projects без проекта — замкнутый круг: JS отсутствовал как
+   раз тогда, когда проект нужно было выбрать. Каждый .dd хранит выбранное
+   значение в data-value на корне; ddSelect вызывается из onclick пункта меню
+   и по data-name корня разруливает, кто запросил выбор. */
 function ddToggle(triggerBtn) {
     const dd = triggerBtn.closest('.dd');
     const wasOpen = dd.classList.contains('dd-open');
@@ -248,6 +231,9 @@ function ddSelect(item) {
     trigger.focus();
 
     // Маршрутизация по data-name: <prefix>-<todoId> или new-priority-<sectionKey>.
+    // changeTodo* определены ниже только при выбранном проекте (блок {% if selected %});
+    // до этих веток доходит лишь клик по дропдаунам карточек задач, которых на
+    // странице без проекта нет, поэтому ReferenceError не возникнет.
     const name = dd.dataset.name;
     if (name.startsWith('status-')) {
         changeTodoStatus(name.slice(7), value);
@@ -257,6 +243,28 @@ function ddSelect(item) {
         changeTodoSection(name.slice(8), value);
     }
     // 'new-priority-<key>' — только хранит значение, читается при сабмите новой задачи.
+}
+</script>
+
+{% if selected %}
+<script>
+const CURRENT_PROJECT_SLUG = {{ selected.slug | tojson }};
+
+function toggleClosedTodos(btn) {
+    const group = btn.closest('.todo-group');
+    group.querySelectorAll('.closed-hidden').forEach(el => el.classList.remove('closed-hidden'));
+    btn.remove();
+}
+
+function apiPost(path, payload) {
+    return fetch(path, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+    }).then(r => {
+        if (!r.ok) return r.json().then(e => { throw new Error(e.detail || 'Ошибка'); });
+        return r.json();
+    });
 }
 
 function changeTodoSection(todoId, section) {
