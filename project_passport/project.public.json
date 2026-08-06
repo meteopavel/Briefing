@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-06T04:38:27.979361+00:00",
+  "generated_at": "2026-08-06T12:55:57.827302+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -59,7 +59,7 @@
     "scanned_python_files": 28,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 118,
+    "functions": 121,
     "methods": 16,
     "constants": 62,
     "has_cli": true,
@@ -90,7 +90,7 @@
         "stats": {
           "classes": 1,
           "dataclasses": 0,
-          "functions": 31,
+          "functions": 32,
           "methods": 2,
           "constants": 17
         }
@@ -112,7 +112,7 @@
         "stats": {
           "classes": 0,
           "dataclasses": 0,
-          "functions": 11,
+          "functions": 12,
           "methods": 0,
           "constants": 6
         }
@@ -129,19 +129,19 @@
         }
       },
       {
-        "path": "app/services/redmine/normalizers.py",
-        "summary": "Функции нормализации и упрощения данных Redmine.",
+        "path": "app/mcp_server.py",
+        "summary": "MCP-сервер Briefing: тулы над тудушками проектов (та же БД и тот же",
         "stats": {
           "classes": 0,
           "dataclasses": 0,
-          "functions": 11,
+          "functions": 12,
           "methods": 0,
           "constants": 0
         }
       },
       {
-        "path": "app/services/redmine/exports.py",
-        "summary": "Экспорт трудозатрат Redmine в табличный CSV-формат.",
+        "path": "app/services/redmine/normalizers.py",
+        "summary": "Функции нормализации и упрощения данных Redmine.",
         "stats": {
           "classes": 0,
           "dataclasses": 0,
@@ -160,7 +160,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-08-06T04:38:27.904448+00:00",
+    "api_map_generated_at": "2026-08-06T12:55:57.748707+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"

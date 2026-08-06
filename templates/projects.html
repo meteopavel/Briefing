@@ -39,7 +39,7 @@
 {% endmacro %}
 
 {% macro render_todo(todo) %}
-<div class="todo-item todo-priority-{{ todo.priority }} todo-section-{{ todo.section }}" data-id="{{ todo.id }}">
+<div class="todo-item todo-priority-{{ todo.priority }} todo-section-{{ todo.section }} todo-approved-{% if todo.placement_approved %}yes{% else %}no{% endif %}" data-id="{{ todo.id }}">
     <div class="todo-item-header">
         <button type="button" class="todo-item-id" title="Скопировать /skill todo {{ todo.section }}.{{ todo.number }}"
                 onclick="copyTodoId('{{ todo.section }}.{{ todo.number }}')">{{ todo.section }}.{{ todo.number }}</button>
@@ -48,6 +48,11 @@
             {{ dd(todo.status, status_meta, ['open', 'in_progress', 'done', 'wontdo'], 'status-' ~ todo.id) }}
             {{ dd(todo.priority, priority_meta, ['high', 'medium', 'low'], 'priority-' ~ todo.id) }}
             {{ dd(todo.section, section_meta, section_order, 'section-' ~ todo.id) }}
+            <button type="button" class="todo-action-btn todo-action-approve{% if todo.placement_approved %} is-approved{% endif %}"
+                    title="{% if todo.placement_approved %}Размещение утверждено — нажми, чтобы снять (вернуть в ревью){% else %}Размещение не утверждено — агент предложит ревью при следующем взятии; нажми, чтобы утвердить вручную{% endif %}"
+                    onclick="changeTodoApproved({{ todo.id }}, {{ 'false' if todo.placement_approved else 'true' }})">
+                <svg class="icon"><use href="#i-check"/></svg>
+            </button>
             <button type="button" class="todo-action-btn todo-action-edit" title="Редактировать" onclick="editTodo({{ todo.id }})">
                 <svg class="icon"><use href="#i-edit"/></svg>
             </button>
@@ -291,6 +296,12 @@ function changeTodoStatus(todoId, status) {
 
 function changeTodoPriority(todoId, priority) {
     apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/priority`, {priority})
+        .then(() => location.reload())
+        .catch(e => { alert(e.message); location.reload(); });
+}
+
+function changeTodoApproved(todoId, approved) {
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/placement-approved`, {approved})
         .then(() => location.reload())
         .catch(e => { alert(e.message); location.reload(); });
 }

@@ -1189,6 +1189,33 @@ blockquote.redmine-quote {
     border-color: var(--tint-yellow-border);
 }
 
+/* Флаг «размещение утверждено»: карточка, ждущая ревью (placement_approved=false),
+   получает пунктирную нижнюю границу — тонкая метка, что секцию/приоритет ещё
+   не согласовали. Утверждённые карточки визуально ничем не выделяются. */
+.todo-approved-no {
+    border-bottom-style: dashed;
+    border-bottom-color: var(--amber-dim);
+}
+
+/* Кнопка-тоггл флага утверждения. Неутверждённая — как обычный .todo-action-btn
+   (muted-иконка); утверждённая (.is-approved) — зелёная галка. */
+.todo-action-approve .icon {
+    color: var(--muted);
+}
+
+.todo-action-approve.is-approved .icon {
+    color: var(--green);
+}
+
+.todo-action-approve:hover .icon {
+    color: var(--text);
+}
+
+.todo-action-approve.is-approved:hover {
+    background: var(--tint-green-bg);
+    border-color: var(--tint-green-border);
+}
+
 .todo-edit-form {
     display: flex;
     flex-direction: column;

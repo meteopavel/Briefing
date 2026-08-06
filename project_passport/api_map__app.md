@@ -8,7 +8,7 @@
 - модулей: 21
 - классов: 3
 - dataclass: 1
-- функций: 118
+- функций: 121
 - методов: 16
 - констант: 62
 
@@ -156,8 +156,15 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   Меняет статус задачи. status: open|in_progress|done|wontdo.
   При переходе в done/wontdo closed_note обязателен (что сделано / что решили).
 
-- `update_todo_priority(todo_id: int, priority: str) -> None`
+- `update_todo_priority(todo_id: int, priority: str)`
   Меняет приоритет задачи. priority: high|medium|low.
+
+- `set_todo_placement_approved(todo_id: int, approved: bool) -> None`
+  Ставит/снимает флаг «размещение (секция + приоритет) утверждено».
+  Агент выставляет approved=True после ревью размещения (когда согласовал
+  секцию и приоритет задачи); при ручном изменении секции/приоритета через
+  веб флаг снимается автоматически на бэке, а через MCP — нет (агент сам
+  управляет им этим тулом).
 
 - `add_todo_subitem(todo_id: int, kind: str, text: str) -> None`
   Добавляет подпункт к задаче. kind: requirement|context.
@@ -374,13 +381,16 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
   Меняет статус. При переходе в done/wontdo заметка обязательна —
   вызывающий код (роут) должен это проверить до вызова.
 
-- `update_priority(todo_id: int, priority: str) -> None`
-  Нет докстринга.
+- `update_priority(todo_id: int, priority: str, reset_approved: bool = False) -> None`
+  Меняет приоритет. reset_approved=True (ручное изменение через веб) дополнительно
+  сбрасывает placement_approved — т.к. размещение (секция+приоритет) изменилось,
+  его надо заново утвердить. MCP-вызовы идут с reset_approved=False (агент сам
+  выставляет флаг после ревью через update_placement_approved).
 
 - `add_subitem(todo_id: int, kind: str, text: str) -> None`
   Нет докстринга.
 
-- `edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None`
+- `edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None`
   Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной
   транзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем
   явные begin()/commit() с rollback() при ошибке — иначе replace+update
@@ -392,7 +402,14 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
   project_id+section+number не даёт сохранить старый);
   subitems — None (не трогать) либо полная замена списком
   {'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.
+  reset_approved — сбросить placement_approved при смене секции (ручное
+  изменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс
+  применяется только когда секция реально меняется; при правке только title
+  флаг не трогается.
   Валидация значений — на вызывающей стороне (роут/MCP).
+
+- `update_placement_approved(todo_id: int, approved: bool) -> None`
+  Ставит/снимает флаг «размещение (секция+приоритет) утверждено».
 
 - `delete_todo(todo_id: int) -> None`
   Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).
@@ -851,6 +868,9 @@ FastAPI web application: маршруты Briefing.
   Нет докстринга.
 
 - `edit_project_todo(slug: str, todo_id: int, request: Request)`
+  Нет докстринга.
+
+- `set_todo_placement_approved(slug: str, todo_id: int, request: Request)`
   Нет докстринга.
 
 - `delete_project_todo(slug: str, todo_id: int)`

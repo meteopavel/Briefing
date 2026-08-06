@@ -80,11 +80,25 @@ def update_todo_status(todo_id: int, status: str, closed_note: str | None = None
 
 
 @mcp.tool()
-def update_todo_priority(todo_id: int, priority: str) -> None:
+def update_todo_priority(todo_id: int, priority: str):
     """Меняет приоритет задачи. priority: high|medium|low."""
     if priority not in projects_repo.PRIORITIES:
         raise ValueError(f'Некорректный приоритет: {priority} (ожидается одна из {projects_repo.PRIORITIES})')
     projects_repo.update_priority(todo_id, priority)
+
+
+@mcp.tool()
+def set_todo_placement_approved(todo_id: int, approved: bool) -> None:
+    """
+    Ставит/снимает флаг «размещение (секция + приоритет) утверждено».
+    Агент выставляет approved=True после ревью размещения (когда согласовал
+    секцию и приоритет задачи); при ручном изменении секции/приоритета через
+    веб флаг снимается автоматически на бэке, а через MCP — нет (агент сам
+    управляет им этим тулом).
+    """
+    if not isinstance(approved, bool):
+        raise ValueError(f'approved должен быть bool, получен {type(approved).__name__}')
+    projects_repo.update_placement_approved(todo_id, approved)
 
 
 @mcp.tool()

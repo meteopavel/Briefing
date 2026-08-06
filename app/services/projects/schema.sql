@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS todos (
     number INT NOT NULL,
     status ENUM('open', 'in_progress', 'done', 'wontdo') NOT NULL DEFAULT 'open',
     priority ENUM('high', 'medium', 'low') NOT NULL,
+    placement_approved BOOLEAN NOT NULL DEFAULT FALSE,
     title TEXT NOT NULL,
     closed_note TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

@@ -51,7 +51,7 @@ def get_todos(project_id: int) -> list[dict]:
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                'SELECT id, section, number, status, priority, title, closed_note, created_at, updated_at '
+                'SELECT id, section, number, status, priority, placement_approved, title, closed_note, created_at, updated_at '
                 'FROM todos WHERE project_id = %s',
                 (project_id,),
             )
@@ -120,8 +120,8 @@ def create_todo(project_id: int, section: str, priority: str, title: str, subite
         with conn.cursor() as cursor:
             number = _next_number(cursor, project_id, section)
             cursor.execute(
-                'INSERT INTO todos (project_id, section, number, status, priority, title) '
-                "VALUES (%s, %s, %s, 'open', %s, %s)",
+                'INSERT INTO todos (project_id, section, number, status, priority, placement_approved, title) '
+                "VALUES (%s, %s, %s, 'open', %s, 0, %s)",
                 (project_id, section, number, priority, title),
             )
             todo_id = cursor.lastrowid
@@ -146,10 +146,19 @@ def update_status(todo_id: int, status: str, closed_note: str | None = None) -> 
             )
 
 
-def update_priority(todo_id: int, priority: str) -> None:
+def update_priority(todo_id: int, priority: str, reset_approved: bool = False) -> None:
+    """
+    Меняет приоритет. reset_approved=True (ручное изменение через веб) дополнительно
+    сбрасывает placement_approved — т.к. размещение (секция+приоритет) изменилось,
+    его надо заново утвердить. MCP-вызовы идут с reset_approved=False (агент сам
+    выставляет флаг после ревью через update_placement_approved).
+    """
     with get_connection() as conn:
         with conn.cursor() as cursor:
-            cursor.execute('UPDATE todos SET priority = %s WHERE id = %s', (priority, todo_id))
+            if reset_approved:
+                cursor.execute('UPDATE todos SET priority = %s, placement_approved = 0 WHERE id = %s', (priority, todo_id))
+            else:
+                cursor.execute('UPDATE todos SET priority = %s WHERE id = %s', (priority, todo_id))
 
 
 def add_subitem(todo_id: int, kind: str, text: str) -> None:
@@ -166,7 +175,7 @@ def add_subitem(todo_id: int, kind: str, text: str) -> None:
             )
 
 
-def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None:
+def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None:
     """
     Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной
     транзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем
@@ -179,6 +188,10 @@ def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | Non
     project_id+section+number не даёт сохранить старый);
     subitems — None (не трогать) либо полная замена списком
     {'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.
+    reset_approved — сбросить placement_approved при смене секции (ручное
+    изменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс
+    применяется только когда секция реально меняется; при правке только title
+    флаг не трогается.
     Валидация значений — на вызывающей стороне (роут/MCP).
     """
     with get_connection() as conn:
@@ -201,14 +214,27 @@ def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | Non
                     cursor.execute('UPDATE todos SET title = %s WHERE id = %s', (title, todo_id))
                 else:
                     next_number = _next_number(cursor, current['project_id'], section)
-                    cursor.execute(
-                        'UPDATE todos SET title = %s, section = %s, number = %s WHERE id = %s',
-                        (title, section, next_number, todo_id),
-                    )
+                    if reset_approved:
+                        cursor.execute(
+                            'UPDATE todos SET title = %s, section = %s, number = %s, placement_approved = 0 WHERE id = %s',
+                            (title, section, next_number, todo_id),
+                        )
+                    else:
+                        cursor.execute(
+                            'UPDATE todos SET title = %s, section = %s, number = %s WHERE id = %s',
+                            (title, section, next_number, todo_id),
+                        )
                 conn.commit()
             except Exception:
                 conn.rollback()
                 raise
+
+
+def update_placement_approved(todo_id: int, approved: bool) -> None:
+    """Ставит/снимает флаг «размещение (секция+приоритет) утверждено»."""
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute('UPDATE todos SET placement_approved = %s WHERE id = %s', (1 if approved else 0, todo_id))
 
 
 def delete_todo(todo_id: int) -> None:

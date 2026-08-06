@@ -626,7 +626,9 @@ async def update_todo_priority(slug: str, todo_id: int, request: Request):
     priority = body.get('priority')
     if priority not in projects_repo.PRIORITIES:
         raise HTTPException(400, 'Некорректный приоритет')
-    projects_repo.update_priority(todo_id, priority)
+    # reset_approved=True: ручное изменение приоритета через веб сбрасывает флаг
+    # утверждения размещения (через MCP — не сбрасывает, агент сам выставляет флаг).
+    projects_repo.update_priority(todo_id, priority, reset_approved=True)
     return {'ok': True}
 
 
@@ -659,7 +661,19 @@ async def edit_project_todo(slug: str, todo_id: int, request: Request):
                 raise HTTPException(400, 'Некорректный тип подпункта')
             if not (sub.get('text') or '').strip():
                 raise HTTPException(400, 'Текст подпункта не может быть пустым')
-    projects_repo.edit_todo(todo_id, title, section, subitems)
+    # reset_approved=True: смена секции через веб сбрасывает флаг утверждения
+    # размещения (DAL применит сброс только при реальной смене секции).
+    projects_repo.edit_todo(todo_id, title, section, subitems, reset_approved=True)
+    return {'ok': True}
+
+
+@app.post('/api/projects/{slug}/todos/{todo_id}/placement-approved')
+async def set_todo_placement_approved(slug: str, todo_id: int, request: Request):
+    body = await request.json()
+    approved = body.get('approved')
+    if not isinstance(approved, bool):
+        raise HTTPException(400, 'approved должен быть bool')
+    projects_repo.update_placement_approved(todo_id, approved)
     return {'ok': True}
 
 

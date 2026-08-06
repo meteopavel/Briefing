@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-06T04:38:27.904448+00:00",
+  "generated_at": "2026-08-06T12:55:57.748707+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -19,7 +19,7 @@
     "modules": 21,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 118,
+    "functions": 121,
     "methods": 16,
     "constants": 62
   },
@@ -500,7 +500,7 @@
         },
         {
           "name": "update_todo_priority",
-          "signature": "update_todo_priority(todo_id: int, priority: str) -> None",
+          "signature": "update_todo_priority(todo_id: int, priority: str)",
           "docstring": "Меняет приоритет задачи. priority: high|medium|low.",
           "summary": "Меняет приоритет задачи. priority: high|medium|low.",
           "kind": "function",
@@ -511,6 +511,18 @@
           "end_lineno": 87
         },
         {
+          "name": "set_todo_placement_approved",
+          "signature": "set_todo_placement_approved(todo_id: int, approved: bool) -> None",
+          "docstring": "Ставит/снимает флаг «размещение (секция + приоритет) утверждено».\nАгент выставляет approved=True после ревью размещения (когда согласовал\nсекцию и приоритет задачи); при ручном изменении секции/приоритета через\nвеб флаг снимается автоматически на бэке, а через MCP — нет (агент сам\nуправляет им этим тулом).",
+          "summary": "Ставит/снимает флаг «размещение (секция + приоритет) утверждено».",
+          "kind": "function",
+          "decorators": [
+            "mcp.tool()"
+          ],
+          "lineno": 91,
+          "end_lineno": 101
+        },
+        {
           "name": "add_todo_subitem",
           "signature": "add_todo_subitem(todo_id: int, kind: str, text: str) -> None",
           "docstring": "Добавляет подпункт к задаче. kind: requirement|context.",
@@ -519,8 +531,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 91,
-          "end_lineno": 97
+          "lineno": 105,
+          "end_lineno": 111
         },
         {
           "name": "edit_todo",
@@ -531,8 +543,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 101,
-          "end_lineno": 126
+          "lineno": 115,
+          "end_lineno": 140
         },
         {
           "name": "delete_todo",
@@ -543,8 +555,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 130,
-          "end_lineno": 132
+          "lineno": 144,
+          "end_lineno": 146
         },
         {
           "name": "create_asgi_app",
@@ -553,15 +565,15 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 135,
-          "end_lineno": 136
+          "lineno": 149,
+          "end_lineno": 150
         }
       ],
       "constants": [],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 11,
+        "functions": 12,
         "methods": 0,
         "constants": 0
       }
@@ -960,13 +972,13 @@
         },
         {
           "name": "update_priority",
-          "signature": "update_priority(todo_id: int, priority: str) -> None",
-          "docstring": null,
-          "summary": null,
+          "signature": "update_priority(todo_id: int, priority: str, reset_approved: bool = False) -> None",
+          "docstring": "Меняет приоритет. reset_approved=True (ручное изменение через веб) дополнительно\nсбрасывает placement_approved — т.к. размещение (секция+приоритет) изменилось,\nего надо заново утвердить. MCP-вызовы идут с reset_approved=False (агент сам\nвыставляет флаг после ревью через update_placement_approved).",
+          "summary": "Меняет приоритет. reset_approved=True (ручное изменение через веб) дополнительно",
           "kind": "function",
           "decorators": [],
           "lineno": 149,
-          "end_lineno": 152
+          "end_lineno": 161
         },
         {
           "name": "add_subitem",
@@ -975,18 +987,28 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 155,
-          "end_lineno": 166
+          "lineno": 164,
+          "end_lineno": 175
         },
         {
           "name": "edit_todo",
-          "signature": "edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None",
-          "docstring": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной\nтранзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем\nявные begin()/commit() с rollback() при ошибке — иначе replace+update\nпрошли бы в раздельных авто-коммитах и при сбое второго шага подпункты\nоказались бы перезаписаны при старом заголовке/секции (рассинхрон).\n\ntitle — новый заголовок; section — bug|feat|ref|ques (при смене номер\nперевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт\nproject_id+section+number не даёт сохранить старый);\nsubitems — None (не трогать) либо полная замена списком\n{'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.\nВалидация значений — на вызывающей стороне (роут/MCP).",
+          "signature": "edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None",
+          "docstring": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной\nтранзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем\nявные begin()/commit() с rollback() при ошибке — иначе replace+update\nпрошли бы в раздельных авто-коммитах и при сбое второго шага подпункты\nоказались бы перезаписаны при старом заголовке/секции (рассинхрон).\n\ntitle — новый заголовок; section — bug|feat|ref|ques (при смене номер\nперевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт\nproject_id+section+number не даёт сохранить старый);\nsubitems — None (не трогать) либо полная замена списком\n{'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.\nreset_approved — сбросить placement_approved при смене секции (ручное\nизменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс\nприменяется только когда секция реально меняется; при правке только title\nфлаг не трогается.\nВалидация значений — на вызывающей стороне (роут/MCP).",
           "summary": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной",
           "kind": "function",
           "decorators": [],
-          "lineno": 169,
-          "end_lineno": 211
+          "lineno": 178,
+          "end_lineno": 230
+        },
+        {
+          "name": "update_placement_approved",
+          "signature": "update_placement_approved(todo_id: int, approved: bool) -> None",
+          "docstring": "Ставит/снимает флаг «размещение (секция+приоритет) утверждено».",
+          "summary": "Ставит/снимает флаг «размещение (секция+приоритет) утверждено».",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 233,
+          "end_lineno": 237
         },
         {
           "name": "delete_todo",
@@ -995,8 +1017,8 @@
           "summary": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
           "kind": "function",
           "decorators": [],
-          "lineno": 214,
-          "end_lineno": 218
+          "lineno": 240,
+          "end_lineno": 244
         }
       ],
       "constants": [
@@ -1040,7 +1062,7 @@
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 11,
+        "functions": 12,
         "methods": 0,
         "constants": 6
       }
@@ -2087,7 +2109,7 @@
             "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
           ],
           "lineno": 624,
-          "end_lineno": 630
+          "end_lineno": 632
         },
         {
           "name": "add_todo_subitem",
@@ -2098,8 +2120,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
           ],
-          "lineno": 634,
-          "end_lineno": 643
+          "lineno": 636,
+          "end_lineno": 645
         },
         {
           "name": "edit_project_todo",
@@ -2110,8 +2132,20 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
           ],
-          "lineno": 647,
-          "end_lineno": 663
+          "lineno": 649,
+          "end_lineno": 667
+        },
+        {
+          "name": "set_todo_placement_approved",
+          "signature": "set_todo_placement_approved(slug: str, todo_id: int, request: Request)",
+          "docstring": null,
+          "summary": null,
+          "kind": "async_function",
+          "decorators": [
+            "app.post('/api/projects/{slug}/todos/{todo_id}/placement-approved')"
+          ],
+          "lineno": 671,
+          "end_lineno": 677
         },
         {
           "name": "delete_project_todo",
@@ -2122,8 +2156,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
           ],
-          "lineno": 667,
-          "end_lineno": 669
+          "lineno": 681,
+          "end_lineno": 683
         },
         {
           "name": "health",
@@ -2134,8 +2168,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 673,
-          "end_lineno": 674
+          "lineno": 687,
+          "end_lineno": 688
         }
       ],
       "constants": [
@@ -2245,7 +2279,7 @@
       "stats": {
         "classes": 1,
         "dataclasses": 0,
-        "functions": 31,
+        "functions": 32,
         "methods": 2,
         "constants": 17
       }

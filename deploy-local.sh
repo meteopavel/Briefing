@@ -199,6 +199,21 @@ else
     echo "✅ Миграция секций: уже в ref/ques, пропуск."
 fi
 
+# Миграция: флаг placement_approved на todos. Идемпотентна — повторные прогоны
+# no-op. Все существующие строки получают FALSE (DEFAULT) — это намеренно: старый
+# бэклог попадает в первый проход ревью размещения (см. скилл /skill todo).
+HAS_PA_COL=\$(docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -sN \
+    -e "SELECT COUNT(*) FROM information_schema.columns
+        WHERE table_schema='\$MYSQL_DB' AND table_name='todos' AND column_name='placement_approved'")
+if [[ "\$HAS_PA_COL" -eq 0 ]]; then
+    echo "🔁 Миграция: добавляем колонку todos.placement_approved BOOLEAN NOT NULL DEFAULT FALSE..."
+    docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -e \
+        "ALTER TABLE todos ADD COLUMN placement_approved BOOLEAN NOT NULL DEFAULT FALSE AFTER priority;"
+    echo "✅ Колонка placement_approved добавлена (существующие строки → FALSE)."
+else
+    echo "✅ Миграция: колонка placement_approved уже есть, пропуск."
+fi
+
 sudo -n systemctl restart "$DEPLOY_SERVICE"
 sudo -n systemctl status "$DEPLOY_SERVICE" --no-pager --lines=5
 echo "✅ Server deploy completed"
