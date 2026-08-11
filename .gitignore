@@ -4,10 +4,10 @@
 CLAUDE.md
 PRODUCT.md
 DESIGN.md
+/docs/
 .local_secure/
 .local_runtime/
 /secure/
-/TODO
 
 __pycache__/
 *.py[cod]
