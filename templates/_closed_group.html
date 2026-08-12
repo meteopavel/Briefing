@@ -1,0 +1,33 @@
+{% from "_issue.html" import render_issue %}
+{# Серверный фрагмент секции «Закрытые». Возвращается роутом /api/closed и
+   вставляется в #closed-issues-slot по клику на «Показать закрытые».
+   Структура повторяет прежний серверный рендер (tasks.html), чтобы свёртка >10
+   и стили работали без правок CSS. #}
+<div class="issue-group">
+    {% if closed_error %}
+    <div class="issue-group-header">
+        <span class="issue-group-title">Закрытые</span>
+    </div>
+    <div class="closed-load-error">Не удалось загрузить закрытые задачи.
+        <button class="closed-load-btn" type="button" onclick="loadClosedIssues(this)">Повторить</button>
+    </div>
+    {% elif closed %}
+    <div class="issue-group-header">
+        <span class="issue-group-title">Закрытые</span>
+        <span class="issue-group-count">{{ closed | length }}</span>
+    </div>
+    <div class="issue-list">
+        {% for issue in closed %}
+        <div class="closed-issue-wrap{% if loop.index > 10 %} closed-hidden{% endif %}">{{ render_issue(issue, redmine_url, show_status=False) }}</div>
+        {% endfor %}
+    </div>
+    {% if closed | length > 10 %}
+    <button class="closed-show-more" type="button" onclick="toggleClosedIssues(this)">Показать все · {{ closed | length }}</button>
+    {% endif %}
+    {% else %}
+    <div class="issue-group-header">
+        <span class="issue-group-title">Закрытые</span>
+    </div>
+    <div class="closed-empty">Нет закрытых задач</div>
+    {% endif %}
+</div>

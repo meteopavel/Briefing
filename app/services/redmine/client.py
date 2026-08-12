@@ -20,6 +20,12 @@ from app.config import REDMINE_API_KEY, REDMINE_REVIEW_STATUS_IDS, REDMINE_STAGE
 _spent_cache: dict = {}
 _SPENT_CACHE_TTL = 300  # 5 минут
 
+# Кэш закрытых задач: полный список дорогой (растёт с историей — батчи по 100),
+# поэтому кэшируем результат и сбрасываем по TTL. Греется по клику на «Показать
+# закрытые», а не при каждом открытии страницы.
+_closed_cache: dict = {}
+_CLOSED_CACHE_TTL = 300  # 5 минут
+
 
 class RedmineClient:
     """
@@ -117,8 +123,13 @@ class RedmineClient:
 
     @staticmethod
     def fetch_passive_issues() -> dict:
-        """Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь."""
-        # 1. Получаем все задачи, над которыми работал пользователь
+        """Задачи на пассивных статусах (ревью/stage/prod), над которыми работал пользователь.
+
+        Закрытые отсюда убраны — их выборка дорогая (батчи по всем работанным id,
+        число растёт с историей) и раньше тормозила открытие страницы. Теперь они
+        грузятся отдельно по клику — см. fetch_closed_issues().
+        """
+        # Все задачи, над которыми работал пользователь (нужны для фильтра статусов)
         te_response = requests.get(
             f'{REDMINE_URL}/time_entries.json',
             headers={'X-Redmine-API-Key': REDMINE_API_KEY},
@@ -129,15 +140,15 @@ class RedmineClient:
         worked_ids = {e['issue']['id'] for e in te_response.json().get('time_entries', []) if e.get('issue')}
 
         if not worked_ids:
-            return {'review': [], 'stage': [], 'prod': [], 'closed': []}
+            return {'review': [], 'stage': [], 'prod': []}
 
-        # 2. Для ревью/stage/prod: берём задачи по статусу и фильтруем по worked_ids
+        # Ревью/stage/prod: берём задачи по статусу и фильтруем по worked_ids
         active_groups = {
             'review': REDMINE_REVIEW_STATUS_IDS,
             'stage':  REDMINE_STAGE_STATUS_IDS,
             'prod':   REDMINE_PROD_STATUS_IDS,
         }
-        candidates_by_key: dict = {'review': [], 'stage': [], 'prod': [], 'closed': []}
+        candidates_by_key: dict = {'review': [], 'stage': [], 'prod': []}
         for key, status_ids in active_groups.items():
             for status_id in status_ids:
                 response = requests.get(
@@ -149,8 +160,43 @@ class RedmineClient:
                 response.raise_for_status()
                 candidates_by_key[key].extend(response.json().get('issues', []))
 
-        # 3. Для закрытых: идём от worked_ids — батчами запрашиваем конкретные задачи
+        # Фильтрация и группировка: только работанные, не назначенные сейчас на нас,
+        # без дублей между группами
+        result: dict = {'review': [], 'stage': [], 'prod': []}
+        seen_ids: set = set()
+        for key, candidates in candidates_by_key.items():
+            for issue in candidates:
+                iid = issue['id']
+                if iid not in worked_ids or iid in seen_ids:
+                    continue
+                if str(issue.get('assigned_to', {}).get('id', '')) == str(REDMINE_USER_ID):
+                    continue
+                seen_ids.add(iid)
+                result[key].append(issue)
+        return result
+
+    @staticmethod
+    def fetch_closed_issues() -> list[dict]:
+        """Закрытые задачи, над которыми работал пользователь.
+
+        Дорогая выборка: идёт от всех работанных id и батчами по 100
+        переспрашивает у Redmine, оставляя лишь закрытые. Вызывается по клику
+        «Показать закрытые» (не при открытии страницы), результат кэшируется на
+        _CLOSED_CACHE_TTL — повторные клики мгновенны.
+        """
+        if _closed_cache and time.monotonic() - _closed_cache.get('ts', 0) < _CLOSED_CACHE_TTL:
+            return _closed_cache.get('issues', [])
+
+        # worked_ids берём из кэша трудозатрат (его греет /api/spent при загрузке
+        # страницы) — не дёргаем time_entries повторно. Пагинация там полная,
+        # поэтому набор полнее, чем limit=1000 у fetch_passive_issues.
+        RedmineClient._ensure_cache()
+        worked_ids = {int(iid) for iid in _spent_cache.get('by_issue', {}).keys()}
+        if not worked_ids:
+            return []
+
         closed_set = set(REDMINE_CLOSED_STATUS_IDS)
+        closed: list[dict] = []
         worked_ids_list = sorted(worked_ids)
         for i in range(0, len(worked_ids_list), 100):
             batch = worked_ids_list[i:i + 100]
@@ -163,23 +209,12 @@ class RedmineClient:
             response.raise_for_status()
             for issue in response.json().get('issues', []):
                 if issue['status']['id'] in closed_set:
-                    candidates_by_key['closed'].append(issue)
+                    closed.append(issue)
 
-        # 4. Фильтрация и группировка
-        result: dict = {'review': [], 'stage': [], 'prod': [], 'closed': []}
-        seen_ids: set = set()
-        for key, candidates in candidates_by_key.items():
-            for issue in candidates:
-                iid = issue['id']
-                if iid not in worked_ids or iid in seen_ids:
-                    continue
-                if key != 'closed' and str(issue.get('assigned_to', {}).get('id', '')) == str(REDMINE_USER_ID):
-                    continue
-                seen_ids.add(iid)
-                result[key].append(issue)
-
-        result['closed'].sort(key=lambda x: x.get('updated_on', ''), reverse=True)
-        return result
+        closed.sort(key=lambda x: x.get('updated_on', ''), reverse=True)
+        _closed_cache['issues'] = closed
+        _closed_cache['ts'] = time.monotonic()
+        return closed
 
     @staticmethod
     def _fetch_and_cache() -> None:

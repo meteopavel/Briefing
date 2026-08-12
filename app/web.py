@@ -303,13 +303,40 @@ def index(request: Request):
         error = None
     except Exception as e:
         issues = []; groups = []; daily_summary = []
-        passive = {'review': [], 'stage': [], 'prod': [], 'closed': []}
+        passive = {'review': [], 'stage': [], 'prod': []}
         error = str(e)
     return templates.TemplateResponse(
         request=request,
         name='tasks.html',
         context={'title': 'Briefing', 'active_tab': 'tasks', 'issues': issues, 'groups': groups, 'passive': passive, 'error': error, 'redmine_url': REDMINE_URL, 'issues_count': len(issues), 'daily_summary': daily_summary},
     )
+
+
+@app.get('/api/closed')
+def api_closed(request: Request):
+    """Закрытые задачи (lazy) — рендерит фрагмент HTML секции «Закрытые».
+
+    Грузится по клику «Показать закрытые», а не при открытии страницы: выборка
+    дорогая (батчи по всем работанным id), поэтому вынесена из GET /. Результат
+    кэшируется в RedmineClient._closed_cache на 5 минут.
+    """
+    try:
+        closed = RedmineClient.fetch_closed_issues()
+        for issue in closed:
+            issue['_desc_html'] = _render(issue.get('description'))
+            _enrich(issue)
+        return templates.TemplateResponse(
+            request=request,
+            name='_closed_group.html',
+            context={'closed': closed, 'redmine_url': REDMINE_URL},
+        )
+    except Exception:
+        # Не роняем страницу — фронт покажет кнопку повтора
+        return templates.TemplateResponse(
+            request=request,
+            name='_closed_group.html',
+            context={'closed': [], 'redmine_url': REDMINE_URL, 'closed_error': True},
+        )
 
 
 @app.get('/api/spent')

@@ -933,6 +933,28 @@ blockquote.redmine-quote {
 }
 .closed-show-more:hover { color: var(--amber); border-color: var(--amber-dim); }
 
+/* Lazy-загрузка закрытых задач (bug.2): кнопка «Показать закрытые» и состояния
+   слота. Визуально — тот же пунктирный контрол, что .closed-show-more. */
+.closed-load-wrap { margin-top: 8px; }
+.closed-load-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    min-height: var(--tap);
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    transition: color var(--transition), border-color var(--transition);
+}
+.closed-load-btn:hover:not(:disabled) { color: var(--amber); border-color: var(--amber-dim); }
+.closed-load-btn:disabled { cursor: default; opacity: 0.7; }
+.closed-empty { padding: 10px; color: var(--muted); font-family: var(--font-mono); font-size: var(--fs-sm); }
+.closed-load-error { padding: 10px; color: var(--muted); font-family: var(--font-mono); font-size: var(--fs-sm); }
+
 /* Мобила: метаданные переходят в отдельные строки вместо сжатия в одну */
 @media (max-width: 640px) {
     .issue-header {

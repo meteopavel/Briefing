@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-11T13:07:41.613910+00:00",
+  "generated_at": "2026-08-12T15:06:46.818966+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -19,9 +19,9 @@
     "modules": 21,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 121,
-    "methods": 16,
-    "constants": 62
+    "functions": 122,
+    "methods": 17,
+    "constants": 63
   },
   "modules": [
     {
@@ -1091,8 +1091,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 30,
-              "end_lineno": 44
+              "lineno": 36,
+              "end_lineno": 50
             },
             {
               "name": "fetch_issue_subjects",
@@ -1103,8 +1103,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 48,
-              "end_lineno": 68
+              "lineno": 54,
+              "end_lineno": 74
             },
             {
               "name": "fetch_issue_with_journals",
@@ -1115,8 +1115,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 72,
-              "end_lineno": 84
+              "lineno": 78,
+              "end_lineno": 90
             },
             {
               "name": "fetch_issue",
@@ -1127,8 +1127,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 88,
-              "end_lineno": 98
+              "lineno": 94,
+              "end_lineno": 104
             },
             {
               "name": "fetch_my_issues",
@@ -1139,20 +1139,32 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 101,
-              "end_lineno": 116
+              "lineno": 107,
+              "end_lineno": 122
             },
             {
               "name": "fetch_passive_issues",
               "signature": "fetch_passive_issues() -> dict",
-              "docstring": "Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь.",
-              "summary": "Задачи на passive-статусах (ревью/stage/prod/закрытые), над которыми работал пользователь.",
+              "docstring": "Задачи на пассивных статусах (ревью/stage/prod), над которыми работал пользователь.\n\nЗакрытые отсюда убраны — их выборка дорогая (батчи по всем работанным id,\nчисло растёт с историей) и раньше тормозила открытие страницы. Теперь они\nгрузятся отдельно по клику — см. fetch_closed_issues().",
+              "summary": "Задачи на пассивных статусах (ревью/stage/prod), над которыми работал пользователь.",
               "kind": "method",
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 119,
-              "end_lineno": 182
+              "lineno": 125,
+              "end_lineno": 176
+            },
+            {
+              "name": "fetch_closed_issues",
+              "signature": "fetch_closed_issues() -> list[dict]",
+              "docstring": "Закрытые задачи, над которыми работал пользователь.\n\nДорогая выборка: идёт от всех работанных id и батчами по 100\nпереспрашивает у Redmine, оставляя лишь закрытые. Вызывается по клику\n«Показать закрытые» (не при открытии страницы), результат кэшируется на\n_CLOSED_CACHE_TTL — повторные клики мгновенны.",
+              "summary": "Закрытые задачи, над которыми работал пользователь.",
+              "kind": "method",
+              "decorators": [
+                "staticmethod"
+              ],
+              "lineno": 179,
+              "end_lineno": 217
             },
             {
               "name": "_fetch_and_cache",
@@ -1163,8 +1175,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 185,
-              "end_lineno": 223
+              "lineno": 220,
+              "end_lineno": 258
             },
             {
               "name": "_ensure_cache",
@@ -1175,8 +1187,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 226,
-              "end_lineno": 228
+              "lineno": 261,
+              "end_lineno": 263
             },
             {
               "name": "fetch_my_spent_hours",
@@ -1187,8 +1199,8 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 231,
-              "end_lineno": 237
+              "lineno": 266,
+              "end_lineno": 272
             },
             {
               "name": "fetch_daily_summary",
@@ -1199,12 +1211,12 @@
               "decorators": [
                 "staticmethod"
               ],
-              "lineno": 240,
-              "end_lineno": 271
+              "lineno": 275,
+              "end_lineno": 306
             }
           ],
-          "lineno": 24,
-          "end_lineno": 271
+          "lineno": 30,
+          "end_lineno": 306
         }
       ],
       "functions": [],
@@ -1214,14 +1226,20 @@
           "annotation": null,
           "value_repr": "300",
           "lineno": 21
+        },
+        {
+          "name": "_CLOSED_CACHE_TTL",
+          "annotation": null,
+          "value_repr": "300",
+          "lineno": 27
         }
       ],
       "stats": {
         "classes": 1,
         "dataclasses": 0,
         "functions": 0,
-        "methods": 10,
-        "constants": 1
+        "methods": 11,
+        "constants": 2
       }
     },
     {
@@ -1938,6 +1956,18 @@
           "end_lineno": 312
         },
         {
+          "name": "api_closed",
+          "signature": "api_closed(request: Request)",
+          "docstring": "Закрытые задачи (lazy) — рендерит фрагмент HTML секции «Закрытые».\n\nГрузится по клику «Показать закрытые», а не при открытии страницы: выборка\nдорогая (батчи по всем работанным id), поэтому вынесена из GET /. Результат\nкэшируется в RedmineClient._closed_cache на 5 минут.",
+          "summary": "Закрытые задачи (lazy) — рендерит фрагмент HTML секции «Закрытые».",
+          "kind": "function",
+          "decorators": [
+            "app.get('/api/closed')"
+          ],
+          "lineno": 316,
+          "end_lineno": 339
+        },
+        {
           "name": "api_spent",
           "signature": "api_spent()",
           "docstring": null,
@@ -1946,8 +1976,8 @@
           "decorators": [
             "app.get('/api/spent')"
           ],
-          "lineno": 316,
-          "end_lineno": 326
+          "lineno": 343,
+          "end_lineno": 353
         },
         {
           "name": "api_mrs",
@@ -1958,8 +1988,8 @@
           "decorators": [
             "app.get('/api/mrs')"
           ],
-          "lineno": 330,
-          "end_lineno": 342
+          "lineno": 357,
+          "end_lineno": 369
         },
         {
           "name": "issue_by_id",
@@ -1970,8 +2000,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 346,
-          "end_lineno": 367
+          "lineno": 373,
+          "end_lineno": 394
         },
         {
           "name": "issue_journals",
@@ -1982,8 +2012,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 371,
-          "end_lineno": 400
+          "lineno": 398,
+          "end_lineno": 427
         },
         {
           "name": "attachment_thumbnail",
@@ -1994,8 +2024,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 404,
-          "end_lineno": 416
+          "lineno": 431,
+          "end_lineno": 443
         },
         {
           "name": "attachment_download",
@@ -2006,8 +2036,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 420,
-          "end_lineno": 434
+          "lineno": 447,
+          "end_lineno": 461
         },
         {
           "name": "_get_redmine_meta",
@@ -2016,8 +2046,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 456,
-          "end_lineno": 479
+          "lineno": 483,
+          "end_lineno": 506
         },
         {
           "name": "_resolve_attr",
@@ -2026,8 +2056,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 482,
-          "end_lineno": 507
+          "lineno": 509,
+          "end_lineno": 534
         },
         {
           "name": "_build_attr_changes",
@@ -2036,8 +2066,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 510,
-          "end_lineno": 520
+          "lineno": 537,
+          "end_lineno": 547
         },
         {
           "name": "avatar",
@@ -2048,8 +2078,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 524,
-          "end_lineno": 544
+          "lineno": 551,
+          "end_lineno": 571
         },
         {
           "name": "projects_index",
@@ -2060,8 +2090,8 @@
           "decorators": [
             "app.get('/projects')"
           ],
-          "lineno": 548,
-          "end_lineno": 559
+          "lineno": 575,
+          "end_lineno": 586
         },
         {
           "name": "project_detail",
@@ -2072,8 +2102,8 @@
           "decorators": [
             "app.get('/projects/{slug}')"
           ],
-          "lineno": 563,
-          "end_lineno": 587
+          "lineno": 590,
+          "end_lineno": 614
         },
         {
           "name": "create_project_todo",
@@ -2084,8 +2114,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos')"
           ],
-          "lineno": 591,
-          "end_lineno": 607
+          "lineno": 618,
+          "end_lineno": 634
         },
         {
           "name": "update_todo_status",
@@ -2096,8 +2126,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/status')"
           ],
-          "lineno": 611,
-          "end_lineno": 620
+          "lineno": 638,
+          "end_lineno": 647
         },
         {
           "name": "update_todo_priority",
@@ -2108,8 +2138,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
           ],
-          "lineno": 624,
-          "end_lineno": 632
+          "lineno": 651,
+          "end_lineno": 659
         },
         {
           "name": "add_todo_subitem",
@@ -2120,8 +2150,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
           ],
-          "lineno": 636,
-          "end_lineno": 645
+          "lineno": 663,
+          "end_lineno": 672
         },
         {
           "name": "edit_project_todo",
@@ -2132,8 +2162,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
           ],
-          "lineno": 649,
-          "end_lineno": 667
+          "lineno": 676,
+          "end_lineno": 694
         },
         {
           "name": "set_todo_placement_approved",
@@ -2144,8 +2174,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/placement-approved')"
           ],
-          "lineno": 671,
-          "end_lineno": 677
+          "lineno": 698,
+          "end_lineno": 704
         },
         {
           "name": "delete_project_todo",
@@ -2156,8 +2186,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
           ],
-          "lineno": 681,
-          "end_lineno": 683
+          "lineno": 708,
+          "end_lineno": 710
         },
         {
           "name": "health",
@@ -2168,8 +2198,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 687,
-          "end_lineno": 688
+          "lineno": 714,
+          "end_lineno": 715
         }
       ],
       "constants": [
@@ -2273,13 +2303,13 @@
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 440
+          "lineno": 467
         }
       ],
       "stats": {
         "classes": 1,
         "dataclasses": 0,
-        "functions": 32,
+        "functions": 33,
         "methods": 2,
         "constants": 17
       }
