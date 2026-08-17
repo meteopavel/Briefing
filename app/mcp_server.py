@@ -42,10 +42,24 @@ def list_projects() -> list[dict]:
 
 
 @mcp.tool()
-def list_todos(project_slug: str) -> list[dict]:
-    """Все задачи проекта с подпунктами (без группировки/сортировки)."""
+def list_todos(project_slug: str, section: str | None = None, include_closed: bool = True) -> list[dict]:
+    """
+    Задачи проекта с подпунктами (без группировки/сортировки).
+
+    section (опционально): bug|feat|ref|ques — только эта секция.
+    include_closed=False: отбросить done/wontdo (для «что в тудушке?»).
+    Без параметров — все задачи проекта. Для больших проектов фильтруй:
+    полный список растёт с историей и может не влезть в лимит ответа тула.
+    """
+    if section is not None and section not in projects_repo.SECTIONS:
+        raise ValueError(f'Некорректная секция: {section} (ожидается одна из {projects_repo.SECTIONS})')
     project = _project_or_raise(project_slug)
-    return [_serialize_todo(t) for t in projects_repo.get_todos(project['id'])]
+    todos = projects_repo.get_todos(project['id'])
+    if section is not None:
+        todos = [t for t in todos if t['section'] == section]
+    if not include_closed:
+        todos = [t for t in todos if t['status'] not in ('done', 'wontdo')]
+    return [_serialize_todo(t) for t in todos]
 
 
 @mcp.tool()

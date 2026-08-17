@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-12T15:06:46.818966+00:00",
+  "generated_at": "2026-08-17T11:57:58.607243+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -464,15 +464,15 @@
         },
         {
           "name": "list_todos",
-          "signature": "list_todos(project_slug: str) -> list[dict]",
-          "docstring": "Все задачи проекта с подпунктами (без группировки/сортировки).",
-          "summary": "Все задачи проекта с подпунктами (без группировки/сортировки).",
+          "signature": "list_todos(project_slug: str, section: str | None = None, include_closed: bool = True) -> list[dict]",
+          "docstring": "Задачи проекта с подпунктами (без группировки/сортировки).\n\nsection (опционально): bug|feat|ref|ques — только эта секция.\ninclude_closed=False: отбросить done/wontdo (для «что в тудушке?»).\nБез параметров — все задачи проекта. Для больших проектов фильтруй:\nполный список растёт с историей и может не влезть в лимит ответа тула.",
+          "summary": "Задачи проекта с подпунктами (без группировки/сортировки).",
           "kind": "function",
           "decorators": [
             "mcp.tool()"
           ],
           "lineno": 45,
-          "end_lineno": 48
+          "end_lineno": 62
         },
         {
           "name": "create_todo",
@@ -483,8 +483,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 52,
-          "end_lineno": 66
+          "lineno": 66,
+          "end_lineno": 80
         },
         {
           "name": "update_todo_status",
@@ -495,8 +495,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 70,
-          "end_lineno": 79
+          "lineno": 84,
+          "end_lineno": 93
         },
         {
           "name": "update_todo_priority",
@@ -507,8 +507,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 83,
-          "end_lineno": 87
+          "lineno": 97,
+          "end_lineno": 101
         },
         {
           "name": "set_todo_placement_approved",
@@ -519,8 +519,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 91,
-          "end_lineno": 101
+          "lineno": 105,
+          "end_lineno": 115
         },
         {
           "name": "add_todo_subitem",
@@ -531,8 +531,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 105,
-          "end_lineno": 111
+          "lineno": 119,
+          "end_lineno": 125
         },
         {
           "name": "edit_todo",
@@ -543,8 +543,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 115,
-          "end_lineno": 140
+          "lineno": 129,
+          "end_lineno": 154
         },
         {
           "name": "delete_todo",
@@ -555,8 +555,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 144,
-          "end_lineno": 146
+          "lineno": 158,
+          "end_lineno": 160
         },
         {
           "name": "create_asgi_app",
@@ -565,8 +565,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 149,
-          "end_lineno": 150
+          "lineno": 163,
+          "end_lineno": 164
         }
       ],
       "constants": [],

@@ -143,8 +143,13 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 - `list_projects() -> list[dict]`
   Список проектов, заведённых в Briefing (slug, title, contour).
 
-- `list_todos(project_slug: str) -> list[dict]`
-  Все задачи проекта с подпунктами (без группировки/сортировки).
+- `list_todos(project_slug: str, section: str | None = None, include_closed: bool = True) -> list[dict]`
+  Задачи проекта с подпунктами (без группировки/сортировки).
+  
+  section (опционально): bug|feat|ref|ques — только эта секция.
+  include_closed=False: отбросить done/wontdo (для «что в тудушке?»).
+  Без параметров — все задачи проекта. Для больших проектов фильтруй:
+  полный список растёт с историей и может не влезть в лимит ответа тула.
 
 - `create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int`
   Создаёт задачу со следующим свободным номером в указанной секции.
