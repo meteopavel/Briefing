@@ -44,5 +44,6 @@ INSERT INTO projects (slug, title, local_path, contour) VALUES
     ('django_edu_multisite', 'Django EDU Multisite (VOA)', '/Users/Work/PycharmProjects/Django_EDU_Multisite', 'public'),
     ('home_router_panel', 'Home Router Panel', '/Users/Work/PycharmProjects/Home_Router_Panel', 'personal'),
     ('llm_server', 'LLM Server', '/Users/Work/PycharmProjects/LLM_Server', 'personal'),
-    ('python_practice_hub', 'Python Practice Hub — веб-грейдер кода', '/Users/Work/PycharmProjects/Python_Practice_Hub', 'public')
+    ('python_practice_hub', 'Python Practice Hub — веб-грейдер кода', '/Users/Work/PycharmProjects/Python_Practice_Hub', 'public'),
+    ('home_chores', 'Домашние дела', NULL, 'personal')
 ON DUPLICATE KEY UPDATE title = VALUES(title);
