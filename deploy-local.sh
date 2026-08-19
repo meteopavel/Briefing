@@ -214,6 +214,12 @@ else
     echo "✅ Миграция: колонка placement_approved уже есть, пропуск."
 fi
 
+# Миграция: прогон сида проектов (schema.sql идемпотентен: CREATE TABLE IF NOT
+# EXISTS + INSERT ... ON DUPLICATE KEY UPDATE) — держит список проектов в БД
+# соответствующим сиду. Через контейнер edu_mysql, на хосте нет mysql-клиента.
+docker exec -i edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" < app/services/projects/schema.sql
+echo "✅ Сид проектов применён (schema.sql)."
+
 sudo -n systemctl restart "$DEPLOY_SERVICE"
 sudo -n systemctl status "$DEPLOY_SERVICE" --no-pager --lines=5
 echo "✅ Server deploy completed"
