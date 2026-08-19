@@ -45,5 +45,5 @@ INSERT INTO projects (slug, title, local_path, contour) VALUES
     ('home_router_panel', 'Home Router Panel', '/Users/Work/PycharmProjects/Home_Router_Panel', 'personal'),
     ('llm_server', 'LLM Server', '/Users/Work/PycharmProjects/LLM_Server', 'personal'),
     ('python_practice_hub', 'Python Practice Hub — веб-грейдер кода', '/Users/Work/PycharmProjects/Python_Practice_Hub', 'public'),
-    ('home_chores', 'Домашние дела', NULL, 'personal')
-ON DUPLICATE KEY UPDATE title = VALUES(title);
+    ('home_chores', 'Домашние дела', '/Users/Work/PycharmProjects/home_chores', 'personal')
+ON DUPLICATE KEY UPDATE title = VALUES(title), local_path = VALUES(local_path);
