@@ -106,6 +106,7 @@
             <button type="button" class="dd-trigger dd-trigger-project" onclick="ddToggle(this)">
                 <svg class="icon"><use href="#i-inbox"/></svg>
                 <span>{% if selected %}{{ selected.title }}{% else %}Выбери проект…{% endif %}</span>
+                {% if selected and selected.is_hub %}<span class="badge badge-hub">узловой</span>{% endif %}
                 <svg class="icon dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="dd-menu">
@@ -113,6 +114,7 @@
                 <div class="dd-item{% if selected and selected.slug == p.slug %} dd-item-active{% endif %}"
                      data-value="{{ p.slug }}" data-nav="/projects/{{ p.slug }}" onclick="ddSelect(this)">
                     <span>{{ p.title }}</span>
+                    {% if p.is_hub %}<span class="badge badge-hub">узловой</span>{% endif %}
                     <svg class="icon dd-item-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 {% endfor %}
@@ -255,6 +257,18 @@ function ddSelect(item) {
 <script>
 const CURRENT_PROJECT_SLUG = {{ selected.slug | tojson }};
 
+// bug.3: reload после создания/сохранения задачи прыгал в начало страницы.
+// Сохраняем скролл перед перезагрузкой и восстанавливаем сразу после неё.
+function reloadKeepScroll() {
+    sessionStorage.setItem('todoScrollY', String(window.scrollY));
+    location.reload();
+}
+const _savedScrollY = sessionStorage.getItem('todoScrollY');
+if (_savedScrollY !== null) {
+    sessionStorage.removeItem('todoScrollY');
+    window.scrollTo(0, parseInt(_savedScrollY, 10) || 0);
+}
+
 function toggleClosedTodos(btn) {
     const group = btn.closest('.todo-group');
     group.querySelectorAll('.closed-hidden').forEach(el => el.classList.remove('closed-hidden'));
@@ -315,7 +329,7 @@ function submitNewTodo(event) {
     const priority = dd ? (dd.dataset.value || 'medium') : 'medium';
     if (!title) return false;
     apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos`, {section, priority, title, subitems: []})
-        .then(() => location.reload())
+        .then(() => reloadKeepScroll())
         .catch(e => alert(e.message));
     return false;
 }
@@ -351,8 +365,8 @@ function submitEdit(event, todoId) {
     // отправляем её текущее значение из карточки, чтобы сервер не упал на валидации.
     const section = _todoEl(todoId).querySelector('.dd[data-name^="section-"]')?.dataset.value || '';
     apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems})
-        .then(() => location.reload())
-        .catch(e => { alert(e.message); location.reload(); });
+        .then(() => reloadKeepScroll())
+        .catch(e => { alert(e.message); reloadKeepScroll(); });
     return false;
 }
 

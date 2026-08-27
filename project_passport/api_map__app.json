@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-27T06:28:33.818483+00:00",
+  "generated_at": "2026-08-27T06:32:45.434187+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -453,8 +453,8 @@
         {
           "name": "list_projects",
           "signature": "list_projects() -> list[dict]",
-          "docstring": "Список проектов, заведённых в Briefing (slug, title, contour).",
-          "summary": "Список проектов, заведённых в Briefing (slug, title, contour).",
+          "docstring": "Список проектов, заведённых в Briefing (slug, title, contour, is_hub); хаб первым.",
+          "summary": "Список проектов, заведённых в Briefing (slug, title, contour, is_hub); хаб первым.",
           "kind": "function",
           "decorators": [
             "mcp.tool()"

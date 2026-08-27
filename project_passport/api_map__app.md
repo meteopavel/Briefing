@@ -141,7 +141,7 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   Нет докстринга.
 
 - `list_projects() -> list[dict]`
-  Список проектов, заведённых в Briefing (slug, title, contour).
+  Список проектов, заведённых в Briefing (slug, title, contour, is_hub); хаб первым.
 
 - `list_todos(project_slug: str, section: str | None = None, include_closed: bool = True) -> list[dict]`
   Задачи проекта с подпунктами (без группировки/сортировки).

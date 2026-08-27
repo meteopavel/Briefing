@@ -37,7 +37,7 @@ def _serialize_todo(todo: dict) -> dict:
 
 @mcp.tool()
 def list_projects() -> list[dict]:
-    """Список проектов, заведённых в Briefing (slug, title, contour)."""
+    """Список проектов, заведённых в Briefing (slug, title, contour, is_hub); хаб первым."""
     return projects_repo.list_projects()
 
 

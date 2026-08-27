@@ -33,14 +33,14 @@ PRIORITY_META = {
 def list_projects() -> list[dict]:
     with get_connection() as conn:
         with conn.cursor() as cursor:
-            cursor.execute('SELECT id, slug, title, local_path, contour FROM projects ORDER BY title')
+            cursor.execute('SELECT id, slug, title, local_path, contour, is_hub FROM projects ORDER BY is_hub DESC, title')
             return cursor.fetchall()
 
 
 def get_project_by_slug(slug: str) -> dict | None:
     with get_connection() as conn:
         with conn.cursor() as cursor:
-            cursor.execute('SELECT id, slug, title, local_path, contour FROM projects WHERE slug = %s', (slug,))
+            cursor.execute('SELECT id, slug, title, local_path, contour, is_hub FROM projects WHERE slug = %s', (slug,))
             return cursor.fetchone()
 
 
