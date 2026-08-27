@@ -32,6 +32,7 @@
     --blue: var(--cyan);
     --danger: var(--red);
     --prio-low: #55559a;
+    --prio-critical: #ff5fd2;
     --sec-bug: var(--red);
     --sec-feat: var(--green);
     --sec-ref: var(--cyan);

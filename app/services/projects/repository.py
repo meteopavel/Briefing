@@ -13,7 +13,7 @@ SECTION_TITLES = {
     'ques': 'Вопросы / Исследовать',
 }
 STATUSES = ['open', 'in_progress', 'done', 'wontdo']
-PRIORITIES = ['high', 'medium', 'low']
+PRIORITIES = ['critical', 'high', 'medium', 'low']
 
 # Единый источник правды для UI: лейбл + SVG-иконка статуса/приоритета.
 STATUS_META = {
@@ -23,6 +23,7 @@ STATUS_META = {
     'wontdo':      {'label': 'Отклонено', 'icon': 'i-status-wontdo',  'icon_class': 'icon-status-wontdo'},
 }
 PRIORITY_META = {
+    'critical': {'label': 'Критический', 'icon': 'i-prio', 'icon_class': 'icon-prio-critical'},
     'high':   {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'},
     'medium': {'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'},
     'low':    {'label': 'Низкий',  'icon': 'i-prio', 'icon_class': 'icon-prio-low'},

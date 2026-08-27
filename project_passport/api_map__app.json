@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-19T07:14:03.961686+00:00",
+  "generated_at": "2026-08-27T06:28:33.818483+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -477,7 +477,7 @@
         {
           "name": "create_todo",
           "signature": "create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int",
-          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|ref|ques. priority: high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nВозвращает id созданной задачи.",
+          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|ref|ques. priority: critical|high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nВозвращает id созданной задачи.",
           "summary": "Создаёт задачу со следующим свободным номером в указанной секции.",
           "kind": "function",
           "decorators": [
@@ -501,8 +501,8 @@
         {
           "name": "update_todo_priority",
           "signature": "update_todo_priority(todo_id: int, priority: str)",
-          "docstring": "Меняет приоритет задачи. priority: high|medium|low.",
-          "summary": "Меняет приоритет задачи. priority: high|medium|low.",
+          "docstring": "Меняет приоритет задачи. priority: critical|high|medium|low.",
+          "summary": "Меняет приоритет задачи. priority: critical|high|medium|low.",
           "kind": "function",
           "decorators": [
             "mcp.tool()"
@@ -907,8 +907,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 32,
-          "end_lineno": 36
+          "lineno": 33,
+          "end_lineno": 37
         },
         {
           "name": "get_project_by_slug",
@@ -917,8 +917,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 39,
-          "end_lineno": 43
+          "lineno": 40,
+          "end_lineno": 44
         },
         {
           "name": "get_todos",
@@ -927,8 +927,8 @@
           "summary": "Возвращает все задачи проекта с подпунктами, без группировки/сортировки",
           "kind": "function",
           "decorators": [],
-          "lineno": 46,
-          "end_lineno": 72
+          "lineno": 47,
+          "end_lineno": 73
         },
         {
           "name": "_next_number",
@@ -937,8 +937,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 75,
-          "end_lineno": 80
+          "lineno": 76,
+          "end_lineno": 81
         },
         {
           "name": "import_todo",
@@ -947,8 +947,8 @@
           "summary": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,",
           "kind": "function",
           "decorators": [],
-          "lineno": 83,
-          "end_lineno": 111
+          "lineno": 84,
+          "end_lineno": 112
         },
         {
           "name": "create_todo",
@@ -957,8 +957,8 @@
           "summary": "Создаёт задачу со следующим свободным номером в секции.",
           "kind": "function",
           "decorators": [],
-          "lineno": 114,
-          "end_lineno": 133
+          "lineno": 115,
+          "end_lineno": 134
         },
         {
           "name": "update_status",
@@ -967,8 +967,8 @@
           "summary": "Меняет статус. При переходе в done/wontdo заметка обязательна —",
           "kind": "function",
           "decorators": [],
-          "lineno": 136,
-          "end_lineno": 146
+          "lineno": 137,
+          "end_lineno": 147
         },
         {
           "name": "update_priority",
@@ -977,8 +977,8 @@
           "summary": "Меняет приоритет. reset_approved=True (ручное изменение через веб) дополнительно",
           "kind": "function",
           "decorators": [],
-          "lineno": 149,
-          "end_lineno": 161
+          "lineno": 150,
+          "end_lineno": 162
         },
         {
           "name": "add_subitem",
@@ -987,8 +987,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 164,
-          "end_lineno": 175
+          "lineno": 165,
+          "end_lineno": 176
         },
         {
           "name": "edit_todo",
@@ -997,8 +997,8 @@
           "summary": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной",
           "kind": "function",
           "decorators": [],
-          "lineno": 178,
-          "end_lineno": 230
+          "lineno": 179,
+          "end_lineno": 231
         },
         {
           "name": "update_placement_approved",
@@ -1007,8 +1007,8 @@
           "summary": "Ставит/снимает флаг «размещение (секция+приоритет) утверждено».",
           "kind": "function",
           "decorators": [],
-          "lineno": 233,
-          "end_lineno": 237
+          "lineno": 234,
+          "end_lineno": 238
         },
         {
           "name": "delete_todo",
@@ -1017,8 +1017,8 @@
           "summary": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
           "kind": "function",
           "decorators": [],
-          "lineno": 240,
-          "end_lineno": 244
+          "lineno": 241,
+          "end_lineno": 245
         }
       ],
       "constants": [
@@ -1043,7 +1043,7 @@
         {
           "name": "PRIORITIES",
           "annotation": null,
-          "value_repr": "['high', 'medium', 'low']",
+          "value_repr": "['critical', 'high', 'medium', 'low']",
           "lineno": 16
         },
         {
@@ -1055,7 +1055,7 @@
         {
           "name": "PRIORITY_META",
           "annotation": null,
-          "value_repr": "{'high': {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'}, 'medium': {'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'}, 'low': {'label': 'Низкий', 'icon': 'i-prio', 'icon_class': 'icon-prio-low'}}",
+          "value_repr": "{'critical': {'label': 'Критический', 'icon': 'i-prio', 'icon_class': 'icon-prio-critical'}, 'high': {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'}, 'medium': {'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'}, 'low': {'label': 'Низкий', 'icon': 'i-prio', 'icon_class': 'icon-prio-low'}}",
           "lineno": 25
         }
       ],
@@ -2272,7 +2272,7 @@
         {
           "name": "_TODO_PRIORITY_ORDER",
           "annotation": null,
-          "value_repr": "{'high': 0, 'medium': 1, 'low': 2}",
+          "value_repr": "{'critical': 0, 'high': 1, 'medium': 2, 'low': 3}",
           "lineno": 221
         },
         {

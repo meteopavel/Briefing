@@ -177,48 +177,13 @@ source .venv/bin/activate
 python -m pip install --upgrade pip -q
 python -m pip install -r requirements.txt -q
 
-# Миграция: переименование секций refactor→ref, q→ques. Идемпотентна —
-# повторные прогоны no-op. Гонится через контейнер edu_mysql (на хосте нет mysql-клиента).
-# Должна пройти ДО restart сервиса, иначе _next_number словит UNIQUE-конфликт.
+# Миграции БД + сид проектов: migrations/apply.sh применяет версионируемые
+# миграции (учёт — таблица schema_migrations) и всегда прогоняет идемпотентный
+# сид. Гоняется через контейнер edu_mysql (на хосте нет mysql-клиента).
+# Должно пройти ДО restart сервиса — иначе старый код словит новые
+# колонки/ENUM (вплоть до UNIQUE-конфликтов в _next_number).
 set -a; . .env; set +a
-MYSQL_DB="\${MYSQL_DATABASE:-briefing}"
-MYSQL_USER_V="\${MYSQL_USER}"
-MYSQL_PASS="\${MYSQL_PASSWORD}"
-LEGACY_COUNT=\$(docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -sN \
-    -e "SELECT COUNT(*) FROM todos WHERE section IN ('refactor','q')")
-if [[ "\$LEGACY_COUNT" -gt 0 ]]; then
-    echo "🔁 Миграция секций: найдено \$LEGACY_COUNT строк refactor/q, бэкап + перевод в ref/ques..."
-    docker exec edu_mysql mysqldump -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" todos > /tmp/todos_pre_rename.sql
-    docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -e "
-        ALTER TABLE todos MODIFY COLUMN section ENUM('bug','feat','refactor','q','ref','ques') NOT NULL;
-        UPDATE todos SET section='ref'  WHERE section='refactor';
-        UPDATE todos SET section='ques' WHERE section='q';
-        ALTER TABLE todos MODIFY COLUMN section ENUM('bug','feat','ref','ques') NOT NULL;"
-    echo "✅ Миграция секций завершена (бэкап: /tmp/todos_pre_rename.sql на роутере)."
-else
-    echo "✅ Миграция секций: уже в ref/ques, пропуск."
-fi
-
-# Миграция: флаг placement_approved на todos. Идемпотентна — повторные прогоны
-# no-op. Все существующие строки получают FALSE (DEFAULT) — это намеренно: старый
-# бэклог попадает в первый проход ревью размещения (см. скилл /skill todo).
-HAS_PA_COL=\$(docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -sN \
-    -e "SELECT COUNT(*) FROM information_schema.columns
-        WHERE table_schema='\$MYSQL_DB' AND table_name='todos' AND column_name='placement_approved'")
-if [[ "\$HAS_PA_COL" -eq 0 ]]; then
-    echo "🔁 Миграция: добавляем колонку todos.placement_approved BOOLEAN NOT NULL DEFAULT FALSE..."
-    docker exec edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" -e \
-        "ALTER TABLE todos ADD COLUMN placement_approved BOOLEAN NOT NULL DEFAULT FALSE AFTER priority;"
-    echo "✅ Колонка placement_approved добавлена (существующие строки → FALSE)."
-else
-    echo "✅ Миграция: колонка placement_approved уже есть, пропуск."
-fi
-
-# Миграция: прогон сида проектов (schema.sql идемпотентен: CREATE TABLE IF NOT
-# EXISTS + INSERT ... ON DUPLICATE KEY UPDATE) — держит список проектов в БД
-# соответствующим сиду. Через контейнер edu_mysql, на хосте нет mysql-клиента.
-docker exec -i edu_mysql mysql -u"\$MYSQL_USER_V" -p"\$MYSQL_PASS" "\$MYSQL_DB" < app/services/projects/schema.sql
-echo "✅ Сид проектов применён (schema.sql)."
+bash migrations/apply.sh
 
 sudo -n systemctl restart "$DEPLOY_SERVICE"
 sudo -n systemctl status "$DEPLOY_SERVICE" --no-pager --lines=5

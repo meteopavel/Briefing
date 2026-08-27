@@ -153,7 +153,7 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 
 - `create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int`
   Создаёт задачу со следующим свободным номером в указанной секции.
-  section: bug|feat|ref|ques. priority: high|medium|low.
+  section: bug|feat|ref|ques. priority: critical|high|medium|low.
   subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
   Возвращает id созданной задачи.
 
@@ -162,7 +162,7 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   При переходе в done/wontdo closed_note обязателен (что сделано / что решили).
 
 - `update_todo_priority(todo_id: int, priority: str)`
-  Меняет приоритет задачи. priority: high|medium|low.
+  Меняет приоритет задачи. priority: critical|high|medium|low.
 
 - `set_todo_placement_approved(todo_id: int, approved: bool) -> None`
   Ставит/снимает флаг «размещение (секция + приоритет) утверждено».
@@ -354,9 +354,9 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
 - `SECTIONS = ['bug', 'feat', 'ref', 'ques']`
 - `SECTION_TITLES = {'bug': 'Баги', 'feat': 'Идеи / Фичи', 'ref': 'Рефакторинг / Техдолг', 'ques': 'Вопросы / Исследова…`
 - `STATUSES = ['open', 'in_progress', 'done', 'wontdo']`
-- `PRIORITIES = ['high', 'medium', 'low']`
+- `PRIORITIES = ['critical', 'high', 'medium', 'low']`
 - `STATUS_META = {'open': {'label': 'Открыта', 'icon': 'i-status-open', 'icon_class': 'icon-status-open'}, 'in_progr…`
-- `PRIORITY_META = {'high': {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'}, 'medium': {'label'…`
+- `PRIORITY_META = {'critical': {'label': 'Критический', 'icon': 'i-prio', 'icon_class': 'icon-prio-critical'}, 'high'…`
 
 Функции:
 
@@ -779,7 +779,7 @@ FastAPI web application: маршруты Briefing.
 - `_QUOTE_BLOCK_RE = re.compile('((?:^> ?.*$\\n?)+)', re.MULTILINE)`
 - `_GROUP_DEFS = [('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s …`
 - `_MR_URL_RE = re.compile('(https?://\\S+/merge_requests/(\\d+))\\s*[-–]?\\s*(stage|master)?', re.IGNORECASE)`
-- `_TODO_PRIORITY_ORDER = {'high': 0, 'medium': 1, 'low': 2}`
+- `_TODO_PRIORITY_ORDER = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3}`
 - `_TODO_STATUS_ORDER = {'in_progress': 0, 'open': 1}`
 - `_LABEL_Q_RE = re.compile('\\[Q', re.IGNORECASE)`
 - `_LABEL_AI_RE = re.compile('\\[ai\\]', re.IGNORECASE)`

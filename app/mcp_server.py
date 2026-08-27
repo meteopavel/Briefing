@@ -66,7 +66,7 @@ def list_todos(project_slug: str, section: str | None = None, include_closed: bo
 def create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int:
     """
     Создаёт задачу со следующим свободным номером в указанной секции.
-    section: bug|feat|ref|ques. priority: high|medium|low.
+    section: bug|feat|ref|ques. priority: critical|high|medium|low.
     subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
     Возвращает id созданной задачи.
     """
@@ -95,7 +95,7 @@ def update_todo_status(todo_id: int, status: str, closed_note: str | None = None
 
 @mcp.tool()
 def update_todo_priority(todo_id: int, priority: str):
-    """Меняет приоритет задачи. priority: high|medium|low."""
+    """Меняет приоритет задачи. priority: critical|high|medium|low."""
     if priority not in projects_repo.PRIORITIES:
         raise ValueError(f'Некорректный приоритет: {priority} (ожидается одна из {projects_repo.PRIORITIES})')
     projects_repo.update_priority(todo_id, priority)

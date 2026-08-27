@@ -218,7 +218,7 @@ def _group_issues(issues: list) -> list:
     return result
 
 
-_TODO_PRIORITY_ORDER = {'high': 0, 'medium': 1, 'low': 2}
+_TODO_PRIORITY_ORDER = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3}
 _TODO_STATUS_ORDER = {'in_progress': 0, 'open': 1}
 
 
@@ -233,7 +233,7 @@ def _group_todos(todos: list) -> list:
         bucket = buckets[todo['section']]['closed'] if todo['status'] in ('done', 'wontdo') else buckets[todo['section']]['open']
         bucket.append(todo)
     for bucket in buckets.values():
-        bucket['open'].sort(key=lambda t: (_TODO_PRIORITY_ORDER.get(t['priority'], 1), _TODO_STATUS_ORDER.get(t['status'], 1), t['number']))
+        bucket['open'].sort(key=lambda t: (_TODO_PRIORITY_ORDER.get(t['priority'], 2), _TODO_STATUS_ORDER.get(t['status'], 1), t['number']))
         bucket['closed'].sort(key=lambda t: t['number'])
     return [
         {'key': section, 'title': projects_repo.SECTION_TITLES[section], **buckets[section]}

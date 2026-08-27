@@ -82,6 +82,12 @@
     letter-spacing: 0.05em;
 }
 
+.badge-hub {
+    color: var(--amber);
+    border: 1px solid var(--tint-yellow-border);
+    background: var(--tint-yellow-bg);
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -1037,6 +1043,7 @@ blockquote.redmine-quote {
     padding: 10px 14px;
 }
 
+.todo-priority-critical { border-left-color: var(--prio-critical); box-shadow: inset 6px 0 12px -8px var(--prio-critical); }
 .todo-priority-high   { border-left-color: var(--red);      box-shadow: inset 6px 0 12px -8px var(--red); }
 .todo-priority-medium { border-left-color: var(--amber); }
 .todo-priority-low    { border-left-color: var(--prio-low); box-shadow: inset 6px 0 12px -8px var(--prio-low); }
@@ -1072,6 +1079,7 @@ blockquote.redmine-quote {
 }
 
 /* Свечение за ID задачи цветом её приоритета (подсветка «лампы») */
+.todo-priority-critical .todo-item-id { text-shadow: 0 0 8px rgba(255, 95, 210, 0.55); }
 .todo-priority-high   .todo-item-id { text-shadow: 0 0 8px rgba(255, 90, 73, 0.55); }
 .todo-priority-medium .todo-item-id { text-shadow: 0 0 8px rgba(255, 180, 84, 0.55); }
 .todo-priority-low    .todo-item-id { text-shadow: 0 0 8px rgba(85, 85, 154, 0.6); }
@@ -1317,6 +1325,7 @@ blockquote.redmine-quote {
 }
 
 /* Цвета иконок */
+.icon-prio-critical { color: var(--prio-critical); }
 .icon-prio-high   { color: var(--red); }
 .icon-prio-medium { color: var(--amber); }
 .icon-prio-low    { color: var(--prio-low); }

@@ -1,6 +1,9 @@
--- Схема БД "briefing" для вкладки «Проекты» (тудушки проектов).
--- Применяется вручную: mysql -h HOST -u USER -p briefing < schema.sql
--- SET NAMES обязателен — без него mysql CLI может побить кириллицу в INSERT ниже.
+-- Базовая миграция: полная схема БД "briefing" (тудушки проектов: вкладка
+-- «Проекты» + MCP-сервер briefing-todos).
+-- На существующей БД — no-op (CREATE TABLE IF NOT EXISTS), на свежей —
+-- создаёт всё с нуля. Изменения схемы дальше — только НОВЫМИ миграциями
+-- (002_*.sql и т.д.); применённые миграции не редактируются.
+-- SET NAMES обязателен — без него mysql CLI может побить кириллицу.
 
 SET NAMES utf8mb4;
 
@@ -37,13 +40,3 @@ CREATE TABLE IF NOT EXISTS todo_subitems (
     position INT NOT NULL DEFAULT 0,
     FOREIGN KEY (todo_id) REFERENCES todos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO projects (slug, title, local_path, contour) VALUES
-    ('meteopavel', 'meteopavel.space — Static Site Generator', '/Users/Work/PycharmProjects/meteopavel', 'public'),
-    ('briefing', 'Briefing', '/Users/Work/PycharmProjects/Briefing', 'personal'),
-    ('django_edu_multisite', 'Django EDU Multisite (VOA)', '/Users/Work/PycharmProjects/Django_EDU_Multisite', 'public'),
-    ('home_router_panel', 'Home Router Panel', '/Users/Work/PycharmProjects/Home_Router_Panel', 'personal'),
-    ('llm_server', 'LLM Server', '/Users/Work/PycharmProjects/LLM_Server', 'personal'),
-    ('python_practice_hub', 'Python Practice Hub — веб-грейдер кода', '/Users/Work/PycharmProjects/Python_Practice_Hub', 'public'),
-    ('home_chores', 'Домашние дела', '/Users/Work/PycharmProjects/home_chores', 'personal')
-ON DUPLICATE KEY UPDATE title = VALUES(title), local_path = VALUES(local_path);

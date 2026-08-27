@@ -46,7 +46,7 @@
         <span class="todo-item-title">{{ todo.title }}</span>
         <span class="todo-item-controls">
             {{ dd(todo.status, status_meta, ['open', 'in_progress', 'done', 'wontdo'], 'status-' ~ todo.id) }}
-            {{ dd(todo.priority, priority_meta, ['high', 'medium', 'low'], 'priority-' ~ todo.id) }}
+            {{ dd(todo.priority, priority_meta, ['critical', 'high', 'medium', 'low'], 'priority-' ~ todo.id) }}
             {{ dd(todo.section, section_meta, section_order, 'section-' ~ todo.id) }}
             <button type="button" class="todo-action-btn todo-action-approve{% if todo.placement_approved %} is-approved{% endif %}"
                     title="{% if todo.placement_approved %}Размещение утверждено — нажми, чтобы снять (вернуть в ревью){% else %}Размещение не утверждено — агент предложит ревью при следующем взятии; нажми, чтобы утвердить вручную{% endif %}"
@@ -141,7 +141,7 @@
             <span class="issue-group-count">{{ group.open | length }}</span>
             <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
                 <input type="text" name="title" class="todo-add-input" placeholder="+ новая…" required>
-                {{ dd('medium', priority_meta, ['high', 'medium', 'low'], 'new-priority-' ~ group.key) }}
+                {{ dd('medium', priority_meta, ['critical', 'high', 'medium', 'low'], 'new-priority-' ~ group.key) }}
                 <button type="submit" class="btn btn-amber">Добавить</button>
             </form>
         </div>
