@@ -28,11 +28,26 @@ def _project_or_raise(project_slug: str) -> dict:
 
 
 def _serialize_todo(todo: dict) -> dict:
-    return {
-        **todo,
-        'created_at': todo['created_at'].isoformat() if todo.get('created_at') else None,
-        'updated_at': todo['updated_at'].isoformat() if todo.get('updated_at') else None,
-    }
+    out = dict(todo)
+    # Однострочный контракт MCP: title = ru-версия, иначе en; title_alt —
+    # вторая версия (None, если её ещё не заполнили). Аналогично для подпунктов.
+    out['title'] = todo.get('title_ru') or todo.get('title_en')
+    out['title_alt'] = todo.get('title_en') if todo.get('title_ru') else todo.get('title_ru')
+    for sub in out.get('subitems', []):
+        sub['text'] = sub.get('text_ru') or sub.get('text_en')
+        sub['text_alt'] = sub.get('text_en') if sub.get('text_ru') else sub.get('text_ru')
+    out['created_at'] = todo['created_at'].isoformat() if todo.get('created_at') else None
+    out['updated_at'] = todo['updated_at'].isoformat() if todo.get('updated_at') else None
+    return out
+
+
+def _split_subitems(subitems: list[dict]) -> list[dict]:
+    """Подпункты с однострочным text → пары text_ru/text_en по языку текста."""
+    out = []
+    for sub in subitems or []:
+        text_ru, text_en = projects_repo.split_by_lang(sub.get('text') or '')
+        out.append({'kind': sub['kind'], 'text_ru': text_ru, 'text_en': text_en})
+    return out
 
 
 @mcp.tool()
@@ -68,6 +83,8 @@ def create_todo(project_slug: str, section: str, priority: str, title: str, subi
     Создаёт задачу со следующим свободным номером в указанной секции.
     section: bug|feat|ref|ques. priority: critical|high|medium|low.
     subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
+    Текст пишется в колонку своего языка (кириллица → ru, иначе → en);
+    вторую версию можно заполнить позже через веб (форма правки, поля RU/EN).
     Возвращает id созданной задачи.
     """
     project = _project_or_raise(project_slug)
@@ -77,7 +94,8 @@ def create_todo(project_slug: str, section: str, priority: str, title: str, subi
         raise ValueError(f'Некорректный приоритет: {priority} (ожидается одна из {projects_repo.PRIORITIES})')
     if not title.strip():
         raise ValueError('Текст задачи не может быть пустым')
-    return projects_repo.create_todo(project['id'], section, priority, title, subitems or [])
+    title_ru, title_en = projects_repo.split_by_lang(title)
+    return projects_repo.create_todo(project['id'], section, priority, title_ru, title_en, _split_subitems(subitems))
 
 
 @mcp.tool()
@@ -122,7 +140,8 @@ def add_todo_subitem(todo_id: int, kind: str, text: str) -> None:
         raise ValueError(f'Некорректный тип подпункта: {kind} (ожидается requirement|context)')
     if not text.strip():
         raise ValueError('Текст подпункта не может быть пустым')
-    projects_repo.add_subitem(todo_id, kind, text)
+    text_ru, text_en = projects_repo.split_by_lang(text)
+    projects_repo.add_subitem(todo_id, kind, text_ru, text_en)
 
 
 @mcp.tool()
@@ -137,9 +156,13 @@ def edit_todo(
     При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
     к секции. Статус и приоритет сохраняются.
 
+    Однострочный title перезаписывает только колонку своего языка (кириллица →
+    ru, иначе → en); вторая языковая версия не трогается.
+
     subitems (опционально): полная замена подпунктов списком
     [{"kind": "requirement"|"context", "text": "..."}] в указанном порядке.
-    Пустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.
+    Каждый text пишется в колонку своего языка. Пустой список [] — удалить все
+    подпункты. None (по умолчанию) — не трогать.
     """
     if section not in projects_repo.SECTIONS:
         raise ValueError(f'Некорректная секция: {section} (ожидается одна из {projects_repo.SECTIONS})')
@@ -151,7 +174,19 @@ def edit_todo(
                 raise ValueError(f'Некорректный тип подпункта: {sub.get("kind")} (ожидается requirement|context)')
             if not (sub.get('text') or '').strip():
                 raise ValueError('Текст подпункта не может быть пустым')
-    projects_repo.edit_todo(todo_id, title, section, subitems)
+    current = projects_repo.get_todo(todo_id)
+    if current is None:
+        raise ValueError(f'Задача {todo_id} не найдена')
+    title_ru, title_en = projects_repo.split_by_lang(title)
+    # склейка: однострочный title обновляет только свою колонку,
+    # вторая языковая версия сохраняется
+    projects_repo.edit_todo(
+        todo_id,
+        title_ru or current['title_ru'],
+        title_en or current['title_en'],
+        section,
+        _split_subitems(subitems),
+    )
 
 
 @mcp.tool()

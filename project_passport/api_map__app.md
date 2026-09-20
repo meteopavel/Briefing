@@ -8,9 +8,9 @@
 - модулей: 21
 - классов: 3
 - dataclass: 1
-- функций: 122
+- функций: 127
 - методов: 17
-- констант: 63
+- констант: 64
 
 ---
 
@@ -140,6 +140,9 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 - `_serialize_todo(todo: dict) -> dict`
   Нет докстринга.
 
+- `_split_subitems(subitems: list[dict]) -> list[dict]`
+  Подпункты с однострочным text → пары text_ru/text_en по языку текста.
+
 - `list_projects() -> list[dict]`
   Список проектов, заведённых в Briefing (slug, title, contour, is_hub); хаб первым.
 
@@ -155,6 +158,8 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   Создаёт задачу со следующим свободным номером в указанной секции.
   section: bug|feat|ref|ques. priority: critical|high|medium|low.
   subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
+  Текст пишется в колонку своего языка (кириллица → ru, иначе → en);
+  вторую версию можно заполнить позже через веб (форма правки, поля RU/EN).
   Возвращает id созданной задачи.
 
 - `update_todo_status(todo_id: int, status: str, closed_note: str | None = None) -> None`
@@ -179,9 +184,13 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
   к секции. Статус и приоритет сохраняются.
   
+  Однострочный title перезаписывает только колонку своего языка (кириллица →
+  ru, иначе → en); вторая языковая версия не трогается.
+  
   subitems (опционально): полная замена подпунктов списком
   [{"kind": "requirement"|"context", "text": "..."}] в указанном порядке.
-  Пустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.
+  Каждый text пишется в колонку своего языка. Пустой список [] — удалить все
+  подпункты. None (по умолчанию) — не трогать.
 
 - `delete_todo(todo_id: int) -> None`
   Удаляет задачу вместе с подпунктами (они снимаются каскадом).
@@ -350,6 +359,11 @@ README с дальнейшими шагами и итогового prompt'а д
 CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,
 подпункты). Формат данных — тот же, что у скилла `todo`.
 
+Тексты двуязычные: у задач title_ru/title_en, у подпунктов text_ru/text_en
+(миграция 004). Одна из пары может быть NULL — тогда показывается имеющаяся.
+Однострочные клиенты (MCP) передают текст без языка — он раскладывается
+`split_by_lang` в колонку своего языка.
+
 Константы:
 - `SECTIONS = ['bug', 'feat', 'ref', 'ques']`
 - `SECTION_TITLES = {'bug': 'Баги', 'feat': 'Идеи / Фичи', 'ref': 'Рефакторинг / Техдолг', 'ques': 'Вопросы / Исследова…`
@@ -357,8 +371,15 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
 - `PRIORITIES = ['critical', 'high', 'medium', 'low']`
 - `STATUS_META = {'open': {'label': 'Открыта', 'icon': 'i-status-open', 'icon_class': 'icon-status-open'}, 'in_progr…`
 - `PRIORITY_META = {'critical': {'label': 'Критический', 'icon': 'i-prio', 'icon_class': 'icon-prio-critical'}, 'high'…`
+- `_CYRILLIC_RE = re.compile('[А-Яа-яЁё]')`
 
 Функции:
+
+- `detect_lang(text: str) -> str`
+  Нет докстринга.
+
+- `split_by_lang(text: str) -> tuple[str | None, str | None]`
+  Однострочный текст → пара (ru, en): непустой остаётся только свой язык.
 
 - `list_projects() -> list[dict]`
   Нет докстринга.
@@ -370,17 +391,22 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
   Возвращает все задачи проекта с подпунктами, без группировки/сортировки
   (этим занимается вызывающий код — см. `app/web.py:_group_todos`).
 
+- `get_todo(todo_id: int) -> dict | None`
+  Задача по id (без подпунктов) — для точечных чтений (MCP).
+
 - `_next_number(cursor, project_id: int, section: str) -> int`
   Нет докстринга.
 
 - `import_todo(project_id: int, section: str, number: int, status: str, priority: str, title: str, closed_note: str | None, subitems: list[dict]) -> int`
   Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,
   где нумерация уже существует и должна сохраниться 1:1). В отличие от
-  `create_todo`, номер не назначается автоматически.
+  `create_todo`, номер не назначается автоматически. Однострочный title
+  раскладывается в колонку своего языка (`split_by_lang`).
 
-- `create_todo(project_id: int, section: str, priority: str, title: str, subitems: list[dict]) -> int`
+- `create_todo(project_id: int, section: str, priority: str, title_ru: str | None, title_en: str | None, subitems: list[dict]) -> int`
   Создаёт задачу со следующим свободным номером в секции.
-  `subitems` — список {'kind': 'requirement'|'context', 'text': str}.
+  title_ru/title_en — языковые версии заголовка (одна может быть NULL).
+  `subitems` — список {'kind': 'requirement'|'context', 'text_ru': str|None, 'text_en': str|None}.
 
 - `update_status(todo_id: int, status: str, closed_note: str | None = None) -> None`
   Меняет статус. При переходе в done/wontdo заметка обязательна —
@@ -392,21 +418,23 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
   его надо заново утвердить. MCP-вызовы идут с reset_approved=False (агент сам
   выставляет флаг после ревью через update_placement_approved).
 
-- `add_subitem(todo_id: int, kind: str, text: str) -> None`
+- `add_subitem(todo_id: int, kind: str, text_ru: str | None, text_en: str | None) -> None`
   Нет докстринга.
 
-- `edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None`
+- `edit_todo(todo_id: int, title_ru: str | None, title_en: str | None, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None`
   Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной
   транзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем
   явные begin()/commit() с rollback() при ошибке — иначе replace+update
   прошли бы в раздельных авто-коммитах и при сбое второго шага подпункты
   оказались бы перезаписаны при старом заголовке/секции (рассинхрон).
   
-  title — новый заголовок; section — bug|feat|ref|ques (при смене номер
-  перевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт
-  project_id+section+number не даёт сохранить старый);
+  title_ru/title_en — новые языковые версии заголовка (одна может быть NULL);
+  section — bug|feat|ref|ques (при смене номер перевыпускается как следующий
+  свободный в новой секции, UNIQUE-констрейнт project_id+section+number
+  не даёт сохранить старый);
   subitems — None (не трогать) либо полная замена списком
-  {'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.
+  {'kind': 'requirement'|'context', 'text_ru': str|None, 'text_en': str|None};
+  пустой список — удалить все.
   reset_approved — сбросить placement_approved при смене секции (ручное
   изменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс
   применяется только когда секция реально меняется; при правке только title
@@ -872,6 +900,9 @@ FastAPI web application: маршруты Briefing.
 
 - `avatar(user_id: int)`
   Нет докстринга.
+
+- `_todo_lang(request: Request) -> str`
+  Активный язык показа текстов задач (кнопка RU⇄EN, cookie briefing_lang).
 
 - `projects_index(request: Request)`
   Нет докстринга.

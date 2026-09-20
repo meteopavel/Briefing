@@ -1,7 +1,14 @@
 """
 CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,
 подпункты). Формат данных — тот же, что у скилла `todo`.
+
+Тексты двуязычные: у задач title_ru/title_en, у подпунктов text_ru/text_en
+(миграция 004). Одна из пары может быть NULL — тогда показывается имеющаяся.
+Однострочные клиенты (MCP) передают текст без языка — он раскладывается
+`split_by_lang` в колонку своего языка.
 """
+
+import re
 
 from app.services.projects.db import get_connection
 
@@ -30,6 +37,19 @@ PRIORITY_META = {
 }
 
 
+# Язык однострочного текста: кириллица в тексте значит ru, иначе en.
+_CYRILLIC_RE = re.compile(r'[А-Яа-яЁё]')
+
+
+def detect_lang(text: str) -> str:
+    return 'ru' if text and _CYRILLIC_RE.search(text) else 'en'
+
+
+def split_by_lang(text: str) -> tuple[str | None, str | None]:
+    """Однострочный текст → пара (ru, en): непустой остаётся только свой язык."""
+    return (text, None) if detect_lang(text) == 'ru' else (None, text)
+
+
 def list_projects() -> list[dict]:
     with get_connection() as conn:
         with conn.cursor() as cursor:
@@ -52,7 +72,7 @@ def get_todos(project_id: int) -> list[dict]:
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                'SELECT id, section, number, status, priority, placement_approved, title, closed_note, created_at, updated_at '
+                'SELECT id, section, number, status, priority, placement_approved, title_ru, title_en, closed_note, created_at, updated_at '
                 'FROM todos WHERE project_id = %s',
                 (project_id,),
             )
@@ -61,7 +81,7 @@ def get_todos(project_id: int) -> list[dict]:
                 return []
             todo_ids = [todo['id'] for todo in todos]
             cursor.execute(
-                'SELECT todo_id, kind, text, position FROM todo_subitems '
+                'SELECT todo_id, kind, text_ru, text_en, position FROM todo_subitems '
                 f'WHERE todo_id IN ({",".join(["%s"] * len(todo_ids))}) ORDER BY position',
                 todo_ids,
             )
@@ -71,6 +91,18 @@ def get_todos(project_id: int) -> list[dict]:
             for todo in todos:
                 todo['subitems'] = subitems_by_todo.get(todo['id'], [])
             return todos
+
+
+def get_todo(todo_id: int) -> dict | None:
+    """Задача по id (без подпунктов) — для точечных чтений (MCP)."""
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                'SELECT id, project_id, section, number, status, priority, placement_approved, title_ru, title_en, closed_note, created_at, updated_at '
+                'FROM todos WHERE id = %s',
+                (todo_id,),
+            )
+            return cursor.fetchone()
 
 
 def _next_number(cursor, project_id: int, section: str) -> int:
@@ -94,42 +126,46 @@ def import_todo(
     """
     Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,
     где нумерация уже существует и должна сохраниться 1:1). В отличие от
-    `create_todo`, номер не назначается автоматически.
+    `create_todo`, номер не назначается автоматически. Однострочный title
+    раскладывается в колонку своего языка (`split_by_lang`).
     """
+    title_ru, title_en = split_by_lang(title)
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                'INSERT INTO todos (project_id, section, number, status, priority, title, closed_note) '
-                'VALUES (%s, %s, %s, %s, %s, %s, %s)',
-                (project_id, section, number, status, priority, title, closed_note),
+                'INSERT INTO todos (project_id, section, number, status, priority, title_ru, title_en, closed_note) '
+                'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                (project_id, section, number, status, priority, title_ru, title_en, closed_note),
             )
             todo_id = cursor.lastrowid
             for position, subitem in enumerate(subitems):
+                sub_ru, sub_en = split_by_lang(subitem['text'])
                 cursor.execute(
-                    'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
-                    (todo_id, subitem['kind'], subitem['text'], position),
+                    'INSERT INTO todo_subitems (todo_id, kind, text_ru, text_en, position) VALUES (%s, %s, %s, %s, %s)',
+                    (todo_id, subitem['kind'], sub_ru, sub_en, position),
                 )
             return todo_id
 
 
-def create_todo(project_id: int, section: str, priority: str, title: str, subitems: list[dict]) -> int:
+def create_todo(project_id: int, section: str, priority: str, title_ru: str | None, title_en: str | None, subitems: list[dict]) -> int:
     """
     Создаёт задачу со следующим свободным номером в секции.
-    `subitems` — список {'kind': 'requirement'|'context', 'text': str}.
+    title_ru/title_en — языковые версии заголовка (одна может быть NULL).
+    `subitems` — список {'kind': 'requirement'|'context', 'text_ru': str|None, 'text_en': str|None}.
     """
     with get_connection() as conn:
         with conn.cursor() as cursor:
             number = _next_number(cursor, project_id, section)
             cursor.execute(
-                'INSERT INTO todos (project_id, section, number, status, priority, placement_approved, title) '
-                "VALUES (%s, %s, %s, 'open', %s, 0, %s)",
-                (project_id, section, number, priority, title),
+                'INSERT INTO todos (project_id, section, number, status, priority, placement_approved, title_ru, title_en) '
+                "VALUES (%s, %s, %s, 'open', %s, 0, %s, %s)",
+                (project_id, section, number, priority, title_ru, title_en),
             )
             todo_id = cursor.lastrowid
             for position, subitem in enumerate(subitems):
                 cursor.execute(
-                    'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
-                    (todo_id, subitem['kind'], subitem['text'], position),
+                    'INSERT INTO todo_subitems (todo_id, kind, text_ru, text_en, position) VALUES (%s, %s, %s, %s, %s)',
+                    (todo_id, subitem['kind'], subitem.get('text_ru'), subitem.get('text_en'), position),
                 )
             return todo_id
 
@@ -162,7 +198,7 @@ def update_priority(todo_id: int, priority: str, reset_approved: bool = False) -
                 cursor.execute('UPDATE todos SET priority = %s WHERE id = %s', (priority, todo_id))
 
 
-def add_subitem(todo_id: int, kind: str, text: str) -> None:
+def add_subitem(todo_id: int, kind: str, text_ru: str | None, text_en: str | None) -> None:
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
@@ -171,12 +207,12 @@ def add_subitem(todo_id: int, kind: str, text: str) -> None:
             )
             next_position = cursor.fetchone()['max_position'] + 1
             cursor.execute(
-                'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
-                (todo_id, kind, text, next_position),
+                'INSERT INTO todo_subitems (todo_id, kind, text_ru, text_en, position) VALUES (%s, %s, %s, %s, %s)',
+                (todo_id, kind, text_ru, text_en, next_position),
             )
 
 
-def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None:
+def edit_todo(todo_id: int, title_ru: str | None, title_en: str | None, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None:
     """
     Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной
     транзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем
@@ -184,11 +220,13 @@ def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | Non
     прошли бы в раздельных авто-коммитах и при сбое второго шага подпункты
     оказались бы перезаписаны при старом заголовке/секции (рассинхрон).
 
-    title — новый заголовок; section — bug|feat|ref|ques (при смене номер
-    перевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт
-    project_id+section+number не даёт сохранить старый);
+    title_ru/title_en — новые языковые версии заголовка (одна может быть NULL);
+    section — bug|feat|ref|ques (при смене номер перевыпускается как следующий
+    свободный в новой секции, UNIQUE-констрейнт project_id+section+number
+    не даёт сохранить старый);
     subitems — None (не трогать) либо полная замена списком
-    {'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.
+    {'kind': 'requirement'|'context', 'text_ru': str|None, 'text_en': str|None};
+    пустой список — удалить все.
     reset_approved — сбросить placement_approved при смене секции (ручное
     изменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс
     применяется только когда секция реально меняется; при правке только title
@@ -203,8 +241,8 @@ def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | Non
                     cursor.execute('DELETE FROM todo_subitems WHERE todo_id = %s', (todo_id,))
                     for position, subitem in enumerate(subitems):
                         cursor.execute(
-                            'INSERT INTO todo_subitems (todo_id, kind, text, position) VALUES (%s, %s, %s, %s)',
-                            (todo_id, subitem['kind'], subitem['text'], position),
+                            'INSERT INTO todo_subitems (todo_id, kind, text_ru, text_en, position) VALUES (%s, %s, %s, %s, %s)',
+                            (todo_id, subitem['kind'], subitem.get('text_ru'), subitem.get('text_en'), position),
                         )
                 cursor.execute('SELECT project_id, section FROM todos WHERE id = %s', (todo_id,))
                 current = cursor.fetchone()
@@ -212,18 +250,21 @@ def edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | Non
                     conn.rollback()
                     return
                 if section == current['section']:
-                    cursor.execute('UPDATE todos SET title = %s WHERE id = %s', (title, todo_id))
+                    cursor.execute(
+                        'UPDATE todos SET title_ru = %s, title_en = %s WHERE id = %s',
+                        (title_ru, title_en, todo_id),
+                    )
                 else:
                     next_number = _next_number(cursor, current['project_id'], section)
                     if reset_approved:
                         cursor.execute(
-                            'UPDATE todos SET title = %s, section = %s, number = %s, placement_approved = 0 WHERE id = %s',
-                            (title, section, next_number, todo_id),
+                            'UPDATE todos SET title_ru = %s, title_en = %s, section = %s, number = %s, placement_approved = 0 WHERE id = %s',
+                            (title_ru, title_en, section, next_number, todo_id),
                         )
                     else:
                         cursor.execute(
-                            'UPDATE todos SET title = %s, section = %s, number = %s WHERE id = %s',
-                            (title, section, next_number, todo_id),
+                            'UPDATE todos SET title_ru = %s, title_en = %s, section = %s, number = %s WHERE id = %s',
+                            (title_ru, title_en, section, next_number, todo_id),
                         )
                 conn.commit()
             except Exception:

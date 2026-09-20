@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-30T06:07:25.291062+00:00",
+  "generated_at": "2026-09-20T06:48:44.241285+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
   "scanned_python_files": 28,
@@ -19,9 +19,9 @@
     "modules": 21,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 122,
+    "functions": 127,
     "methods": 17,
-    "constants": 63
+    "constants": 64
   },
   "modules": [
     {
@@ -448,7 +448,17 @@
           "kind": "function",
           "decorators": [],
           "lineno": 30,
-          "end_lineno": 35
+          "end_lineno": 41
+        },
+        {
+          "name": "_split_subitems",
+          "signature": "_split_subitems(subitems: list[dict]) -> list[dict]",
+          "docstring": "Подпункты с однострочным text → пары text_ru/text_en по языку текста.",
+          "summary": "Подпункты с однострочным text → пары text_ru/text_en по языку текста.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 44,
+          "end_lineno": 50
         },
         {
           "name": "list_projects",
@@ -459,8 +469,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 39,
-          "end_lineno": 41
+          "lineno": 54,
+          "end_lineno": 56
         },
         {
           "name": "list_todos",
@@ -471,20 +481,20 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 45,
-          "end_lineno": 62
+          "lineno": 60,
+          "end_lineno": 77
         },
         {
           "name": "create_todo",
           "signature": "create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int",
-          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|ref|ques. priority: critical|high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nВозвращает id созданной задачи.",
+          "docstring": "Создаёт задачу со следующим свободным номером в указанной секции.\nsection: bug|feat|ref|ques. priority: critical|high|medium|low.\nsubitems (опционально): [{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}].\nТекст пишется в колонку своего языка (кириллица → ru, иначе → en);\nвторую версию можно заполнить позже через веб (форма правки, поля RU/EN).\nВозвращает id созданной задачи.",
           "summary": "Создаёт задачу со следующим свободным номером в указанной секции.",
           "kind": "function",
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 66,
-          "end_lineno": 80
+          "lineno": 81,
+          "end_lineno": 98
         },
         {
           "name": "update_todo_status",
@@ -495,8 +505,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 84,
-          "end_lineno": 93
+          "lineno": 102,
+          "end_lineno": 111
         },
         {
           "name": "update_todo_priority",
@@ -507,8 +517,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 97,
-          "end_lineno": 101
+          "lineno": 115,
+          "end_lineno": 119
         },
         {
           "name": "set_todo_placement_approved",
@@ -519,8 +529,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 105,
-          "end_lineno": 115
+          "lineno": 123,
+          "end_lineno": 133
         },
         {
           "name": "add_todo_subitem",
@@ -531,20 +541,20 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 119,
-          "end_lineno": 125
+          "lineno": 137,
+          "end_lineno": 144
         },
         {
           "name": "edit_todo",
           "signature": "edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None",
-          "docstring": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.\nПри смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан\nк секции. Статус и приоритет сохраняются.\n\nsubitems (опционально): полная замена подпунктов списком\n[{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}] в указанном порядке.\nПустой список [] — удалить все подпункты. None (по умолчанию) — не трогать.",
+          "docstring": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.\nПри смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан\nк секции. Статус и приоритет сохраняются.\n\nОднострочный title перезаписывает только колонку своего языка (кириллица →\nru, иначе → en); вторая языковая версия не трогается.\n\nsubitems (опционально): полная замена подпунктов списком\n[{\"kind\": \"requirement\"|\"context\", \"text\": \"...\"}] в указанном порядке.\nКаждый text пишется в колонку своего языка. Пустой список [] — удалить все\nподпункты. None (по умолчанию) — не трогать.",
           "summary": "Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.",
           "kind": "function",
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 129,
-          "end_lineno": 154
+          "lineno": 148,
+          "end_lineno": 189
         },
         {
           "name": "delete_todo",
@@ -555,8 +565,8 @@
           "decorators": [
             "mcp.tool()"
           ],
-          "lineno": 158,
-          "end_lineno": 160
+          "lineno": 193,
+          "end_lineno": 195
         },
         {
           "name": "create_asgi_app",
@@ -565,15 +575,15 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 163,
-          "end_lineno": 164
+          "lineno": 198,
+          "end_lineno": 199
         }
       ],
       "constants": [],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 12,
+        "functions": 13,
         "methods": 0,
         "constants": 0
       }
@@ -896,10 +906,30 @@
     },
     {
       "path": "app/services/projects/repository.py",
-      "module_docstring": "CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,\nподпункты). Формат данных — тот же, что у скилла `todo`.",
+      "module_docstring": "CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,\nподпункты). Формат данных — тот же, что у скилла `todo`.\n\nТексты двуязычные: у задач title_ru/title_en, у подпунктов text_ru/text_en\n(миграция 004). Одна из пары может быть NULL — тогда показывается имеющаяся.\nОднострочные клиенты (MCP) передают текст без языка — он раскладывается\n`split_by_lang` в колонку своего языка.",
       "module_summary": "CRUD для тудушек проектов (секции bug/feat/ref/ques, статусы, приоритеты,",
       "classes": [],
       "functions": [
+        {
+          "name": "detect_lang",
+          "signature": "detect_lang(text: str) -> str",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 44,
+          "end_lineno": 45
+        },
+        {
+          "name": "split_by_lang",
+          "signature": "split_by_lang(text: str) -> tuple[str | None, str | None]",
+          "docstring": "Однострочный текст → пара (ru, en): непустой остаётся только свой язык.",
+          "summary": "Однострочный текст → пара (ru, en): непустой остаётся только свой язык.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 48,
+          "end_lineno": 50
+        },
         {
           "name": "list_projects",
           "signature": "list_projects() -> list[dict]",
@@ -907,8 +937,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 33,
-          "end_lineno": 37
+          "lineno": 53,
+          "end_lineno": 57
         },
         {
           "name": "get_project_by_slug",
@@ -917,8 +947,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 40,
-          "end_lineno": 44
+          "lineno": 60,
+          "end_lineno": 64
         },
         {
           "name": "get_todos",
@@ -927,8 +957,18 @@
           "summary": "Возвращает все задачи проекта с подпунктами, без группировки/сортировки",
           "kind": "function",
           "decorators": [],
-          "lineno": 47,
-          "end_lineno": 73
+          "lineno": 67,
+          "end_lineno": 93
+        },
+        {
+          "name": "get_todo",
+          "signature": "get_todo(todo_id: int) -> dict | None",
+          "docstring": "Задача по id (без подпунктов) — для точечных чтений (MCP).",
+          "summary": "Задача по id (без подпунктов) — для точечных чтений (MCP).",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 96,
+          "end_lineno": 105
         },
         {
           "name": "_next_number",
@@ -937,28 +977,28 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 76,
-          "end_lineno": 81
+          "lineno": 108,
+          "end_lineno": 113
         },
         {
           "name": "import_todo",
           "signature": "import_todo(project_id: int, section: str, number: int, status: str, priority: str, title: str, closed_note: str | None, subitems: list[dict]) -> int",
-          "docstring": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,\nгде нумерация уже существует и должна сохраниться 1:1). В отличие от\n`create_todo`, номер не назначается автоматически.",
+          "docstring": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,\nгде нумерация уже существует и должна сохраниться 1:1). В отличие от\n`create_todo`, номер не назначается автоматически. Однострочный title\nраскладывается в колонку своего языка (`split_by_lang`).",
           "summary": "Вставляет задачу с явно заданным номером (для миграции из docs/TODO.md,",
           "kind": "function",
           "decorators": [],
-          "lineno": 84,
-          "end_lineno": 112
+          "lineno": 116,
+          "end_lineno": 147
         },
         {
           "name": "create_todo",
-          "signature": "create_todo(project_id: int, section: str, priority: str, title: str, subitems: list[dict]) -> int",
-          "docstring": "Создаёт задачу со следующим свободным номером в секции.\n`subitems` — список {'kind': 'requirement'|'context', 'text': str}.",
+          "signature": "create_todo(project_id: int, section: str, priority: str, title_ru: str | None, title_en: str | None, subitems: list[dict]) -> int",
+          "docstring": "Создаёт задачу со следующим свободным номером в секции.\ntitle_ru/title_en — языковые версии заголовка (одна может быть NULL).\n`subitems` — список {'kind': 'requirement'|'context', 'text_ru': str|None, 'text_en': str|None}.",
           "summary": "Создаёт задачу со следующим свободным номером в секции.",
           "kind": "function",
           "decorators": [],
-          "lineno": 115,
-          "end_lineno": 134
+          "lineno": 150,
+          "end_lineno": 170
         },
         {
           "name": "update_status",
@@ -967,8 +1007,8 @@
           "summary": "Меняет статус. При переходе в done/wontdo заметка обязательна —",
           "kind": "function",
           "decorators": [],
-          "lineno": 137,
-          "end_lineno": 147
+          "lineno": 173,
+          "end_lineno": 183
         },
         {
           "name": "update_priority",
@@ -977,28 +1017,28 @@
           "summary": "Меняет приоритет. reset_approved=True (ручное изменение через веб) дополнительно",
           "kind": "function",
           "decorators": [],
-          "lineno": 150,
-          "end_lineno": 162
+          "lineno": 186,
+          "end_lineno": 198
         },
         {
           "name": "add_subitem",
-          "signature": "add_subitem(todo_id: int, kind: str, text: str) -> None",
+          "signature": "add_subitem(todo_id: int, kind: str, text_ru: str | None, text_en: str | None) -> None",
           "docstring": null,
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 165,
-          "end_lineno": 176
+          "lineno": 201,
+          "end_lineno": 212
         },
         {
           "name": "edit_todo",
-          "signature": "edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None",
-          "docstring": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной\nтранзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем\nявные begin()/commit() с rollback() при ошибке — иначе replace+update\nпрошли бы в раздельных авто-коммитах и при сбое второго шага подпункты\nоказались бы перезаписаны при старом заголовке/секции (рассинхрон).\n\ntitle — новый заголовок; section — bug|feat|ref|ques (при смене номер\nперевыпускается как следующий свободный в новой секции, UNIQUE-констрейнт\nproject_id+section+number не даёт сохранить старый);\nsubitems — None (не трогать) либо полная замена списком\n{'kind': 'requirement'|'context', 'text': str}; пустой список — удалить все.\nreset_approved — сбросить placement_approved при смене секции (ручное\nизменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс\nприменяется только когда секция реально меняется; при правке только title\nфлаг не трогается.\nВалидация значений — на вызывающей стороне (роут/MCP).",
+          "signature": "edit_todo(todo_id: int, title_ru: str | None, title_en: str | None, section: str, subitems: list[dict] | None = None, reset_approved: bool = False) -> None",
+          "docstring": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной\nтранзакции. Соединение по умолчанию в autocommit, поэтому оборачиваем\nявные begin()/commit() с rollback() при ошибке — иначе replace+update\nпрошли бы в раздельных авто-коммитах и при сбое второго шага подпункты\nоказались бы перезаписаны при старом заголовке/секции (рассинхрон).\n\ntitle_ru/title_en — новые языковые версии заголовка (одна может быть NULL);\nsection — bug|feat|ref|ques (при смене номер перевыпускается как следующий\nсвободный в новой секции, UNIQUE-констрейнт project_id+section+number\nне даёт сохранить старый);\nsubitems — None (не трогать) либо полная замена списком\n{'kind': 'requirement'|'context', 'text_ru': str|None, 'text_en': str|None};\nпустой список — удалить все.\nreset_approved — сбросить placement_approved при смене секции (ручное\nизменение через веб; MCP не передаёт — агент сам управляет флагом). Сброс\nприменяется только когда секция реально меняется; при правке только title\nфлаг не трогается.\nВалидация значений — на вызывающей стороне (роут/MCP).",
           "summary": "Атомарно меняет заголовок/секцию и (опционально) подпункты задачи в одной",
           "kind": "function",
           "decorators": [],
-          "lineno": 179,
-          "end_lineno": 231
+          "lineno": 215,
+          "end_lineno": 272
         },
         {
           "name": "update_placement_approved",
@@ -1007,8 +1047,8 @@
           "summary": "Ставит/снимает флаг «размещение (секция+приоритет) утверждено».",
           "kind": "function",
           "decorators": [],
-          "lineno": 234,
-          "end_lineno": 238
+          "lineno": 275,
+          "end_lineno": 279
         },
         {
           "name": "delete_todo",
@@ -1017,8 +1057,8 @@
           "summary": "Удаляет задачу. Подпункты снимаются каскадом (FK ON DELETE CASCADE).",
           "kind": "function",
           "decorators": [],
-          "lineno": 241,
-          "end_lineno": 245
+          "lineno": 282,
+          "end_lineno": 286
         }
       ],
       "constants": [
@@ -1026,45 +1066,51 @@
           "name": "SECTIONS",
           "annotation": null,
           "value_repr": "['bug', 'feat', 'ref', 'ques']",
-          "lineno": 8
+          "lineno": 15
         },
         {
           "name": "SECTION_TITLES",
           "annotation": null,
           "value_repr": "{'bug': 'Баги', 'feat': 'Идеи / Фичи', 'ref': 'Рефакторинг / Техдолг', 'ques': 'Вопросы / Исследовать'}",
-          "lineno": 9
+          "lineno": 16
         },
         {
           "name": "STATUSES",
           "annotation": null,
           "value_repr": "['open', 'in_progress', 'done', 'wontdo']",
-          "lineno": 15
+          "lineno": 22
         },
         {
           "name": "PRIORITIES",
           "annotation": null,
           "value_repr": "['critical', 'high', 'medium', 'low']",
-          "lineno": 16
+          "lineno": 23
         },
         {
           "name": "STATUS_META",
           "annotation": null,
           "value_repr": "{'open': {'label': 'Открыта', 'icon': 'i-status-open', 'icon_class': 'icon-status-open'}, 'in_progress': {'label': 'В работе', 'icon': 'i-status-progress', 'icon_class': 'icon-status-progress'}, 'done': {'label': 'Готово', 'icon': 'i-status-done', 'icon_class': 'icon-status-done'}, 'wontdo': {'label': 'Отклонено', 'icon': 'i-status-wontdo', 'icon_class': 'icon-status-wontdo'}}",
-          "lineno": 19
+          "lineno": 26
         },
         {
           "name": "PRIORITY_META",
           "annotation": null,
           "value_repr": "{'critical': {'label': 'Критический', 'icon': 'i-prio', 'icon_class': 'icon-prio-critical'}, 'high': {'label': 'Высокий', 'icon': 'i-prio', 'icon_class': 'icon-prio-high'}, 'medium': {'label': 'Средний', 'icon': 'i-prio', 'icon_class': 'icon-prio-medium'}, 'low': {'label': 'Низкий', 'icon': 'i-prio', 'icon_class': 'icon-prio-low'}}",
-          "lineno": 25
+          "lineno": 32
+        },
+        {
+          "name": "_CYRILLIC_RE",
+          "annotation": null,
+          "value_repr": "re.compile('[А-Яа-яЁё]')",
+          "lineno": 41
         }
       ],
       "stats": {
         "classes": 0,
         "dataclasses": 0,
-        "functions": 12,
+        "functions": 15,
         "methods": 0,
-        "constants": 6
+        "constants": 7
       }
     },
     {
@@ -2082,6 +2128,16 @@
           "end_lineno": 571
         },
         {
+          "name": "_todo_lang",
+          "signature": "_todo_lang(request: Request) -> str",
+          "docstring": "Активный язык показа текстов задач (кнопка RU⇄EN, cookie briefing_lang).",
+          "summary": "Активный язык показа текстов задач (кнопка RU⇄EN, cookie briefing_lang).",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 574,
+          "end_lineno": 577
+        },
+        {
           "name": "projects_index",
           "signature": "projects_index(request: Request)",
           "docstring": null,
@@ -2090,8 +2146,8 @@
           "decorators": [
             "app.get('/projects')"
           ],
-          "lineno": 575,
-          "end_lineno": 586
+          "lineno": 581,
+          "end_lineno": 592
         },
         {
           "name": "project_detail",
@@ -2102,8 +2158,8 @@
           "decorators": [
             "app.get('/projects/{slug}')"
           ],
-          "lineno": 590,
-          "end_lineno": 614
+          "lineno": 596,
+          "end_lineno": 621
         },
         {
           "name": "create_project_todo",
@@ -2114,8 +2170,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos')"
           ],
-          "lineno": 618,
-          "end_lineno": 634
+          "lineno": 625,
+          "end_lineno": 649
         },
         {
           "name": "update_todo_status",
@@ -2126,8 +2182,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/status')"
           ],
-          "lineno": 638,
-          "end_lineno": 647
+          "lineno": 653,
+          "end_lineno": 662
         },
         {
           "name": "update_todo_priority",
@@ -2138,8 +2194,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
           ],
-          "lineno": 651,
-          "end_lineno": 659
+          "lineno": 666,
+          "end_lineno": 674
         },
         {
           "name": "add_todo_subitem",
@@ -2150,8 +2206,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
           ],
-          "lineno": 663,
-          "end_lineno": 672
+          "lineno": 678,
+          "end_lineno": 687
         },
         {
           "name": "edit_project_todo",
@@ -2162,8 +2218,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
           ],
-          "lineno": 676,
-          "end_lineno": 694
+          "lineno": 691,
+          "end_lineno": 715
         },
         {
           "name": "set_todo_placement_approved",
@@ -2174,8 +2230,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/placement-approved')"
           ],
-          "lineno": 698,
-          "end_lineno": 704
+          "lineno": 719,
+          "end_lineno": 725
         },
         {
           "name": "delete_project_todo",
@@ -2186,8 +2242,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
           ],
-          "lineno": 708,
-          "end_lineno": 710
+          "lineno": 729,
+          "end_lineno": 731
         },
         {
           "name": "health",
@@ -2198,8 +2254,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 714,
-          "end_lineno": 715
+          "lineno": 735,
+          "end_lineno": 736
         }
       ],
       "constants": [
@@ -2309,7 +2365,7 @@
       "stats": {
         "classes": 1,
         "dataclasses": 0,
-        "functions": 33,
+        "functions": 34,
         "methods": 2,
         "constants": 17
       }

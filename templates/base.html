@@ -39,10 +39,14 @@
             <div class="eyebrow">Личный центр управления</div>
             <h1>Briefing</h1>
         </div>
-        <div class="header-badge">
-            <span class="status-dot status-dot-green"></span>
-            Онлайн
-        </div>
+        {# Переключатель языка задач (feat.27), на месте бывшего бейджа «Онлайн»:
+           RU⇄EN одним кликом, активный язык подсвечен. Тексты задач несут обе
+           версии в data-ru/data-en (вкладка «Проекты») — подмена живьём. #}
+        <button type="button" class="lang-toggle" onclick="toggleTodoLang()" title="Переключить язык текстов задач">
+            <span class="lang-opt" data-lang="ru">RU</span>
+            <span class="lang-sep">·</span>
+            <span class="lang-opt" data-lang="en">EN</span>
+        </button>
     </header>
 
     <nav class="tabs">
@@ -63,5 +67,39 @@
         Briefing · local only
     </footer>
 </div>
+
+<script>
+/* ─── Переключатель языка задач (feat.27) ───
+   Выбор живёт в cookie briefing_lang (год) — сервер рендерит вкладку «Проекты»
+   сразу на нужном языке, здесь только живая подмена без перезагрузки.
+   Тексты задач несут обе версии в data-ru/data-en (при отсутствии версии на
+   активном языке сервер кладёт в оба атрибута имеющуюся — fallback). */
+function _todoLangApply(lang) {
+    document.documentElement.setAttribute('lang', lang);
+    document.querySelectorAll('[data-ru]').forEach(el => {
+        const v = el.dataset[lang];
+        if (v !== undefined) el.textContent = v;
+    });
+    document.querySelectorAll('[data-ph-ru]').forEach(el => {
+        el.placeholder = lang === 'ru' ? el.dataset.phRu : el.dataset.phEn;
+    });
+    document.querySelectorAll('.lang-toggle .lang-opt').forEach(opt => {
+        opt.classList.toggle('lang-active', opt.dataset.lang === lang);
+    });
+}
+
+function _todoLangCurrent() {
+    const m = document.cookie.match(/(?:^|;\s*)briefing_lang=(ru|en)/);
+    return m ? m[1] : 'ru';
+}
+
+function toggleTodoLang() {
+    const lang = _todoLangCurrent() === 'ru' ? 'en' : 'ru';
+    document.cookie = 'briefing_lang=' + lang + ';path=/;max-age=31536000;samesite=lax';
+    _todoLangApply(lang);
+}
+
+_todoLangApply(_todoLangCurrent());
+</script>
 </body>
 </html>

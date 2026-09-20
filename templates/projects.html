@@ -39,11 +39,16 @@
 {% endmacro %}
 
 {% macro render_todo(todo) %}
+{% set t_ru = todo.title_ru or todo.title_en or '' %}
+{% set t_en = todo.title_en or todo.title_ru or '' %}
 <div class="todo-item todo-priority-{{ todo.priority }} todo-section-{{ todo.section }} todo-approved-{% if todo.placement_approved %}yes{% else %}no{% endif %}" data-id="{{ todo.id }}">
     <div class="todo-item-header">
         <button type="button" class="todo-item-id" title="Скопировать /skill todo {{ todo.section }}.{{ todo.number }}"
                 onclick="copyTodoId('{{ todo.section }}.{{ todo.number }}')">{{ todo.section }}.{{ todo.number }}</button>
-        <span class="todo-item-title">{{ todo.title }}</span>
+        {# Двуязычный текст: обе версии в data-ru/data-en, показ — активный язык
+           (кнопка RU⇄EN меняет живьём, без перезагрузки). Нет версии на активном
+           языке — показываем имеющуюся (fallback в t_ru/t_en). #}
+        <span class="todo-item-title" data-ru="{{ t_ru }}" data-en="{{ t_en }}">{{ t_ru if lang == 'ru' else t_en }}</span>
         <span class="todo-item-controls">
             {{ dd(todo.status, status_meta, ['open', 'in_progress', 'done', 'wontdo'], 'status-' ~ todo.id) }}
             {{ dd(todo.priority, priority_meta, ['critical', 'high', 'medium', 'low'], 'priority-' ~ todo.id) }}
@@ -62,11 +67,13 @@
         </span>
     </div>
     <form class="todo-edit-form" data-todo-id="{{ todo.id }}" hidden onsubmit="return submitEdit(event, {{ todo.id }})">
-        <textarea name="title" class="todo-edit-textarea" rows="2" required>{{ todo.title }}</textarea>
+        <textarea name="title_ru" class="todo-edit-textarea" rows="2" placeholder="RU">{{ todo.title_ru or '' }}</textarea>
+        <textarea name="title_en" class="todo-edit-textarea" rows="2" placeholder="EN">{{ todo.title_en or '' }}</textarea>
         <div class="todo-edit-subitems" data-todo-id="{{ todo.id }}">
             {% for sub in todo.subitems %}
-            <div class="todo-edit-subitem-row">
-                <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required>{{ sub.text }}</textarea>
+            <div class="todo-edit-subitem-row" data-kind="{{ sub.kind }}">
+                <textarea name="text_ru" class="todo-edit-textarea todo-edit-subitem-text" rows="2" placeholder="RU">{{ sub.text_ru or '' }}</textarea>
+                <textarea name="text_en" class="todo-edit-textarea todo-edit-subitem-text" rows="2" placeholder="EN">{{ sub.text_en or '' }}</textarea>
                 <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, true)">
                     <svg class="icon"><use href="#i-x"/></svg>
                 </button>
@@ -86,7 +93,9 @@
     {% if todo.subitems %}
     <ul class="todo-subitems">
         {% for sub in todo.subitems %}
-        <li class="todo-subitem todo-subitem-{{ sub.kind }}">{{ sub.text }}</li>
+        {% set s_ru = sub.text_ru or sub.text_en or '' %}
+        {% set s_en = sub.text_en or sub.text_ru or '' %}
+        <li class="todo-subitem todo-subitem-{{ sub.kind }}" data-ru="{{ s_ru }}" data-en="{{ s_en }}">{{ s_ru if lang == 'ru' else s_en }}</li>
         {% endfor %}
     </ul>
     {% endif %}
@@ -142,7 +151,10 @@
             <span class="issue-group-title">{{ group.title }}</span>
             <span class="issue-group-count">{{ group.open | length }}</span>
             <form class="todo-add-form todo-add-form--compact" data-section="{{ group.key }}" onsubmit="return submitNewTodo(event)">
-                <input type="text" name="title" class="todo-add-input" placeholder="+ новая…" required>
+                {# placeholder подсказывает активный язык ввода — новая задача
+                   пишется в колонку этого языка (см. create_project_todo) #}
+                <input type="text" name="title" class="todo-add-input" placeholder="{{ '+ новая (RU)…' if lang == 'ru' else '+ new (EN)…' }}"
+                       data-ph-ru="+ новая (RU)…" data-ph-en="+ new (EN)…" required>
                 {{ dd('medium', priority_meta, ['critical', 'high', 'medium', 'low'], 'new-priority-' ~ group.key) }}
                 <button type="submit" class="btn btn-amber">Добавить</button>
             </form>
@@ -287,12 +299,15 @@ function apiPost(path, payload) {
 }
 
 function changeTodoSection(todoId, section) {
-    // Секция меняется через edit-эндпоинт: нужен непустой title (берём из карточки),
-    // подпункты не трогаем (subitems: undefined → сервер пропустит).
+    // Секция меняется через edit-эндпоинт. Заголовок берём из формы правки —
+    // там лежат обе языковые версии (textareas всегда в DOM, prefilled).
+    // Подпункты не трогаем (subitems: undefined → сервер пропустит).
     const item = _todoEl(todoId);
-    const title = item.querySelector('.todo-item-title')?.textContent.trim() || '';
-    if (!title) return;
-    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems: undefined})
+    const form = item.querySelector('.todo-edit-form');
+    const titleRu = form.elements['title_ru'].value.trim();
+    const titleEn = form.elements['title_en'].value.trim();
+    if (!titleRu && !titleEn) return;
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title_ru: titleRu, title_en: titleEn, section, subitems: undefined})
         .then(() => location.reload())
         .catch(e => { alert(e.message); location.reload(); });
 }
@@ -345,7 +360,7 @@ function editTodo(todoId) {
     item.querySelector('.todo-subitems')?.classList.add('hidden-while-editing');
     const form = item.querySelector('.todo-edit-form');
     form.hidden = false;
-    form.title.focus();
+    form.elements['title_ru'].focus();
 }
 
 function cancelEdit(todoId) {
@@ -358,26 +373,29 @@ function cancelEdit(todoId) {
 function submitEdit(event, todoId) {
     event.preventDefault();
     const form = event.target;
-    const title = form.title.value.trim();
-    if (!title) return false;
+    const titleRu = form.elements['title_ru'].value.trim();
+    const titleEn = form.elements['title_en'].value.trim();
+    if (!titleRu && !titleEn) return false;
     const subitems = _collectSubitems(form);
     // Секция редактируется отдельно (dropdown в шапке карточки); при edit
     // отправляем её текущее значение из карточки, чтобы сервер не упал на валидации.
     const section = _todoEl(todoId).querySelector('.dd[data-name^="section-"]')?.dataset.value || '';
-    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title, section, subitems})
+    apiPost(`/api/projects/${CURRENT_PROJECT_SLUG}/todos/${todoId}/edit`, {title_ru: titleRu, title_en: titleEn, section, subitems})
         .then(() => reloadKeepScroll())
         .catch(e => { alert(e.message); reloadKeepScroll(); });
     return false;
 }
 
 function _collectSubitems(form) {
-    // Все подпункты по умолчанию обязательны (kind=requirement). Пустые по
-    // тексту пропускаем — их сохранять не нужно.
+    // Подпункты двуязычные: каждая строка — пара text_ru/text_en, хотя бы одна
+    // непустая (пустые строки пропускаем — их сохранять не нужно). Kind берём
+    // из data-kind строки (сервер рендерит фактический, новые — requirement).
     const rows = form.querySelectorAll('.todo-edit-subitem-row');
     const out = [];
     rows.forEach(row => {
-        const text = (row.querySelector('textarea[name="text"]').value || '').trim();
-        if (text) out.push({kind: 'requirement', text});
+        const text_ru = (row.querySelector('textarea[name="text_ru"]').value || '').trim();
+        const text_en = (row.querySelector('textarea[name="text_en"]').value || '').trim();
+        if (text_ru || text_en) out.push({kind: row.dataset.kind || 'requirement', text_ru, text_en});
     });
     return out;
 }
@@ -386,12 +404,14 @@ function addSubitemRow(todoId) {
     const container = _todoEl(todoId).querySelector('.todo-edit-subitems');
     const row = document.createElement('div');
     row.className = 'todo-edit-subitem-row';
+    row.dataset.kind = 'requirement';
     row.innerHTML = `
-        <textarea name="text" class="todo-edit-textarea todo-edit-subitem-text" rows="2" required></textarea>
+        <textarea name="text_ru" class="todo-edit-textarea todo-edit-subitem-text" rows="2" placeholder="RU"></textarea>
+        <textarea name="text_en" class="todo-edit-textarea todo-edit-subitem-text" rows="2" placeholder="EN"></textarea>
         <button type="button" class="todo-action-btn todo-action-danger" title="Удалить подпункт" onclick="removeSubitemRow(this, false)"><svg class="icon"><use href="#i-x"/></svg></button>
     `;
     container.appendChild(row);
-    row.querySelector('textarea[name="text"]').focus();
+    row.querySelector('textarea[name="text_ru"]').focus();
 }
 
 function removeSubitemRow(btn, confirmNeeded) {

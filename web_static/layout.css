@@ -26,10 +26,12 @@
     margin-bottom: 4px;
 }
 
-.header-badge {
+/* Переключатель языка задач (feat.27) — на месте бывшего бейджа «Онлайн».
+   Пилюля RU·EN, активный язык подсвечивает JS (lang-active). */
+.lang-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     padding: 8px 14px;
     border-radius: var(--radius-btn);
     background: var(--panel);
@@ -44,18 +46,25 @@
     border-left: 1px solid var(--bezel-hi);
     border-bottom: 1px solid var(--bezel-lo);
     border-right: 1px solid var(--bezel-lo);
+    cursor: pointer;
+    transition: border-color var(--transition);
 }
 
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
+.lang-toggle:hover {
+    border-color: var(--amber-dim);
 }
 
-.status-dot-green {
-    background: var(--green);
-    box-shadow: 0 0 0 3px rgba(78, 207, 142, 0.18), 0 0 6px rgba(78, 207, 142, 0.6);
+.lang-opt {
+    color: var(--muted);
+    transition: color var(--transition);
+}
+
+.lang-opt.lang-active {
+    color: var(--amber);
+}
+
+.lang-sep {
+    color: var(--border);
 }
 
 .tabs {
@@ -155,7 +164,7 @@
         gap: 12px;
     }
 
-    .header-badge {
+    .lang-toggle {
         align-self: flex-start;
     }
 

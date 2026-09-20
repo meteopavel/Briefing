@@ -571,6 +571,12 @@ def avatar(user_id: int):
     return Response(status_code=404)
 
 
+def _todo_lang(request: Request) -> str:
+    """Активный язык показа текстов задач (кнопка RU⇄EN, cookie briefing_lang)."""
+    lang = request.cookies.get('briefing_lang', 'ru')
+    return lang if lang in ('ru', 'en') else 'ru'
+
+
 @app.get('/projects')
 def projects_index(request: Request):
     try:
@@ -582,7 +588,7 @@ def projects_index(request: Request):
     return templates.TemplateResponse(
         request=request,
         name='projects.html',
-        context={'title': 'Briefing · Проекты', 'active_tab': 'projects', 'projects': projects, 'selected': None, 'groups': [], 'error': error},
+        context={'title': 'Briefing · Проекты', 'active_tab': 'projects', 'projects': projects, 'selected': None, 'groups': [], 'error': error, 'lang': _todo_lang(request)},
     )
 
 
@@ -608,6 +614,7 @@ def project_detail(request: Request, slug: str):
             'selected': project,
             'groups': groups,
             'error': error,
+            'lang': _todo_lang(request),
             'status_meta': projects_repo.STATUS_META,
             'priority_meta': projects_repo.PRIORITY_META,
         },
@@ -630,7 +637,15 @@ async def create_project_todo(slug: str, request: Request):
         raise HTTPException(400, 'Некорректный приоритет')
     if not title:
         raise HTTPException(400, 'Текст задачи не может быть пустым')
-    todo_id = projects_repo.create_todo(project['id'], section, priority, title, subitems)
+    # компактная форма вводит один язык — пишем его в колонку активного языка
+    # (кнопка RU⇄EN в шапке, cookie briefing_lang), вторая версия остаётся NULL
+    lang = _todo_lang(request)
+    title_pair = (title, None) if lang == 'ru' else (None, title)
+    subitems_pairs = [
+        {'kind': sub.get('kind', 'requirement'), 'text_ru': sub.get('text') if lang == 'ru' else None, 'text_en': sub.get('text') if lang == 'en' else None}
+        for sub in subitems
+    ]
+    todo_id = projects_repo.create_todo(project['id'], section, priority, title_pair[0], title_pair[1], subitems_pairs)
     return {'id': todo_id}
 
 
@@ -675,22 +690,28 @@ async def add_todo_subitem(slug: str, todo_id: int, request: Request):
 @app.post('/api/projects/{slug}/todos/{todo_id}/edit')
 async def edit_project_todo(slug: str, todo_id: int, request: Request):
     body = await request.json()
-    title = (body.get('title') or '').strip()
+    title_ru = (body.get('title_ru') or '').strip() or None
+    title_en = (body.get('title_en') or '').strip() or None
     section = body.get('section')
     subitems = body.get('subitems')  # None = не трогать; список = полная замена
-    if not title:
-        raise HTTPException(400, 'Текст задачи не может быть пустым')
+    if not title_ru and not title_en:
+        raise HTTPException(400, 'Нужна хотя бы одна языковая версия заголовка (RU или EN)')
     if section not in projects_repo.SECTIONS:
         raise HTTPException(400, 'Некорректная секция')
+    subitems_pairs = None
     if subitems is not None:
+        subitems_pairs = []
         for sub in subitems:
+            text_ru = (sub.get('text_ru') or '').strip() or None
+            text_en = (sub.get('text_en') or '').strip() or None
             if sub.get('kind') not in ('requirement', 'context'):
                 raise HTTPException(400, 'Некорректный тип подпункта')
-            if not (sub.get('text') or '').strip():
-                raise HTTPException(400, 'Текст подпункта не может быть пустым')
+            if not text_ru and not text_en:
+                raise HTTPException(400, 'У подпункта должна быть хотя бы одна языковая версия')
+            subitems_pairs.append({'kind': sub['kind'], 'text_ru': text_ru, 'text_en': text_en})
     # reset_approved=True: смена секции через веб сбрасывает флаг утверждения
     # размещения (DAL применит сброс только при реальной смене секции).
-    projects_repo.edit_todo(todo_id, title, section, subitems, reset_approved=True)
+    projects_repo.edit_todo(todo_id, title_ru, title_en, section, subitems_pairs, reset_approved=True)
     return {'ok': True}
 
 
