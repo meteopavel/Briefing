@@ -8,9 +8,9 @@
 - модулей: 21
 - классов: 3
 - dataclass: 1
-- функций: 127
+- функций: 130
 - методов: 17
-- констант: 64
+- констант: 65
 
 ---
 
@@ -132,34 +132,60 @@ MCP-сервер Briefing: тулы над тудушками проектов (
 `repository.py`, что у веб-вкладки «Проекты»). Подключается по HTTP —
 из Claude Code и из zcode — вместо чтения/записи docs/TODO.md.
 
+Контракт двуязычный и худой (feat.28): чтение — один язык по параметру
+lang (по умолчанию 'en', экономия токенов; 'ru'/'both' опционально),
+запись — только явными парами title_ru+title_en / text_ru+text_en, обе
+версии обязательны — гарантирует сама сигнатура тула. Однострочный текст
+с раскладкой split_by_lang — прерогатива веб-форм и import_todo, MCP его
+не принимает.
+
+Константы:
+- `LANGS = ('en', 'ru', 'both')`
+
 Функции:
 
 - `_project_or_raise(project_slug: str) -> dict`
   Нет докстринга.
 
-- `_serialize_todo(todo: dict) -> dict`
+- `_check_lang(lang: str) -> None`
   Нет докстринга.
 
-- `_split_subitems(subitems: list[dict]) -> list[dict]`
-  Подпункты с однострочным text → пары text_ru/text_en по языку текста.
+- `_serialize_todo(todo: dict, lang: str) -> dict`
+  Сериализация без дублирования текста: в режимах en/ru — одно поле
+  title (+ text у подпунктов) и фактический язык версии в title_lang/
+  text_lang (если запрошенной версии нет, берётся вторая — агент видит,
+  чего не хватает); в режиме both — только колонки *_ru/*_en, без
+  производных полей.
+
+- `_validated_pair(title_ru: str, title_en: str) -> tuple[str, str]`
+  Нет докстринга.
+
+- `_validated_subitems(subitems: list[dict] | None) -> list[dict] | None`
+  Подпункты записи: у каждого обязаны быть непустые text_ru и text_en.
 
 - `list_projects() -> list[dict]`
   Список проектов, заведённых в Briefing (slug, title, contour, is_hub); хаб первым.
 
-- `list_todos(project_slug: str, section: str | None = None, include_closed: bool = True) -> list[dict]`
+- `list_todos(project_slug: str, section: str | None = None, include_closed: bool = True, lang: str = 'en') -> list[dict]`
   Задачи проекта с подпунктами (без группировки/сортировки).
   
   section (опционально): bug|feat|ref|ques — только эта секция.
   include_closed=False: отбросить done/wontdo (для «что в тудушке?»).
+  lang: 'en' (по умолчанию) | 'ru' | 'both' — язык текстов. В режимах
+  en/ru каждый текст отдаётся один раз (title/text, фактический язык —
+  в title_lang/text_lang); 'both' — колонки *_ru/*_en (для правки).
   Без параметров — все задачи проекта. Для больших проектов фильтруй:
   полный список растёт с историей и может не влезть в лимит ответа тула.
 
-- `create_todo(project_slug: str, section: str, priority: str, title: str, subitems: list[dict] | None = None) -> int`
+- `get_todo(todo_id: int, lang: str = 'both') -> dict`
+  Одна задача с подпунктами по внутреннему id. lang: 'both' (по умолчанию —
+  для подготовки правки нужны обе версии) | 'en' | 'ru'.
+
+- `create_todo(project_slug: str, section: str, priority: str, title_ru: str, title_en: str, subitems: list[dict] | None = None) -> int`
   Создаёт задачу со следующим свободным номером в указанной секции.
   section: bug|feat|ref|ques. priority: critical|high|medium|low.
-  subitems (опционально): [{"kind": "requirement"|"context", "text": "..."}].
-  Текст пишется в колонку своего языка (кириллица → ru, иначе → en);
-  вторую версию можно заполнить позже через веб (форма правки, поля RU/EN).
+  Обе языковые версии обязательны: title_ru и title_en.
+  subitems (опционально): [{"kind": "requirement"|"context", "text_ru": "...", "text_en": "..."}] — у каждого тоже обе версии.
   Возвращает id созданной задачи.
 
 - `update_todo_status(todo_id: int, status: str, closed_note: str | None = None) -> None`
@@ -176,21 +202,23 @@ MCP-сервер Briefing: тулы над тудушками проектов (
   веб флаг снимается автоматически на бэке, а через MCP — нет (агент сам
   управляет им этим тулом).
 
-- `add_todo_subitem(todo_id: int, kind: str, text: str) -> None`
-  Добавляет подпункт к задаче. kind: requirement|context.
+- `add_todo_subitem(todo_id: int, kind: str, text_ru: str, text_en: str) -> None`
+  Добавляет подпункт к задаче. kind: requirement|context; обе языковые
+  версии (text_ru и text_en) обязательны.
 
-- `edit_todo(todo_id: int, title: str, section: str, subitems: list[dict] | None = None) -> None`
+- `edit_todo(todo_id: int, title_ru: str, title_en: str, section: str, subitems: list[dict] | None = None) -> None`
   Меняет заголовок задачи и (опционально) секцию. section: bug|feat|ref|ques.
   При смене секции номер перевыпускается (bug.3 → feat.5), т.к. номер привязан
   к секции. Статус и приоритет сохраняются.
   
-  Однострочный title перезаписывает только колонку своего языка (кириллица →
-  ru, иначе → en); вторая языковая версия не трогается.
+  Обе языковые версии заголовка обязательны: title_ru и title_en. Перед
+  правкой прочитай текущие версии через get_todo(todo_id, lang='both'),
+  чтобы не переписывать их вслепую.
   
   subitems (опционально): полная замена подпунктов списком
-  [{"kind": "requirement"|"context", "text": "..."}] в указанном порядке.
-  Каждый text пишется в колонку своего языка. Пустой список [] — удалить все
-  подпункты. None (по умолчанию) — не трогать.
+  [{"kind": ..., "text_ru": "...", "text_en": "..."}] в указанном порядке
+  (обе версии у каждого). Пустой список [] — удалить все подпункты.
+  None (по умолчанию) — не трогать.
 
 - `delete_todo(todo_id: int) -> None`
   Удаляет задачу вместе с подпунктами (они снимаются каскадом).
@@ -361,8 +389,9 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
 
 Тексты двуязычные: у задач title_ru/title_en, у подпунктов text_ru/text_en
 (миграция 004). Одна из пары может быть NULL — тогда показывается имеющаяся.
-Однострочные клиенты (MCP) передают текст без языка — он раскладывается
-`split_by_lang` в колонку своего языка.
+Однострочные клиенты (веб-формы, import_todo) передают текст без языка — он
+раскладывается `split_by_lang` в колонку своего языка; MCP работает только
+явными парами, обе версии обязательны (feat.28).
 
 Константы:
 - `SECTIONS = ['bug', 'feat', 'ref', 'ques']`
@@ -392,7 +421,7 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
   (этим занимается вызывающий код — см. `app/web.py:_group_todos`).
 
 - `get_todo(todo_id: int) -> dict | None`
-  Задача по id (без подпунктов) — для точечных чтений (MCP).
+  Задача по id, с подпунктами — для точечных чтений (MCP get_todo/edit_todo).
 
 - `_next_number(cursor, project_id: int, section: str) -> int`
   Нет докстринга.

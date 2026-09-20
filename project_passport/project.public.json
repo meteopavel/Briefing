@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-20T06:55:18.153752+00:00",
+  "generated_at": "2026-09-20T08:04:57.821170+00:00",
   "generated_by": "tools/build_project_passport.py",
   "id": "chronicle-reporting-automation",
   "title": "Redmine Documents & Chronicle Automation",
@@ -59,9 +59,9 @@
     "scanned_python_files": 28,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 127,
+    "functions": 130,
     "methods": 17,
-    "constants": 64,
+    "constants": 65,
     "has_cli": true,
     "has_redmine_integration": true,
     "has_document_generation": true,
@@ -118,6 +118,17 @@
         }
       },
       {
+        "path": "app/mcp_server.py",
+        "summary": "MCP-сервер Briefing: тулы над тудушками проектов (та же БД и тот же",
+        "stats": {
+          "classes": 0,
+          "dataclasses": 0,
+          "functions": 16,
+          "methods": 0,
+          "constants": 1
+        }
+      },
+      {
         "path": "app/services/redmine/client.py",
         "summary": "HTTP-клиент для получения данных из Redmine API.",
         "stats": {
@@ -126,17 +137,6 @@
           "functions": 0,
           "methods": 11,
           "constants": 2
-        }
-      },
-      {
-        "path": "app/mcp_server.py",
-        "summary": "MCP-сервер Briefing: тулы над тудушками проектов (та же БД и тот же",
-        "stats": {
-          "classes": 0,
-          "dataclasses": 0,
-          "functions": 13,
-          "methods": 0,
-          "constants": 0
         }
       },
       {
@@ -160,7 +160,7 @@
   },
   "source": {
     "api_map_schema_version": "1.0",
-    "api_map_generated_at": "2026-09-20T06:55:18.073343+00:00",
+    "api_map_generated_at": "2026-09-20T08:04:57.751439+00:00",
     "api_map_generator": "tools/extract_api_map.py",
     "meta_auto_generated": true,
     "meta_review_status": "draft"

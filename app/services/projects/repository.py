@@ -4,8 +4,9 @@ CRUD для тудушек проектов (секции bug/feat/ref/ques, с�
 
 Тексты двуязычные: у задач title_ru/title_en, у подпунктов text_ru/text_en
 (миграция 004). Одна из пары может быть NULL — тогда показывается имеющаяся.
-Однострочные клиенты (MCP) передают текст без языка — он раскладывается
-`split_by_lang` в колонку своего языка.
+Однострочные клиенты (веб-формы, import_todo) передают текст без языка — он
+раскладывается `split_by_lang` в колонку своего языка; MCP работает только
+явными парами, обе версии обязательны (feat.28).
 """
 
 import re
@@ -94,7 +95,7 @@ def get_todos(project_id: int) -> list[dict]:
 
 
 def get_todo(todo_id: int) -> dict | None:
-    """Задача по id (без подпунктов) — для точечных чтений (MCP)."""
+    """Задача по id, с подпунктами — для точечных чтений (MCP get_todo/edit_todo)."""
     with get_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
@@ -102,7 +103,15 @@ def get_todo(todo_id: int) -> dict | None:
                 'FROM todos WHERE id = %s',
                 (todo_id,),
             )
-            return cursor.fetchone()
+            todo = cursor.fetchone()
+            if todo is None:
+                return None
+            cursor.execute(
+                'SELECT kind, text_ru, text_en, position FROM todo_subitems WHERE todo_id = %s ORDER BY position',
+                (todo_id,),
+            )
+            todo['subitems'] = list(cursor.fetchall())
+            return todo
 
 
 def _next_number(cursor, project_id: int, section: str) -> int:
