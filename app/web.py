@@ -1,6 +1,7 @@
 """FastAPI web application: маршруты Briefing."""
 
-from contextlib import asynccontextmanager
+import asyncio
+from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 
 import hashlib
@@ -36,8 +37,24 @@ async def _lifespan(_: FastAPI):
     # Starlette-приложения MCP — но Starlette не прокидывает lifespan
     # вложенного Mount автоматически, поэтому подключаем его к lifespan
     # самого Briefing.
-    async with mcp_server_instance.session_manager.run():
-        yield
+    from app.services.maxbot import watcher as maxbot_watcher
+
+    # Пинги крит-багов mailganer (feat.30): фоновый поллинг Redmine живёт
+    # вместе с приложением; без токена бота (например, локальный рендер)
+    # молча выключен.
+    maxbot_task = None
+    if maxbot_watcher.enabled():
+        maxbot_task = asyncio.create_task(maxbot_watcher.run())
+    else:
+        print('ℹ️ maxbot: MAX_BOT_TOKEN/REDMINE_URL не заданы — пинги крит-багов выключены')
+    try:
+        async with mcp_server_instance.session_manager.run():
+            yield
+    finally:
+        if maxbot_task is not None:
+            maxbot_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await maxbot_task
 
 
 app = FastAPI(title='Briefing', lifespan=_lifespan)

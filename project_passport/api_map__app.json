@@ -1,27 +1,28 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-20T08:04:57.751439+00:00",
+  "generated_at": "2026-10-09T11:31:26.000963+00:00",
   "generator": "tools/extract_api_map.py",
   "target": "app",
-  "scanned_python_files": 28,
-  "files_count": 21,
-  "skipped_files_count": 7,
+  "scanned_python_files": 32,
+  "files_count": 24,
+  "skipped_files_count": 8,
   "skipped_files": [
     "app/__init__.py",
     "app/services/__init__.py",
     "app/services/chronicle/__init__.py",
     "app/services/gitlab/__init__.py",
+    "app/services/maxbot/__init__.py",
     "app/services/projects/__init__.py",
     "app/services/redmine/__init__.py",
     "app/utils/__init__.py"
   ],
   "stats": {
-    "modules": 21,
+    "modules": 24,
     "classes": 4,
     "dataclasses": 1,
-    "functions": 130,
+    "functions": 142,
     "methods": 17,
-    "constants": 65
+    "constants": 75
   },
   "modules": [
     {
@@ -326,94 +327,118 @@
           "lineno": 74
         },
         {
+          "name": "REDMINE_CRITICAL_PRIORITY_IDS",
+          "annotation": null,
+          "value_repr": "[int(x) for x in os.getenv('REDMINE_CRITICAL_PRIORITY_IDS', '5').split(',') if x.strip()]",
+          "lineno": 79
+        },
+        {
+          "name": "MAX_BOT_TOKEN",
+          "annotation": null,
+          "value_repr": "os.getenv('MAX_BOT_TOKEN', '')",
+          "lineno": 80
+        },
+        {
+          "name": "MAX_USER_ID",
+          "annotation": null,
+          "value_repr": "os.getenv('MAX_USER_ID', '218552779')",
+          "lineno": 81
+        },
+        {
+          "name": "MAX_PING_POLL_SEC",
+          "annotation": null,
+          "value_repr": "int(os.getenv('MAX_PING_POLL_SEC', '120'))",
+          "lineno": 82
+        },
+        {
           "name": "DOCUMENT_OWNER",
           "annotation": null,
           "value_repr": "os.getenv('DOCUMENT_OWNER', 'Contractor')",
-          "lineno": 76
+          "lineno": 84
         },
         {
           "name": "MYSQL_HOST",
           "annotation": null,
           "value_repr": "os.getenv('MYSQL_HOST', '127.0.0.1')",
-          "lineno": 78
+          "lineno": 86
         },
         {
           "name": "MYSQL_PORT",
           "annotation": null,
           "value_repr": "int(os.getenv('MYSQL_PORT', '3306'))",
-          "lineno": 79
+          "lineno": 87
         },
         {
           "name": "MYSQL_USER",
           "annotation": null,
           "value_repr": "os.getenv('MYSQL_USER', '')",
-          "lineno": 80
+          "lineno": 88
         },
         {
           "name": "MYSQL_PASSWORD",
           "annotation": null,
           "value_repr": "os.getenv('MYSQL_PASSWORD', '')",
-          "lineno": 81
+          "lineno": 89
         },
         {
           "name": "MYSQL_DATABASE",
           "annotation": null,
           "value_repr": "os.getenv('MYSQL_DATABASE', 'briefing')",
-          "lineno": 82
+          "lineno": 90
         },
         {
           "name": "MCP_TOKEN",
           "annotation": null,
           "value_repr": "os.getenv('MCP_TOKEN', '')",
-          "lineno": 84
+          "lineno": 92
         },
         {
           "name": "USER_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('USER_MAP', {})",
-          "lineno": 86
+          "lineno": 94
         },
         {
           "name": "ISSUE_STATUS_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_STATUS_MAP', {})",
-          "lineno": 87
+          "lineno": 95
         },
         {
           "name": "ISSUE_PRIORITY_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('ISSUE_PRIORITY_MAP', {})",
-          "lineno": 88
+          "lineno": 96
         },
         {
           "name": "CUSTOM_FIELD_MAP",
           "annotation": null,
           "value_repr": "load_int_key_dict_env('CUSTOM_FIELD_MAP', {})",
-          "lineno": 89
+          "lineno": 97
         },
         {
           "name": "CUSTOM_FIELDS_HIDE_IF_NEGATIVE",
           "annotation": null,
           "value_repr": "load_set_dict_env('CUSTOM_FIELDS_HIDE_IF_NEGATIVE', {})",
-          "lineno": 90
+          "lineno": 98
         },
         {
           "name": "USER_REFERENCE_CUSTOM_FIELD_IDS",
           "annotation": null,
           "value_repr": "{16, 17, 18, 19}",
-          "lineno": 91
+          "lineno": 99
         },
         {
           "name": "MONTH_NAMES",
           "annotation": null,
           "value_repr": "{'01': 'января', '02': 'февраля', '03': 'марта', '04': 'апреля', '05': 'мая', '06': 'июня', '07': 'июля', '08': 'августа', '09': 'сентября', '10': 'октября', '11': 'ноября', '12': 'декабря'}",
-          "lineno": 93
+          "lineno": 101
         },
         {
           "name": "REPORT_TABLE_COLUMN_WIDTHS_INCH",
           "annotation": null,
           "value_repr": "[0.4, 1.6, 2.9, 1.3]",
-          "lineno": 97
+          "lineno": 105
         }
       ],
       "stats": {
@@ -421,7 +446,7 @@
         "dataclasses": 0,
         "functions": 3,
         "methods": 0,
-        "constants": 35
+        "constants": 39
       }
     },
     {
@@ -913,6 +938,212 @@
         "functions": 0,
         "methods": 4,
         "constants": 2
+      }
+    },
+    {
+      "path": "app/services/maxbot/__main__.py",
+      "module_docstring": "Ручной пинг через Max-бота: python -m app.services.maxbot \"текст\".\n\nДля крит-багов mailganer, обнаруженных вне Redmine (например, в сессии\nавто-ревью MR), и для проверки канала.",
+      "module_summary": "Ручной пинг через Max-бота: python -m app.services.maxbot \"текст\".",
+      "classes": [],
+      "functions": [
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 12,
+          "end_lineno": 17
+        }
+      ],
+      "constants": [],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 1,
+        "methods": 0,
+        "constants": 0
+      }
+    },
+    {
+      "path": "app/services/maxbot/client.py",
+      "module_docstring": "Минимальный клиент MAX Bot API для Briefing (только stdlib).\n\nПорт клиента из Gym_helper (core/max_client.py), тот же бот, что в\ndjango_edu_multisite и Gym_helper — нового бота feat.30 не создаёт.\nОтправка личных сообщений (user_id); сертификат platform-api2.max.ru\nвыпущен НУЦ Минцифры — корня нет в публичных trust store, поэтому\nдогружаем certs/russian_trusted_ca.pem поверх доступного набора CA.",
+      "module_summary": "Минимальный клиент MAX Bot API для Briefing (только stdlib).",
+      "classes": [],
+      "functions": [
+        {
+          "name": "_token_from_file",
+          "signature": "_token_from_file(path: Path) -> str",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 40,
+          "end_lineno": 45
+        },
+        {
+          "name": "has_token",
+          "signature": "has_token() -> bool",
+          "docstring": "Есть ли токен — без исключений (решает, запускать ли вотчер).",
+          "summary": "Есть ли токен — без исключений (решает, запускать ли вотчер).",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 48,
+          "end_lineno": 52
+        },
+        {
+          "name": "load_token",
+          "signature": "load_token() -> str",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 55,
+          "end_lineno": 64
+        },
+        {
+          "name": "send_message",
+          "signature": "send_message(text: str, user_id: str) -> None",
+          "docstring": "Отправляет личное сообщение пользователю MAX от имени бота.",
+          "summary": "Отправляет личное сообщение пользователю MAX от имени бота.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 67,
+          "end_lineno": 84
+        }
+      ],
+      "constants": [
+        {
+          "name": "MAX_API_BASE_URL",
+          "annotation": null,
+          "value_repr": "'https://platform-api2.max.ru'",
+          "lineno": 18
+        },
+        {
+          "name": "_CERTS_DIR",
+          "annotation": null,
+          "value_repr": "Path(__file__).resolve().parent / 'certs'",
+          "lineno": 20
+        },
+        {
+          "name": "RUSSIAN_TRUSTED_CA",
+          "annotation": null,
+          "value_repr": "_CERTS_DIR / 'russian_trusted_ca.pem'",
+          "lineno": 21
+        },
+        {
+          "name": "_ROOT",
+          "annotation": null,
+          "value_repr": "Path(__file__).resolve().parents[3]",
+          "lineno": 33
+        },
+        {
+          "name": "_TOKEN_CANDIDATES",
+          "annotation": null,
+          "value_repr": "[_ROOT / '.env', _ROOT.parent / 'Django_EDU_Multisite' / '.env']",
+          "lineno": 34
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 4,
+        "methods": 0,
+        "constants": 5
+      }
+    },
+    {
+      "path": "app/services/maxbot/watcher.py",
+      "module_docstring": "Фоновый вотчер крит-багов mailganer (feat.30).\n\nРаз в MAX_PING_POLL_SEC секунд опрашивает рабочий Redmine (задачи,\nназначенные на владельца): задача, вошедшая в критический приоритет\n(«Критичный баг»), пингуется личным сообщением через Max-бота — один пинг\nна вход, повтор только после снятия приоритета и возврата. Состояние — в\nMySQL (max_ping_state), переживает рестарты и деплои.\n\nСкоуп «только mailganer» выполняется по построению: этот Redmine — трекер\nработодателя (email-платформа Mailganer), личные проекты в нём не живут.",
+      "module_summary": "Фоновый вотчер крит-багов mailganer (feat.30).",
+      "classes": [],
+      "functions": [
+        {
+          "name": "enabled",
+          "signature": "enabled() -> bool",
+          "docstring": "Вотчер можно запускать: есть токен бота и URL Redmine.",
+          "summary": "Вотчер можно запускать: есть токен бота и URL Redmine.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 26,
+          "end_lineno": 28
+        },
+        {
+          "name": "_load_state",
+          "signature": "_load_state() -> dict[int, bool]",
+          "docstring": "{issue_id: was_critical} по таблице max_ping_state.",
+          "summary": "{issue_id: was_critical} по таблице max_ping_state.",
+          "kind": "function",
+          "decorators": [],
+          "lineno": 31,
+          "end_lineno": 36
+        },
+        {
+          "name": "_mark_entered",
+          "signature": "_mark_entered(issue_id: int) -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 39,
+          "end_lineno": 47
+        },
+        {
+          "name": "_mark_left",
+          "signature": "_mark_left(issue_id: int) -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 50,
+          "end_lineno": 56
+        },
+        {
+          "name": "_ping",
+          "signature": "_ping(issue: dict) -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 59,
+          "end_lineno": 66
+        },
+        {
+          "name": "_poll_once",
+          "signature": "_poll_once() -> None",
+          "docstring": null,
+          "summary": null,
+          "kind": "function",
+          "decorators": [],
+          "lineno": 69,
+          "end_lineno": 92
+        },
+        {
+          "name": "run",
+          "signature": "run() -> None",
+          "docstring": "Цикл поллинга; запускается lifespan'ом веб-приложения (см. web.py).\n\nОшибки отдельных итераций (Redmine недоступен, БД, MAX API) гасятся —\nвотчер живёт вместе с приложением и не должен ронять его.",
+          "summary": "Цикл поллинга; запускается lifespan'ом веб-приложения (см. web.py).",
+          "kind": "async_function",
+          "decorators": [],
+          "lineno": 95,
+          "end_lineno": 106
+        }
+      ],
+      "constants": [
+        {
+          "name": "_SUBJECT_MAX_LEN",
+          "annotation": null,
+          "value_repr": "300",
+          "lineno": 23
+        }
+      ],
+      "stats": {
+        "classes": 0,
+        "dataclasses": 0,
+        "functions": 7,
+        "methods": 0,
+        "constants": 1
       }
     },
     {
@@ -1897,8 +2128,8 @@
               "summary": null,
               "kind": "method",
               "decorators": [],
-              "lineno": 53,
-              "end_lineno": 55
+              "lineno": 70,
+              "end_lineno": 72
             },
             {
               "name": "__call__",
@@ -1907,12 +2138,12 @@
               "summary": null,
               "kind": "async_method",
               "decorators": [],
-              "lineno": 57,
-              "end_lineno": 65
+              "lineno": 74,
+              "end_lineno": 82
             }
           ],
-          "lineno": 50,
-          "end_lineno": 65
+          "lineno": 67,
+          "end_lineno": 82
         }
       ],
       "functions": [
@@ -1925,8 +2156,8 @@
           "decorators": [
             "asynccontextmanager"
           ],
-          "lineno": 34,
-          "end_lineno": 40
+          "lineno": 35,
+          "end_lineno": 57
         },
         {
           "name": "_fix_spans",
@@ -1935,8 +2166,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 89,
-          "end_lineno": 90
+          "lineno": 106,
+          "end_lineno": 107
         },
         {
           "name": "_escape_template_vars",
@@ -1945,8 +2176,8 @@
           "summary": "Экранирует <placeholder> которые не являются HTML-тегами.",
           "kind": "function",
           "decorators": [],
-          "lineno": 93,
-          "end_lineno": 101
+          "lineno": 110,
+          "end_lineno": 118
         },
         {
           "name": "_render",
@@ -1955,8 +2186,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 104,
-          "end_lineno": 133
+          "lineno": 121,
+          "end_lineno": 150
         },
         {
           "name": "_calc_workdays",
@@ -1965,8 +2196,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 144,
-          "end_lineno": 165
+          "lineno": 161,
+          "end_lineno": 182
         },
         {
           "name": "_parse_mrs",
@@ -1975,8 +2206,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 174,
-          "end_lineno": 184
+          "lineno": 191,
+          "end_lineno": 201
         },
         {
           "name": "_enrich",
@@ -1985,8 +2216,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 187,
-          "end_lineno": 196
+          "lineno": 204,
+          "end_lineno": 213
         },
         {
           "name": "_group_issues",
@@ -1995,8 +2226,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 199,
-          "end_lineno": 218
+          "lineno": 216,
+          "end_lineno": 235
         },
         {
           "name": "_group_todos",
@@ -2005,8 +2236,8 @@
           "summary": "Группирует задачи проекта по секциям (bug/feat/ref/ques, всегда все",
           "kind": "function",
           "decorators": [],
-          "lineno": 225,
-          "end_lineno": 241
+          "lineno": 242,
+          "end_lineno": 258
         },
         {
           "name": "_detect_label",
@@ -2015,8 +2246,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 248,
-          "end_lineno": 253
+          "lineno": 265,
+          "end_lineno": 270
         },
         {
           "name": "_issue_sort_key",
@@ -2025,8 +2256,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 265,
-          "end_lineno": 283
+          "lineno": 282,
+          "end_lineno": 300
         },
         {
           "name": "index",
@@ -2037,8 +2268,8 @@
           "decorators": [
             "app.get('/')"
           ],
-          "lineno": 287,
-          "end_lineno": 312
+          "lineno": 304,
+          "end_lineno": 329
         },
         {
           "name": "api_closed",
@@ -2049,8 +2280,8 @@
           "decorators": [
             "app.get('/api/closed')"
           ],
-          "lineno": 316,
-          "end_lineno": 339
+          "lineno": 333,
+          "end_lineno": 356
         },
         {
           "name": "api_spent",
@@ -2061,8 +2292,8 @@
           "decorators": [
             "app.get('/api/spent')"
           ],
-          "lineno": 343,
-          "end_lineno": 353
+          "lineno": 360,
+          "end_lineno": 370
         },
         {
           "name": "api_mrs",
@@ -2073,8 +2304,8 @@
           "decorators": [
             "app.get('/api/mrs')"
           ],
-          "lineno": 357,
-          "end_lineno": 369
+          "lineno": 374,
+          "end_lineno": 386
         },
         {
           "name": "issue_by_id",
@@ -2085,8 +2316,8 @@
           "decorators": [
             "app.get('/issue/{issue_id}')"
           ],
-          "lineno": 373,
-          "end_lineno": 394
+          "lineno": 390,
+          "end_lineno": 411
         },
         {
           "name": "issue_journals",
@@ -2097,8 +2328,8 @@
           "decorators": [
             "app.get('/api/issues/{issue_id}/journals')"
           ],
-          "lineno": 398,
-          "end_lineno": 427
+          "lineno": 415,
+          "end_lineno": 444
         },
         {
           "name": "attachment_thumbnail",
@@ -2109,8 +2340,8 @@
           "decorators": [
             "app.get('/api/attachment/thumbnail/{attachment_id}')"
           ],
-          "lineno": 431,
-          "end_lineno": 443
+          "lineno": 448,
+          "end_lineno": 460
         },
         {
           "name": "attachment_download",
@@ -2121,8 +2352,8 @@
           "decorators": [
             "app.get('/api/attachment/download/{attachment_id}')"
           ],
-          "lineno": 447,
-          "end_lineno": 461
+          "lineno": 464,
+          "end_lineno": 478
         },
         {
           "name": "_get_redmine_meta",
@@ -2131,8 +2362,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 483,
-          "end_lineno": 506
+          "lineno": 500,
+          "end_lineno": 523
         },
         {
           "name": "_resolve_attr",
@@ -2141,8 +2372,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 509,
-          "end_lineno": 534
+          "lineno": 526,
+          "end_lineno": 551
         },
         {
           "name": "_build_attr_changes",
@@ -2151,8 +2382,8 @@
           "summary": null,
           "kind": "function",
           "decorators": [],
-          "lineno": 537,
-          "end_lineno": 547
+          "lineno": 554,
+          "end_lineno": 564
         },
         {
           "name": "avatar",
@@ -2163,8 +2394,8 @@
           "decorators": [
             "app.get('/api/avatar/{user_id}')"
           ],
-          "lineno": 551,
-          "end_lineno": 571
+          "lineno": 568,
+          "end_lineno": 588
         },
         {
           "name": "_todo_lang",
@@ -2173,8 +2404,8 @@
           "summary": "Активный язык показа текстов задач (кнопка RU⇄EN, cookie briefing_lang).",
           "kind": "function",
           "decorators": [],
-          "lineno": 574,
-          "end_lineno": 577
+          "lineno": 591,
+          "end_lineno": 594
         },
         {
           "name": "projects_index",
@@ -2185,8 +2416,8 @@
           "decorators": [
             "app.get('/projects')"
           ],
-          "lineno": 581,
-          "end_lineno": 592
+          "lineno": 598,
+          "end_lineno": 609
         },
         {
           "name": "project_detail",
@@ -2197,8 +2428,8 @@
           "decorators": [
             "app.get('/projects/{slug}')"
           ],
-          "lineno": 596,
-          "end_lineno": 621
+          "lineno": 613,
+          "end_lineno": 638
         },
         {
           "name": "create_project_todo",
@@ -2209,8 +2440,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos')"
           ],
-          "lineno": 625,
-          "end_lineno": 649
+          "lineno": 642,
+          "end_lineno": 666
         },
         {
           "name": "update_todo_status",
@@ -2221,8 +2452,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/status')"
           ],
-          "lineno": 653,
-          "end_lineno": 662
+          "lineno": 670,
+          "end_lineno": 679
         },
         {
           "name": "update_todo_priority",
@@ -2233,8 +2464,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/priority')"
           ],
-          "lineno": 666,
-          "end_lineno": 674
+          "lineno": 683,
+          "end_lineno": 691
         },
         {
           "name": "add_todo_subitem",
@@ -2245,8 +2476,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/subitems')"
           ],
-          "lineno": 678,
-          "end_lineno": 687
+          "lineno": 695,
+          "end_lineno": 704
         },
         {
           "name": "edit_project_todo",
@@ -2257,8 +2488,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/edit')"
           ],
-          "lineno": 691,
-          "end_lineno": 715
+          "lineno": 708,
+          "end_lineno": 732
         },
         {
           "name": "set_todo_placement_approved",
@@ -2269,8 +2500,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/placement-approved')"
           ],
-          "lineno": 719,
-          "end_lineno": 725
+          "lineno": 736,
+          "end_lineno": 742
         },
         {
           "name": "delete_project_todo",
@@ -2281,8 +2512,8 @@
           "decorators": [
             "app.post('/api/projects/{slug}/todos/{todo_id}/delete')"
           ],
-          "lineno": 729,
-          "end_lineno": 731
+          "lineno": 746,
+          "end_lineno": 748
         },
         {
           "name": "health",
@@ -2293,8 +2524,8 @@
           "decorators": [
             "app.get('/health')"
           ],
-          "lineno": 735,
-          "end_lineno": 736
+          "lineno": 752,
+          "end_lineno": 753
         }
       ],
       "constants": [
@@ -2302,103 +2533,103 @@
           "name": "PROJECT_ROOT",
           "annotation": null,
           "value_repr": "Path(__file__).resolve().parent.parent",
-          "lineno": 23
+          "lineno": 24
         },
         {
           "name": "STATIC_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'web_static'",
-          "lineno": 24
+          "lineno": 25
         },
         {
           "name": "TEMPLATES_DIR",
           "annotation": null,
           "value_repr": "PROJECT_ROOT / 'templates'",
-          "lineno": 25
+          "lineno": 26
         },
         {
           "name": "_SPAN_RE",
           "annotation": null,
           "value_repr": "re.compile('%\\\\{([^}]+)\\\\}([^%]*)%')",
-          "lineno": 74
+          "lineno": 91
         },
         {
           "name": "_EMAIL_RE",
           "annotation": null,
           "value_repr": "re.compile('_?[a-zA-Z0-9._+%-]+@[a-zA-Z0-9._-]+\\\\.[a-zA-Z0-9._-]+_?')",
-          "lineno": 76
+          "lineno": 93
         },
         {
           "name": "_REAL_TAGS",
           "annotation": null,
           "value_repr": "{'a', 'b', 'i', 'u', 's', 'p', 'br', 'hr', 'em', 'strong', 'code', 'pre', 'span', 'div', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'del', 'ins', 'sub', 'sup', 'tt'}",
-          "lineno": 78
+          "lineno": 95
         },
         {
           "name": "_ANGLE_RE",
           "annotation": null,
           "value_repr": "re.compile('</?([a-zA-Z][a-zA-Z0-9_-]*)(?:\\\\s[^>]*)?>|<([a-zA-Z][a-zA-Z0-9_-]*)>')",
-          "lineno": 84
+          "lineno": 101
         },
         {
           "name": "_NOTEXTILE_RE",
           "annotation": null,
           "value_repr": "re.compile('<notextile>(.*?)</notextile>', re.DOTALL)",
-          "lineno": 85
+          "lineno": 102
         },
         {
           "name": "_QUOTE_BLOCK_RE",
           "annotation": null,
           "value_repr": "re.compile('((?:^> ?.*$\\\\n?)+)', re.MULTILINE)",
-          "lineno": 86
+          "lineno": 103
         },
         {
           "name": "_GROUP_DEFS",
           "annotation": null,
           "value_repr": "[('в_работе', 'В работе', lambda s: 'работ' in s), ('на_ревью', 'На ревью', lambda s: 'ревью' in s or 'review' in s), ('заблокирована', 'Заблокирована', lambda s: 'заблок' in s or 'block' in s)]",
-          "lineno": 137
+          "lineno": 154
         },
         {
           "name": "_MR_URL_RE",
           "annotation": null,
           "value_repr": "re.compile('(https?://\\\\S+/merge_requests/(\\\\d+))\\\\s*[-–]?\\\\s*(stage|master)?', re.IGNORECASE)",
-          "lineno": 168
+          "lineno": 185
         },
         {
           "name": "_TODO_PRIORITY_ORDER",
           "annotation": null,
           "value_repr": "{'critical': 0, 'high': 1, 'medium': 2, 'low': 3}",
-          "lineno": 221
+          "lineno": 238
         },
         {
           "name": "_TODO_STATUS_ORDER",
           "annotation": null,
           "value_repr": "{'in_progress': 0, 'open': 1}",
-          "lineno": 222
+          "lineno": 239
         },
         {
           "name": "_LABEL_Q_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[Q', re.IGNORECASE)",
-          "lineno": 244
+          "lineno": 261
         },
         {
           "name": "_LABEL_AI_RE",
           "annotation": null,
           "value_repr": "re.compile('\\\\[ai\\\\]', re.IGNORECASE)",
-          "lineno": 245
+          "lineno": 262
         },
         {
           "name": "_PRIORITY_ORDER",
           "annotation": null,
           "value_repr": "{'критичный баг': 0, 'недельный фокус': 1, 'высокий': 2, 'high': 2, 'нормальный': 3, 'normal': 3, 'низкий': 4, 'low': 4}",
-          "lineno": 256
+          "lineno": 273
         },
         {
           "name": "_ATTR_LABELS",
           "annotation": "dict[str, str]",
           "value_repr": "{'status_id': 'Статус', 'assigned_to_id': 'Назначена', 'priority_id': 'Приоритет', 'done_ratio': 'Готовность', 'fixed_version_id': 'Версия', 'tracker_id': 'Трекер', 'subject': 'Тема', 'description': 'Описание', 'estimated_hours': 'Оценка (ч)', 'start_date': 'Дата начала', 'due_date': 'Дедлайн', 'is_private': 'Приватная'}",
-          "lineno": 467
+          "lineno": 484
         }
       ],
       "stats": {

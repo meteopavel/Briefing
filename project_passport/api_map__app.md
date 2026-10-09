@@ -1,16 +1,16 @@
 # API map: app
 
-Просканировано Python-файлов: 28
-Включено в карту: 21
-Пропущено без значимой API-информации: 7
+Просканировано Python-файлов: 32
+Включено в карту: 24
+Пропущено без значимой API-информации: 8
 
 Сводная статистика:
-- модулей: 21
+- модулей: 24
 - классов: 3
 - dataclass: 1
-- функций: 130
+- функций: 142
 - методов: 17
-- констант: 65
+- констант: 75
 
 ---
 
@@ -94,6 +94,10 @@ CLI-точка входа для генерации документов и эк
 - `GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')`
 - `GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')`
 - `GITLAB_AUTHOR_ID = int(os.getenv('GITLAB_AUTHOR_ID', '68'))`
+- `REDMINE_CRITICAL_PRIORITY_IDS = [int(x) for x in os.getenv('REDMINE_CRITICAL_PRIORITY_IDS', '5').split(',') if x.strip()]`
+- `MAX_BOT_TOKEN = os.getenv('MAX_BOT_TOKEN', '')`
+- `MAX_USER_ID = os.getenv('MAX_USER_ID', '218552779')`
+- `MAX_PING_POLL_SEC = int(os.getenv('MAX_PING_POLL_SEC', '120'))`
 - `DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')`
 - `MYSQL_HOST = os.getenv('MYSQL_HOST', '127.0.0.1')`
 - `MYSQL_PORT = int(os.getenv('MYSQL_PORT', '3306'))`
@@ -364,6 +368,100 @@ README с дальнейшими шагами и итогового prompt'а д
     Возвращает список MR, связанных с задачей, по номеру в имени ветки.
   - `invalidate_cache() -> None`
     Нет докстринга.
+
+---
+
+# app/services/maxbot/__main__.py
+
+Модуль:
+Ручной пинг через Max-бота: python -m app.services.maxbot "текст".
+
+Для крит-багов mailganer, обнаруженных вне Redmine (например, в сессии
+авто-ревью MR), и для проверки канала.
+
+Функции:
+
+- `main() -> None`
+  Нет докстринга.
+
+---
+
+# app/services/maxbot/client.py
+
+Модуль:
+Минимальный клиент MAX Bot API для Briefing (только stdlib).
+
+Порт клиента из Gym_helper (core/max_client.py), тот же бот, что в
+django_edu_multisite и Gym_helper — нового бота feat.30 не создаёт.
+Отправка личных сообщений (user_id); сертификат platform-api2.max.ru
+выпущен НУЦ Минцифры — корня нет в публичных trust store, поэтому
+догружаем certs/russian_trusted_ca.pem поверх доступного набора CA.
+
+Константы:
+- `MAX_API_BASE_URL = 'https://platform-api2.max.ru'`
+- `_CERTS_DIR = Path(__file__).resolve().parent / 'certs'`
+- `RUSSIAN_TRUSTED_CA = _CERTS_DIR / 'russian_trusted_ca.pem'`
+- `_ROOT = Path(__file__).resolve().parents[3]`
+- `_TOKEN_CANDIDATES = [_ROOT / '.env', _ROOT.parent / 'Django_EDU_Multisite' / '.env']`
+
+Функции:
+
+- `_token_from_file(path: Path) -> str`
+  Нет докстринга.
+
+- `has_token() -> bool`
+  Есть ли токен — без исключений (решает, запускать ли вотчер).
+
+- `load_token() -> str`
+  Нет докстринга.
+
+- `send_message(text: str, user_id: str) -> None`
+  Отправляет личное сообщение пользователю MAX от имени бота.
+
+---
+
+# app/services/maxbot/watcher.py
+
+Модуль:
+Фоновый вотчер крит-багов mailganer (feat.30).
+
+Раз в MAX_PING_POLL_SEC секунд опрашивает рабочий Redmine (задачи,
+назначенные на владельца): задача, вошедшая в критический приоритет
+(«Критичный баг»), пингуется личным сообщением через Max-бота — один пинг
+на вход, повтор только после снятия приоритета и возврата. Состояние — в
+MySQL (max_ping_state), переживает рестарты и деплои.
+
+Скоуп «только mailganer» выполняется по построению: этот Redmine — трекер
+работодателя (email-платформа Mailganer), личные проекты в нём не живут.
+
+Константы:
+- `_SUBJECT_MAX_LEN = 300`
+
+Функции:
+
+- `enabled() -> bool`
+  Вотчер можно запускать: есть токен бота и URL Redmine.
+
+- `_load_state() -> dict[int, bool]`
+  {issue_id: was_critical} по таблице max_ping_state.
+
+- `_mark_entered(issue_id: int) -> None`
+  Нет докстринга.
+
+- `_mark_left(issue_id: int) -> None`
+  Нет докстринга.
+
+- `_ping(issue: dict) -> None`
+  Нет докстринга.
+
+- `_poll_once() -> None`
+  Нет докстринга.
+
+- `run() -> None`
+  Цикл поллинга; запускается lifespan'ом веб-приложения (см. web.py).
+  
+  Ошибки отдельных итераций (Redmine недоступен, БД, MAX API) гасятся —
+  вотчер живёт вместе с приложением и не должен ронять его.
 
 ---
 

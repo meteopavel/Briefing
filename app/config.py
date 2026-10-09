@@ -73,6 +73,14 @@ GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')
 GITLAB_PROJECT_PATH = os.getenv('GITLAB_PROJECT_PATH', 'mg/mailganer')
 GITLAB_AUTHOR_ID = int(os.getenv('GITLAB_AUTHOR_ID', '68'))
 
+# Пинги крит-багов mailganer через Max-бота (feat.30): приоритеты Redmine,
+# считающиеся критическими (в рабочем Redmine «Критичный баг» — id 5), интервал
+# поллинга вотчера и креды бота (тот же бот, что в django_edu_multisite/Gym_helper).
+REDMINE_CRITICAL_PRIORITY_IDS = [int(x) for x in os.getenv('REDMINE_CRITICAL_PRIORITY_IDS', '5').split(',') if x.strip()]
+MAX_BOT_TOKEN = os.getenv('MAX_BOT_TOKEN', '')
+MAX_USER_ID = os.getenv('MAX_USER_ID', '218552779')
+MAX_PING_POLL_SEC = int(os.getenv('MAX_PING_POLL_SEC', '120'))
+
 DOCUMENT_OWNER = os.getenv('DOCUMENT_OWNER', 'Contractor')
 
 MYSQL_HOST = os.getenv('MYSQL_HOST', '127.0.0.1')
