@@ -8,9 +8,9 @@
 - модулей: 24
 - классов: 3
 - dataclass: 1
-- функций: 142
+- функций: 143
 - методов: 17
-- констант: 75
+- констант: 76
 
 ---
 
@@ -436,6 +436,7 @@ MySQL (max_ping_state), переживает рестарты и деплои.
 
 Константы:
 - `_SUBJECT_MAX_LEN = 300`
+- `_INITIALIZED_SENTINEL = 0`
 
 Функции:
 
@@ -449,6 +450,9 @@ MySQL (max_ping_state), переживает рестарты и деплои.
   Нет докстринга.
 
 - `_mark_left(issue_id: int) -> None`
+  Нет докстринга.
+
+- `_mark_initialized() -> None`
   Нет докстринга.
 
 - `_ping(issue: dict) -> None`

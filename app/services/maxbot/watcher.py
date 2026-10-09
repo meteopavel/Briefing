@@ -22,6 +22,11 @@ from app.services.redmine.client import RedmineClient
 # Subject в Redmine бывает длинным; режем, чтобы пинг читался на телефоне
 _SUBJECT_MAX_LEN = 300
 
+# Маркер «инициализация уже была»: issue_id реальных задач всегда > 0.
+# Без него пустая таблица (крит-багов ещё не было) каждый раз считалась бы
+# «первым прогоном» — и самый первый реальный крит-баг засеялся бы без пинга.
+_INITIALIZED_SENTINEL = 0
+
 
 def enabled() -> bool:
     """Вотчер можно запускать: есть токен бота и URL Redmine."""
@@ -56,6 +61,14 @@ def _mark_left(issue_id: int) -> None:
             )
 
 
+def _mark_initialized() -> None:
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                'INSERT IGNORE INTO max_ping_state (issue_id, was_critical) VALUES (0, 0)'
+            )
+
+
 def _ping(issue: dict) -> None:
     issue_id = issue['id']
     subject = issue.get('subject', '').strip()
@@ -63,7 +76,7 @@ def _ping(issue: dict) -> None:
         subject = subject[:_SUBJECT_MAX_LEN - 1] + '…'
     text = f'🚨 Критичный баг mailganer #{issue_id}\n{subject}\n{REDMINE_URL}/issues/{issue_id}'
     max_client.send_message(text, MAX_USER_ID)
-    print(f'✅ maxbot: отправлен пинг по крит-багу #{issue_id}')
+    print(f'✅ maxbot: отправлен пинг по крит-багу #{issue_id}', flush=True)
 
 
 def _poll_once() -> None:
@@ -74,13 +87,15 @@ def _poll_once() -> None:
     }
     state = _load_state()
 
-    # Первый прогон (пустое состояние): засеиваем текущие крит-задачи без
+    # Первый прогон (таблица пуста): засеиваем текущие крит-задачи без
     # пингов — иначе каждый деплой на свежую БД оборачивался бы залпом
-    # сообщений по давно открытым багам.
+    # сообщений по давно открытым багам. Маркер фиксирует, что инициализация
+    # была, даже если крит-задач сейчас ноль.
     if not state:
         for issue_id in critical:
             _mark_entered(issue_id)
-        print(f'ℹ️ maxbot: первый прогон — {len(critical)} крит-задач засеяно без пингов')
+        _mark_initialized()
+        print(f'ℹ️ maxbot: первый прогон — {len(critical)} крит-задач засеяно без пингов', flush=True)
         return
 
     for issue_id, issue in critical.items():
@@ -98,9 +113,10 @@ async def run() -> None:
     Ошибки отдельных итераций (Redmine недоступен, БД, MAX API) гасятся —
     вотчер живёт вместе с приложением и не должен ронять его.
     """
+    print(f'ℹ️ maxbot: вотчер крит-багов запущен (интервал {MAX_PING_POLL_SEC} с)', flush=True)
     while True:
         try:
             await asyncio.to_thread(_poll_once)
         except Exception as exc:
-            print(f'⚠️ maxbot watcher: ошибка итерации поллинга: {exc}')
+            print(f'⚠️ maxbot watcher: ошибка итерации поллинга: {exc}', flush=True)
         await asyncio.sleep(MAX_PING_POLL_SEC)

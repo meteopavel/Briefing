@@ -46,7 +46,7 @@ async def _lifespan(_: FastAPI):
     if maxbot_watcher.enabled():
         maxbot_task = asyncio.create_task(maxbot_watcher.run())
     else:
-        print('ℹ️ maxbot: MAX_BOT_TOKEN/REDMINE_URL не заданы — пинги крит-багов выключены')
+        print('ℹ️ maxbot: MAX_BOT_TOKEN/REDMINE_URL не заданы — пинги крит-багов выключены', flush=True)
     try:
         async with mcp_server_instance.session_manager.run():
             yield
